@@ -38,17 +38,17 @@ class register {
 	
 	// getData() will retrieve all posted data and store in variables
 	function getData(){
-		$this->username = sql($_POST['username']);
-		$this->pass1 = sql($_POST['pass1']);
-		$this->pass2 = sql($_POST['pass2']);
-		$this->name = sql($_POST['name']);
-		$this->email1 = sql($_POST['email1']);
-		$this->email2 = sql($_POST['email2']);
-		$this->birthMonth = sql($_POST['birthMonth']);
-		$this->birthDay = sql($_POST['birthDay']);
-		$this->birthYear = sql($_POST['birthYear']);
-		$this->secCode = sql($_POST['secCode']);
-		$this->termsAgree = sql($_POST['termsAgree']);
+		$this->username = sql(trim($_POST['username']));
+		$this->pass1 = sql(trim($_POST['pass1']));
+		$this->pass2 = sql(trim($_POST['pass2']));
+		$this->name = sql(trim($_POST['name']));
+		$this->email1 = sql(trim($_POST['email1']));
+		$this->email2 = sql(trim($_POST['email2']));
+		$this->birthMonth = sql(trim($_POST['birthMonth']));
+		$this->birthDay = sql(trim($_POST['birthDay']));
+		$this->birthYear = sql(trim($_POST['birthYear']));
+		$this->secCode = sql(trim($_POST['secCode']));
+		$this->termsAgree = sql(trim($_POST['termsAgree']));
 	}
 	
 	// 80% of our users will probably enter invalid data. Lets stop them here.
@@ -58,6 +58,25 @@ class register {
 		if (strlen($this->username) > 16) $error['longUsername'] = "Your username cannot be longer than 16 characters";
 		if (!ctype_alnum($this->username)) $error['alnumUsername'] = "Your username can only contain letters and numbers";
 		if (userExists($this->username)) $error['userExists'] = "This username already exists.";
+		
+		// Password - Must be between 5 and 16 characters; both passwords must match
+		if (strlen($this->pass1) < 5) $error['shortPassword'] = "Your password must contain at least 5 characters";
+		if (strlen($this->pass1) > 16) $error['longPasswrd'] = "Your password cannot be longer than 16 characters";
+		if ($pass1 != $pass2) $error['passNoMatch'] = "Your passwords do not match.";
+		
+		// Name - Just make sure it is 3 or more characters; can't really do much checking here
+		if (strlen($this->name) < 3) $error['shortName'] = "Please enter your name";
+		
+		// Email - Make sure it is in the user@domain.ext formatgoogle; both emails must match
+		if (!preg_match("/^( [a-zA-Z0-9] )+( [a-zA-Z0-9\._-] )*@( [a-zA-Z0-9_-] )+( [a-zA-Z0-9\._-] +)+$/" , $email1)) $error['invalidEmail'] = "Please enter a valid email address";
+		if ($email1 != $email2) $error['emailNoMatch'] = "Your email addresses do not match";
+		
+		// Birthday - Make sure the user is at least 13 years old
+		
+		// Security Code - Make sure the security code matches the image
+		
+		// Terms - Make sure the user has agreed to the terms
+
 	}
 }
 
