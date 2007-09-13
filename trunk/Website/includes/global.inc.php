@@ -17,6 +17,17 @@ if (!$noConn){
 }
 
 /**
+ * Removes all expired security codes from the table
+ * @param expiration time in seconds(default = 12 minutes)
+ * @return true
+ */
+function deleteSecurityKeys($exp = "720"){
+	$exp_time = now() - $exp;
+	$query = "DELETE FROM security_codes WHERE date < '" . $exp_time . "'";
+	mysql_query($query);
+}
+
+/**
  * Formats a string for querying, protects against SQL Injection. Should be called for all user-inputted data
  * @param string s 
  * @return escaped string s
@@ -38,4 +49,26 @@ function userExists($username){
 	if (mysql_num_rows($result) == 0) return false;
 	else return true;
 }
+
+
+/**
+ * Checks to make sure the security key entered matched the image
+ * @param security code hash
+ * @param security code id 
+ * @return true or false
+ */
+function validSecurityKey($hash, $id){
+	deleteSecurityKeys();	// First remove all expired keys from the table
+	$result = mysql_query("SELECT * FROM security_codes WHERE code_hash = '" . $hash . "'");
+	
+	// If there are no rows, security code has expires or hack attempt. Return false
+	if (mysql_num_rows($result) == 0) return false;
+	else $code_id = mysql_result($result, 0 , 'code_id');
+	
+	// If we get here, the code hash has been found. Compare ID in row to that entered by user
+	if ($code_id = $id) return true;
+	else return false;
+}
+
+generateSecurityImage();
 ?>

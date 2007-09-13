@@ -47,6 +47,7 @@ class register {
 		$this->birthMonth = sql(trim($_POST['birthMonth']));
 		$this->birthDay = sql(trim($_POST['birthDay']));
 		$this->birthYear = sql(trim($_POST['birthYear']));
+		$this->secHash = sql(trim($_POST['secHash']));
 		$this->secCode = sql(trim($_POST['secCode']));
 		$this->termsAgree = sql(trim($_POST['termsAgree']));
 	}
@@ -72,11 +73,21 @@ class register {
 		if ($email1 != $email2) $error['emailNoMatch'] = "Your email addresses do not match";
 		
 		// Birthday - Make sure the user is at least 13 years old
+		$now_ts = now();
+		$age_ts = mktime(0, 0, 0, $this->birthMonth, $this->birthDay, $this->birthYear);
+		if (floor(($now_ts - $age_ts)/31556926) < 13) $error['tooYoung'] = "Your must be at least 13 years old to register";
+		
+		/////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////
+		//////////////// CODE ABOVE IS MESSY, FIX LATER ON //////////////////
+		/////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////
 		
 		// Security Code - Make sure the security code matches the image
+		if (!validSecurityKey($this->secHash, $this->secCode)) $error['secCode'] = "You have entered an invalid security code";
 		
 		// Terms - Make sure the user has agreed to the terms
-
+		if ($this->termsAgree != '1') $error['mustAgree'] = "You must agree to the Terms of Service".
 	}
 }
 
