@@ -6,7 +6,7 @@
 /* and insertion of new users into the database.           */
 /***********************************************************/
 
-require('global.inc.php');
+require_once('global.inc.php');
 
 class register {
 
@@ -22,6 +22,7 @@ class register {
 	var $birthYear;
 	var $secCode;
 	var $termsAgree;
+	var $emailConfirmKey;
 	var $error;
 	
 	// PHP4 will call the register() function as the default constructor. 
@@ -84,10 +85,16 @@ class register {
 		/////////////////////////////////////////////////////////////////////
 		
 		// Security Code - Make sure the security code matches the image
-		if (!validSecurityKey($this->secHash, $this->secCode)) $error['secCode'] = "You have entered an invalid security code";
+		if (!validSecurityCode($this->secHash, $this->secCode)) $error['secCode'] = "You have entered an invalid security code";
 		
 		// Terms - Make sure the user has agreed to the terms
 		if ($this->termsAgree != '1') $error['mustAgree'] = "You must agree to the Terms of Service".
+	}
+	
+	function generateEmailKey(){ $this->emailConfirmKey = randomString(40); }
+	
+	function sendEmail(){
+		
 	}
 }
 

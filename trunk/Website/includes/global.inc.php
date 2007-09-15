@@ -6,26 +6,52 @@
 /* settings that will be used in multiple files.           */
 /***********************************************************/
 
-// Database Connection - If $noConn = true, no database connection is required
-if (!$noConn){
-	$user = "root";
-	$pass = "";
-	$host = "localhost";
-	$dbname = "sdp";
-	$link = mysql_connect($host, $user, $pass);
-	$db = mysql_select_db($dbname, $link);
-}
+// Connect to database
+require_once('db.inc.php');
 
 /**
  * Removes all expired security codes from the table
  * @param expiration time in seconds(default = 12 minutes)
  * @return true
  */
-function deleteSecurityKeys($exp = "720"){
-	$exp_time = now() - $exp;
+function deleteSecurityCodes($exp = "720"){
+	$exp_time = time() - $exp;
 	$query = "DELETE FROM security_codes WHERE date < '" . $exp_time . "'";
 	mysql_query($query);
 }
+
+/**
+ * Generates the security code and displays the image
+ * @return image
+ */
+function generateSecurityCode(){
+	deleteSecurityCodes();	// Delete all expired keys first
+	$codeHash = randomString(32);
+	$codeID = randomString(6, "num");
+	$query = "INSERT INTO security_codes SET code_hash = '" . $codeHash . "', code_id = '" . $codeID . "', date = '" . time() . "'";
+	$result = mysql_query($query);
+	echo "<img src='securityCode.inc.php?key=" . $codeHash . "'>";
+}
+
+/**
+ * Generates a random string
+ * @param length l
+ * @param type (alpha, alnum, num)
+ * @return random string with length l
+ */
+function randomString($l, $type = "alnum") {
+	$randstring = "";
+	if ($type == "alpha") $string = "abcdefghijklmnopqrstuvwxyz";
+	else if ($type == "num") $string = "1234567890";
+	else $string = "1234567890abcdefghijklmnopqrstuvwxyz";
+	for ($a = 0; $a < $l; $a++) {
+		$b = rand(0, strlen($string) - 1);
+		$randstring .= $string[$b];
+	}
+	return $randstring;
+}
+
+
 
 /**
  * Formats a string for querying, protects against SQL Injection. Should be called for all user-inputted data
@@ -52,12 +78,12 @@ function userExists($username){
 
 
 /**
- * Checks to make sure the security key entered matched the image
+ * Checks to make sure the security code entered matched the image
  * @param security code hash
  * @param security code id 
  * @return true or false
  */
-function validSecurityKey($hash, $id){
+function validSecurityCode($hash, $id){
 	deleteSecurityKeys();	// First remove all expired keys from the table
 	$result = mysql_query("SELECT * FROM security_codes WHERE code_hash = '" . $hash . "'");
 	
@@ -69,6 +95,4 @@ function validSecurityKey($hash, $id){
 	if ($code_id = $id) return true;
 	else return false;
 }
-
-generateSecurityImage();
 ?>
