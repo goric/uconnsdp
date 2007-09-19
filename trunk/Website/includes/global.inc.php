@@ -6,6 +6,13 @@
 /* settings that will be used in multiple files.           */
 /***********************************************************/
 
+define("HOME_MOD_FILE", "home.mod.php");
+define("PASSWORD_MOD_FILE", "password.mod.php");
+define("REGISTER_MOD_FILE", "register.mod.php");
+define("SUPPORT_MOD_FILE", "support.mod.php");
+define("SITE_ADDR", "http://127.0.0.1/seniorDesignProject/");
+define("PROJ_NAME", "HuskyAIM");
+
 // Connect to database
 require_once('db.inc.php');
 
@@ -18,6 +25,16 @@ function deleteSecurityCodes($exp = "720"){
 	$exp_time = time() - $exp;
 	$query = "DELETE FROM security_codes WHERE date < '" . $exp_time . "'";
 	mysql_query($query);
+}
+
+/**
+ * Determines whether or not the entered email has already be registered
+ * @param email 
+ * @return true or false
+ */
+function emailExists($email){
+	$result = mysql_query("SELECT * FROM users WHERE email = '" . $email . "'");
+	if (mysql_num_rows($result) == 0) return false;
 }
 
 /**
@@ -51,7 +68,28 @@ function randomString($l, $type = "alnum") {
 	return $randstring;
 }
 
-
+/**
+ * Includes the module based on the values passed in the querystring
+ * @param module 
+ * @return module file
+ */
+function showModule($mod){
+	switch ($mod){
+		case "register":
+			$mod_file = REGISTER_MOD_FILE;
+			break;
+		case "support":
+			$mod_file = SUPPORT_MOD_FILE;
+			break;
+		case "forgotpass":
+			$mod_file = PASSWORD_MOD_FILE;
+			break;
+		default:
+			$mod_file = HOME_MOD_FILE;
+	}
+	
+	require_once($mod_file);
+}
 
 /**
  * Formats a string for querying, protects against SQL Injection. Should be called for all user-inputted data
