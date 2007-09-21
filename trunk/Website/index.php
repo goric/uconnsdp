@@ -6,7 +6,8 @@
 /* design and loading of all of the content modules        */
 /***********************************************************/
 
-require_once('includes/global.inc.php');
+require_once('include/global.inc.php');
+
 $module = $_GET['module'];
 ?>
 
@@ -15,9 +16,11 @@ $module = $_GET['module'];
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Untitled Document</title>
+<style type="text/css" media="screen,projection">/*<![CDATA[*/ @import "<?php echo SITE_ADDR ?>css/style.css"; /*]]>*/</style>
+<link rel="stylesheet" href="<?php echo SITE_ADDR ?>css/style.css" type="text/css" />
 </head>
 
 <body>
-<?php showModule($module) ?>
+<?php require_once(showModule($module)); ?>
 </body>
 </html>
