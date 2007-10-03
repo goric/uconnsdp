@@ -5,10 +5,30 @@
 /* This file contains all of the content for the           */
 /* registration module (form and data validation)          */
 /***********************************************************/
-
-require_once('register.class.php');
-
 ?>
+<h1>Register</h1>
+<?php
+require_once('register.class.php');
+$reg = new register();
+
+if (isset($_POST['submit'])){
+	$reg->getData();
+	if ($reg->validateData()) {
+		$reg->insertData();
+		$regSuccess = true;
+	} else {
+		$reg->printErrors();
+	}
+}
+
+if ($regSuccess){
+?>
+<h2>You're almost done!</h2>
+<p>An email has been sent to the email address you used to register. Please follow the instructions in that email to complete your registration.</p>
+<?
+} else {
+?>
+<script type="text/javascript" src="js/ajax.js"></script>
 <script type="text/javascript">
 <!--
 function isAlphaNum(value){
@@ -28,23 +48,41 @@ function checkName(){
 
 function checkUsername(){
 	username = document.regForm.username.value;
-	if (username.length < 5) document.getElementById("usernameError").innerHTML = "Your username must contain at least 5 characters";
-	else if (username.length > 16) document.getElementById("usernameError").innerHTML = "Your username cannot be longer than 16 characters";
-	else if (!isAlphaNum(username)) document.getElementById("usernameError").innerHTML = "Your username can only contain letters and numbers";
-	else document.getElementById("usernameError").innerHTML = "";
+	if (username.length < 5) {
+		document.getElementById("usernameValid").innerHTML = "";
+		document.getElementById("usernameError").innerHTML = "Your username must contain at least 5 characters";
+	} else if (username.length > 16) {
+		document.getElementById("usernameValid").innerHTML = "";
+		document.getElementById("usernameError").innerHTML = "Your username cannot be longer than 16 characters";
+	} else if (!isAlphaNum(username)) {
+		document.getElementById("usernameValid").innerHTML = "";
+		document.getElementById("usernameError").innerHTML = "Your username can only contain letters and numbers";
+	} else checkUsernameExists();
 }
 
 function checkEmail(){
 	email = document.regForm.email1.value;
-	if (!isEmail(email)) document.getElementById("emailError").innerHTML = "Please enter a valid email address";
-	else document.getElementById("emailError").innerHTML = "";
+	if (!isEmail(email)) {
+		document.getElementById("emailValid").innerHTML = "";
+		document.getElementById("emailError").innerHTML = "Please enter a valid email address";
+	} else if (!checkEmailMatch()){
+		// 
+	} else checkEmailExists();
+
 }
 
 function checkEmailMatch(){
 	email1 = document.regForm.email1.value;
 	email2 = document.regForm.email2.value;
-	if (email1 != email2 && email1 != "") document.getElementById("emailMatchError").innerHTML = "Your email addresses do not match";
-	else document.getElementById("emailMatchError").innerHTML = "";
+	if (email1 != email2 && (email1 != "")) {
+		document.getElementById("emailValid").innerHTML = "";
+		document.getElementById("emailMatchError").innerHTML = "Your email addresses do not match";
+		return false;
+	} else {
+		checkEmailExists();
+		document.getElementById("emailMatchError").innerHTML = "";
+		return true;
+	}
 }
 
 function checkSecCode(){
@@ -54,35 +92,34 @@ function checkSecCode(){
 }
 -->
 </script>
-<h1>Register</h1>
 <form action="" name="regForm" id="regForm" method="post">
 <table>
 	<tr>
-		<td align="right">Name: </td>
-		<td><input type="text" name="name" onblur="checkName()" /> <span id="nameError" class="error"></span></td>
+		<td align="right"><span class="error">*</span>Name: </td>
+		<td><input type="text" name="name" onblur="checkName()" value="<?php echo $reg->getName()?>" /> <span id="nameError" class="error"></span></td>
 	</tr>
 	<tr>
-		<td align="right">Email: </td>
-		<td><input type="text" size="30" name="email1" onblur="checkEmail()" /> <span id="emailError" class="error"></span></td>
+		<td align="right"><span class="error">*</span>Email: </td>
+		<td><input type="text" size="30" name="email1" onblur="checkEmail()" value="<?php echo $reg->getEmail()?>" /> <span id="emailError" class="error"></span><span id="emailValid" class="valid"></span></td>
 	</tr>
 	<tr>
-		<td align="right">Confirm Email: </td>
-		<td><input type="text" size="30" name="email2" onblur="checkEmailMatch()" /> <span id="emailMatchError" class="error"></span></td>
+		<td align="right"><span class="error">*</span>Confirm Email: </td>
+		<td><input type="text" size="30" name="email2" onblur="checkEmailMatch()" value="<?php echo $reg->getEmail()?>" /> <span id="emailMatchError" class="error"></span></td>
 	</tr>
 	<tr>
-		<td align="right">Desired Username: </td>
-		<td><input type="text" name="username" onblur="checkUsername()" /> <span id="usernameError" class="error"></span></td>
+		<td align="right"><span class="error">*</span>Desired Username: </td>
+		<td><input type="text" name="username" onblur="checkUsername()" value="<?php echo $reg->getUsername()?>" /> <span id="usernameError" class="error"></span><span id="usernameValid" class="valid"></span></td>
 	</tr>
 	<tr>
-		<td align="right">Password:</td>
-		<td><input type="text" name="pass1" /></td>
+		<td align="right"><span class="error">*</span>Password:</td>
+		<td><input type="password" name="pass1" /></td>
 	</tr>
 	<tr>
-		<td align="right">Confirm Password: </td>
-		<td><input type="text" name="pass2" /></td>
+		<td align="right"><span class="error">*</span>Confirm Password: </td>
+		<td><input type="password" name="pass2" /></td>
 	</tr>
 	<tr>
-		<td align="right">Security Code:</td>
+		<td align="right"><span class="error">*</span>Security Code:</td>
 		<td valign="middle"><input type="text" name="secCode" size="6" maxlength="6" onblur="checkSecCode()" /> <?php generateSecurityCode()?> <span id="codeError" class="error"></span></td>
 	</tr>
 	<tr>
@@ -91,7 +128,7 @@ function checkSecCode(){
 	</tr>
 	<tr>
 		<td align="right"><input type="checkbox" name="termsAgree" value="1" /></td>
-		<td>I agree to the Terms of Service</td>
+		<td><span class="error">*</span>I agree to the Terms of Service</td>
 	</tr>
 	<tr>
 		<td> </td>
@@ -99,3 +136,7 @@ function checkSecCode(){
 	</tr>
 </table>
 </form>
+<span class="error"><em>*Required field</em></span>
+<?php
+}
+?>

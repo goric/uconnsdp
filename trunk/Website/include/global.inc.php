@@ -8,12 +8,14 @@
 
 define("HOME_MOD_FILE", "home.mod.php");
 define("PASSWORD_MOD_FILE", "password.mod.php");
+define("DOWNLOAD_MOD_FILE", "download.mod.php");
 define("REGISTER_MOD_FILE", "register.mod.php");
 define("SUPPORT_MOD_FILE", "support.mod.php");
 define("MOD_REWRITE", true);
 define("SITE_ADDR", "http://127.0.0.1/seniorDesignProject/Website/");
 define("ROOT_DIR", "C:/Users/Joe/Documents/Server/www/seniorDesignProject/Website/");
-define("PROJ_NAME", "");
+define("PROJ_NAME", "Unity Messenger");
+define("SEND_EMAIL", "");
 
 // Connect to database
 require_once('db.inc.php');
@@ -37,6 +39,7 @@ function deleteSecurityCodes($exp = "720"){
 function emailExists($email){
 	$result = mysql_query("SELECT * FROM users WHERE email = '" . $email . "'");
 	if (mysql_num_rows($result) == 0) return false;
+	else return true;
 }
 
 /**
@@ -56,11 +59,23 @@ function generateSecurityCode(){
  * Generates a page url based on the status of mod_rewrite
  * @param module
  * @return page url
- */
 function pageLink($module){
 	if (MOD_REWRITE) $page = $module . ".htm";
 	else $page = "index.php?module=" . $module;
 	return $page;
+}
+*/
+function pageLink($module, $page = ""){
+	if (MOD_REWRITE)
+		if (empty($page))
+			return SITE_ADDR . $module . "/";
+		else
+			return SITE_ADDR . $module . "/" . $page . ".htm";
+	else
+		if (empty($page))
+			return SITE_ADDR . "index.php?module=" . $module;
+		else
+			return SITE_ADDR . "index.php?module=" . $module . "&page=" . $page;
 }
 
 /**
@@ -91,10 +106,13 @@ function showModule($mod){
 		case "register":
 			$mod_file = REGISTER_MOD_FILE;
 			break;
+		case "download":
+			$mod_file = DOWNLOAD_MOD_FILE;
+			break;
 		case "support":
 			$mod_file = SUPPORT_MOD_FILE;
 			break;
-		case "forgotpass":
+		case "password":
 			$mod_file = PASSWORD_MOD_FILE;
 			break;
 		default:
@@ -135,15 +153,14 @@ function userExists($username){
  * @return true or false
  */
 function validSecurityCode($hash, $id){
-	deleteSecurityKeys();	// First remove all expired keys from the table
+	deleteSecurityCodes();	// First remove all expired keys from the table
 	$result = mysql_query("SELECT * FROM security_codes WHERE code_hash = '" . $hash . "'");
 	
 	// If there are no rows, security code has expires or hack attempt. Return false
 	if (mysql_num_rows($result) == 0) return false;
 	else $code_id = mysql_result($result, 0 , 'code_id');
-	
 	// If we get here, the code hash has been found. Compare ID in row to that entered by user
-	if ($code_id = $id) return true;
+	if ($code_id == $id) return true;
 	else return false;
 }
 ?>
