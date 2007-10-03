@@ -1,3 +1,4 @@
 Options +FollowSymLinks
 RewriteEngine on
-RewriteRule (.*).htm$ index.php?module=$1
+RewriteRule (.*)/(.*).htm$ index.php?module=$1&page=$2
+RewriteRule (.*)/$ index.php?module=$1

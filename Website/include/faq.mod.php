@@ -5,27 +5,10 @@
 /* This file contains all of the content for the support   */
 /* module (contact form, contact info, etc)                */
 /***********************************************************/
-
-require_once('support.class.php');
-switch($page){
-/**********************************************/
-/* Support > Frequently Asked Questions       */
-/**********************************************/
-	case "faq":
-?>
-<h1>Frequently Asked Questions</h1>
-<?php
-$faq = new faq();
-$faq->printQuestions();
-$faq->printQA();
-	break;
-/**********************************************/
-/* Support > Contact Form (Default)           */
-/**********************************************/
-	default:
 ?>
 <h1>Support</h1>
 <?php
+require_once('support.class.php');
 $help = new support();
 if (isset($_POST['submit'])){
 	$help->getData();
@@ -85,6 +68,5 @@ if ($emailSuccess){
 <span class="error"><em>*Required field</em></span>
 
 <?php
-}
 }
 ?>
