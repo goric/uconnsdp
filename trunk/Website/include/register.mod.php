@@ -28,7 +28,7 @@ if ($regSuccess){
 <?
 } else {
 ?>
-<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="<?php echo SITE_ADDR?>js/ajax.js"></script>
 <script type="text/javascript">
 <!--
 function isAlphaNum(value){
