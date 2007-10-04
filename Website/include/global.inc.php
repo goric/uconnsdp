@@ -11,7 +11,7 @@ define("PASSWORD_MOD_FILE", "password.mod.php");
 define("DOWNLOAD_MOD_FILE", "download.mod.php");
 define("REGISTER_MOD_FILE", "register.mod.php");
 define("SUPPORT_MOD_FILE", "support.mod.php");
-define("MOD_REWRITE", true);
+define("MOD_REWRITE", false);
 define("SITE_ADDR", "http://127.0.0.1/seniorDesignProject/Website/");
 define("ROOT_DIR", "C:/Users/Joe/Documents/Server/www/seniorDesignProject/Website/");
 define("PROJ_NAME", "Unity Messenger");
