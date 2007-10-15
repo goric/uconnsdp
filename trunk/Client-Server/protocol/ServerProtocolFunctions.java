@@ -103,11 +103,16 @@ public class ServerProtocolFunctions
 	//message code 03
 	public static void SendSingleMessage( String[] pMessage)
 	{
-		System.out.println("Message code 03 entered.");
+		//System.out.println("Message code 03 entered.");
 		
-		String aFromUser = pMessage[1];
-		String aToUser = pMessage[2];
-		
+		//String aFromUser = pMessage[1];
+		//String aToUser = pMessage[2];
+		String aMessage = "";
+		for(int i = 3; i < pMessage.length; i++)
+		{
+			aMessage += pMessage[i] + " ";
+		}
+		server.Server.SendMessageToClients(aMessage);
 	}
 	
 	//message code 04
