@@ -172,6 +172,8 @@ public class Server
 	{	
 		if( pMessage != null)
 		{
+			System.out.println(pMessage);
+			
 			synchronized( pMessage)
 			{
 				//find user who sent message
@@ -256,19 +258,15 @@ public class Server
 					break;
 					
 				case 19:
-					RemoveUser( server.Server.mUserMap.get( pMessage));
+					RemoveUser( server.Server.mUserMap.get( aMessage[1]));
 					break;
 				
 				default:
-					//this will really be blank eventually
-					SendMessageToClients( pMessage);
+					//SendMessageToClients( );
 					break;
 				}
 			}
 		}
-		//if message is null, then this user has become disconnected.  Remove them from
-		// the list of online users and close that socket.  Also send a message to all clients
-		// who are on so they know that person signed off.
 		else
 		{
 			
