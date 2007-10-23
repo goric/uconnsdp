@@ -3,12 +3,12 @@ package server;
 import java.util.*;
 import java.net.*;
 import java.io.*;
-import java.sql.*;
 
 public class Server 
 {
 	public static Map<String, Socket> mUserMap = new HashMap<String, Socket>();
-	public static Vector mConnectedList = new Vector();
+	public static Map<String, Socket> mConnectedList = new HashMap<String, Socket>();
+	public static Map<Socket, String> mReverseUserMap = new HashMap<Socket, String>();
 	
 	private ServerSocket mServerSocket ;
 	public protocol.ServerConnection mServerConnection;
@@ -21,7 +21,7 @@ public class Server
      */
 	public Server()
 	{
-		mConnectedList = new Vector();
+		mConnectedList = new HashMap<String, Socket>();
 		
 		try	
 		{
@@ -85,9 +85,7 @@ public class Server
 					//use synchronized on all accesses to any item that could be shared between threads.
 					//    We're all in OS, right?  Look how easy it is here compared to in C..
 					synchronized( mConnectedList) {
-						mConnectedList.addElement( aSocket);
-						
-						System.out.println( "Client number " + mConnectedList.size() + " just entered.");
+						mConnectedList.put( aSocket.getRemoteSocketAddress().toString(), aSocket);
 					}
 					
 					mServerConnection = new protocol.ServerConnection( aSocket);
@@ -122,17 +120,46 @@ public class Server
 	{
 		DataOutputStream aDataOutStream;
 		
-		for(int i=0; i < mConnectedList.size(); i++) 
+		/*for(int i=0; i < mConnectedList.size(); i++) 
 		{	
 			try 
 			{
-				aDataOutStream = new DataOutputStream( ( (Socket)mConnectedList.elementAt(i) ).getOutputStream());
+				aDataOutStream = new DataOutputStream( ( mConnectedList.get(i) ).getOutputStream());
 				aDataOutStream.writeUTF( pMessage);
 			}
 			catch(Exception e) 
 			{
 				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
 			}
+		}*/
+		Set<String> aKeySet = mUserMap.keySet();
+		Iterator<String> aIterator = aKeySet.iterator();
+		//for(int i=0; i < mConnectedList.size(); i++)
+		while(aIterator.hasNext())
+		{
+			String aKey = aIterator.next();
+			try
+			{
+				aDataOutStream = new DataOutputStream( ( mUserMap.get(aKey) ).getOutputStream());
+				aDataOutStream.writeUTF( pMessage);
+			}
+			catch(Exception e) 
+			{
+				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
+			}
+		}
+	}
+	public static synchronized void SendMessageToSingleClient( String pToUserName, String pMessage)
+	{
+		DataOutputStream aDataOutStream;
+		try
+		{
+			aDataOutStream= new DataOutputStream( ( mUserMap.get(pToUserName) ).getOutputStream());
+			aDataOutStream.writeUTF( pMessage);
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error in Server.SendMessageToSingleClient: " + e.toString());
 		}
 	}
 	
@@ -147,16 +174,13 @@ public class Server
 		{
 			synchronized( pMessage)
 			{
-				//for initial/testing purposes
-				//SendMessageToClients( pMessage);
-				
 				//find user who sent message
-				String[] aMessage = pMessage.split(" ");
+				String[] aMessage = pMessage.split( " ");
 				
-				//Parse message to get first 2 characters
-				//depending on that, call proper function, passing message as param
-				int aMsgCode = Integer.parseInt(aMessage[0]);
+				//Parse message to get the message code
+				int aMsgCode = Integer.parseInt( aMessage[0]);
 				
+				//depending on message code, call proper function, passing message as param
 				switch( aMsgCode)
 				{
 				case 1:
@@ -172,7 +196,7 @@ public class Server
 					break;
 					
 				case 4:
-					
+					// server should NEVER receive this code - client use only
 					break;
 					
 				case 5:
@@ -184,7 +208,7 @@ public class Server
 					break;
 					
 				case 7:
-					
+					//server should NEVER receive this code - client use only
 					break;
 					
 				case 8:
@@ -196,7 +220,7 @@ public class Server
 					break;
 					
 				case 10:
-					
+					//server should NEVER receive this code - client use only
 					break;
 					
 				case 11:
@@ -218,6 +242,22 @@ public class Server
 				case 15:
 					protocol.ServerProtocolFunctions.GetCommonContacts( aMessage);
 					break;
+					
+				case 16:
+					protocol.ServerProtocolFunctions.SendLoginMessage( aMessage);
+					break;
+				
+				case 17:
+					protocol.ServerProtocolFunctions.SendLogoutNotification( aMessage);
+					break;
+					
+				case 18:
+					protocol.ServerProtocolFunctions.SendStatusChangeNotification( aMessage);
+					break;
+					
+				case 19:
+					RemoveUser( server.Server.mUserMap.get( pMessage));
+					break;
 				
 				default:
 					//this will really be blank eventually
@@ -238,12 +278,11 @@ public class Server
 	//remove a user from list of connected.
 	//should also kill/close the socket connection and kill the thread
 	// also notify all clients of the removal (for buddy list)
-	public static void RemoveUser( Socket pSocket)
+	public static synchronized void RemoveUser( Socket pSocket)
 	{
-		synchronized(mConnectedList){
-			mConnectedList.remove( pSocket);
-		}
+		mUserMap.remove(mReverseUserMap.get(pSocket));
+		mReverseUserMap.remove(pSocket);
 		
-		System.out.println("One client left. There are now " + mConnectedList.size() + " clients." );
+		System.out.println("One client left. There are now " + mUserMap.size() + " clients." );
 	}
 }
