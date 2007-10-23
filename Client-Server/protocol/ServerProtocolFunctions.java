@@ -51,10 +51,9 @@ public class ServerProtocolFunctions
 			        try
 			        {
 			        	aInsertLoginTime = aConnection.createStatement();
-			        	System.out.println(new java.sql.Timestamp(new java.util.Date().getTime()));
-			        	//aInsertLoginTime.executeUpdate("UPDATE users SET last_login='" + new Date(java.util.Calendar.getInstance().getTimeInMillis()) + "' "
-			        									//+ "WHERE username='" + aUserName + "'");
-			        	//System.out.println("successfully inserted " + new java.util.Date() + " into the DB.");
+			        	aInsertLoginTime.executeUpdate("UPDATE users SET last_login='" 
+			        									+ (java.lang.System.currentTimeMillis() / 1000) 
+			        									+ "' WHERE username='" + aUserName + "'");
 			        }
 			        catch(SQLException sqle)
 			        {
@@ -112,7 +111,6 @@ public class ServerProtocolFunctions
 	        	aBuddyList += aResultSet.getString("username") + " ";
 	        }
 	        
-	        //System.out.println("buddies: " + aBuddyList);
 	        server.Server.SendMessageToSingleClient(aUserName, "02 " + aUserName + " " + count + " " + aBuddyList);
 	        
 	        aResultSet.close();
