@@ -10,50 +10,75 @@ public class ServerProtocolFunctions
 	{
 		String aUserName = pMessage[1];
 		String aSHA1Passwd = pMessage[2];
+		String aMachineAddress = pMessage[3];
 		
 		//open DB connection
 		try
 		{
-			//String url = "jdbc:mysql://localhost/sdp?user=root&password=";
-			String url = "jdbc:mysql://ocean.hostingzoom.com/gamex_sdp?user=gamex_sdp&password=seniordesign";
-	        Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-	        Connection aConnection = DriverManager.getConnection (url);
-	        //System.out.println("Connected.");
+			String url = "jdbc:mysql://66.29.103.150:3306/gamex_chatterim?user=gamex_chatterim&password=w3e65i6k0n";
+	        Class.forName ( "com.mysql.jdbc.Driver").newInstance();
+	        Connection aConnection = DriverManager.getConnection( url);
+	        
 	        Statement aStatement = aConnection.createStatement();
-	        aStatement.executeQuery ("SELECT password FROM users WHERE username='" + aUserName + "'");
+	        aStatement.executeQuery ( "SELECT password FROM users WHERE username='" + aUserName 
+	        							+ "' AND active='1' AND valid='1'");
 	        
 	        ResultSet aResultSet = aStatement.getResultSet();
-	        //aResultSet.next();
 	        
-	        if(!aResultSet.next())
+	        //add user to mUserMap
+	        server.Server.mUserMap.put( aUserName, server.Server.mConnectedList.get( aMachineAddress));
+	        server.Server.mReverseUserMap.put(server.Server.mConnectedList.get( aMachineAddress), aUserName);
+	        
+	        if( !aResultSet.next())
 	        {
-	        	//send 'username not found'
-	        	System.out.println("invalid username:" + aUserName);
-	        	server.Server.SendMessageToClients( "01 " + aUserName + " denied" );
+	        	//username not found, remove from mUserMap
+	        	System.out.println( "invalid username:" + aUserName);
+	        	server.Server.SendMessageToSingleClient( aUserName, "01 " + aUserName + " denied" );
+	        	
+	        	server.Server.mUserMap.remove( aUserName);
+	        	server.Server.mReverseUserMap.remove(server.Server.mConnectedList.get( aMachineAddress));
 	        }
 	        else
 	        {   
-	        	//aResultSet.next();
-	        	String aPasswd = aResultSet.getString("password");
+	        	String aPasswd = aResultSet.getString( "password");
 	        	
-	    		if(aPasswd.equals(aSHA1Passwd))
-	    		{
-			        System.out.println(aPasswd.toString());
-			        server.Server.SendMessageToClients( "01 " + aUserName + " accepted" );
+	    		if( aPasswd.equals( aSHA1Passwd))
+	    		{   
+			        server.Server.SendMessageToSingleClient( aUserName, "01 " + aUserName + " accepted" );
+			        
+			        //insert last login time to DB
+			        Statement aInsertLoginTime = null;
+			        try
+			        {
+			        	aInsertLoginTime = aConnection.createStatement();
+			        	System.out.println(new java.sql.Timestamp(new java.util.Date().getTime()));
+			        	//aInsertLoginTime.executeUpdate("UPDATE users SET last_login='" + new Date(java.util.Calendar.getInstance().getTimeInMillis()) + "' "
+			        									//+ "WHERE username='" + aUserName + "'");
+			        	//System.out.println("successfully inserted " + new java.util.Date() + " into the DB.");
+			        }
+			        catch(SQLException sqle)
+			        {
+			        	System.out.println("SQL exception in inserting last login time for " + aUserName);
+			        }
 	    		}
 	    		else
 	    		{
-	    			//send 'incorrect password' error
-	    			System.out.println("invalid password:" + aSHA1Passwd);
-	    			server.Server.SendMessageToClients( "01 " + aUserName + " denied" );
+	    			//incorrect password, remove user from mUserMap 
+	    			System.out.println( "invalid password:" + aSHA1Passwd);
+	    			server.Server.SendMessageToSingleClient( aUserName, "01 " + aUserName + " denied" );
+	    			server.Server.mUserMap.remove( aUserName);
+	    			server.Server.mReverseUserMap.remove(server.Server.mConnectedList.get( aMachineAddress));
 	    		}
 	        }
 	        aResultSet.close();
 	        aStatement.close();
+	        
+	        System.out.println("There are now " + server.Server.mUserMap.size() + " users logged in.");
+	        server.Server.mConnectedList.remove( aMachineAddress);
 		}
-		catch(Exception e)
+		catch( Exception e)
 		{
-			System.out.println(e.toString());
+			System.out.println( e.toString());
 		}
 	}
 	
@@ -62,15 +87,14 @@ public class ServerProtocolFunctions
 	public static void SendContactList( String[] pMessage)
 	{
 		String aUserName = pMessage[1];
-		System.out.println(aUserName);
+		
 		//open DB connection
 		try
 		{
-			//String url = "jdbc:mysql://localhost/sdp?user=root&password=";
-			String url = "jdbc:mysql://ocean.hostingzoom.com/gamex_sdp?user=gamex_sdp&password=seniordesign";
+			String url = "jdbc:mysql://66.29.103.150:3306/gamex_chatterim?user=gamex_chatterim&password=w3e65i6k0n";
 	        Class.forName ("com.mysql.jdbc.Driver").newInstance ();
 	        Connection aConnection = DriverManager.getConnection (url);
-	        //System.out.println("Connected.");
+	        
 	        Statement aStatement = aConnection.createStatement();
 	        aStatement.executeQuery ("SELECT username FROM users " +
 	        						"WHERE user_id IN (SELECT buddy_id from buddy_list " +
@@ -78,6 +102,7 @@ public class ServerProtocolFunctions
 	        						"FROM users WHERE username='" + aUserName + "'))");
 	        
 	        ResultSet aResultSet = aStatement.getResultSet();
+	        
 	        String aBuddyList = "";
 	        int count = 0;
 	        
@@ -87,9 +112,8 @@ public class ServerProtocolFunctions
 	        	aBuddyList += aResultSet.getString("username") + " ";
 	        }
 	        
-	        System.out.println("buddies: " + aBuddyList);
-	        server.Server.SendMessageToClients("02 " + aUserName + " " + count + " " + aBuddyList);
-	        System.out.println("sent: " + "02 " + aUserName + " " + count + " " + aBuddyList);
+	        //System.out.println("buddies: " + aBuddyList);
+	        server.Server.SendMessageToSingleClient(aUserName, "02 " + aUserName + " " + count + " " + aBuddyList);
 	        
 	        aResultSet.close();
 	        aStatement.close();
@@ -103,26 +127,23 @@ public class ServerProtocolFunctions
 	//message code 03
 	public static void SendSingleMessage( String[] pMessage)
 	{
-		//System.out.println("Message code 03 entered.");
+		String aFromUser = pMessage[1];
+		String aToUser = pMessage[2];
+		String aMessage = "04 " + pMessage[2] + " " + pMessage[1] + " " + (pMessage.length - 3) + " ";
 		
-		//String aFromUser = pMessage[1];
-		//String aToUser = pMessage[2];
-		String aMessage = "";
 		for(int i = 3; i < pMessage.length; i++)
 		{
 			aMessage += pMessage[i] + " ";
 		}
-		server.Server.SendMessageToClients(aMessage);
+		
+		server.Server.SendMessageToSingleClient( aToUser, aMessage);
 	}
 	
-	//message code 04
+	//message code 04 - server will never receive this code (client only)
 	
 	//message code 05
 	public static void SendSingleChatInvite( String[] pMessage)
 	{
-		String aFromUser = pMessage[1];
-		String aToUser = pMessage[2];
-		String aChatName = pMessage[3];
 		System.out.println("Message code 05 entered.");
 	}
 	
@@ -180,8 +201,85 @@ public class ServerProtocolFunctions
 	//message code 15
 	public static void GetCommonContacts( String[] pMessage)
 	{
-		System.out.println("Message code 15 entered.");
+		String aFromUserName = pMessage[1];
+		String aToUserName = pMessage[2];
+		
+		//open DB connection
+		try
+		{
+			String url = "jdbc:mysql://66.29.103.150:3306/gamex_chatterim?user=gamex_chatterim&password=w3e65i6k0n";
+	        Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+	        Connection aConnection = DriverManager.getConnection (url);
+	        
+	        Statement aStatement = aConnection.createStatement();
+	        aStatement.executeQuery ("SELECT username FROM users " +
+	        						"WHERE user_id IN (SELECT buddy_id from buddy_list " +
+	        						"WHERE user_id IN (SELECT user_id " +
+	        						"FROM users WHERE username='" + aFromUserName + "'))");
+	        
+	        ResultSet aFromResultSet = aStatement.getResultSet();
+	        String aFromBuddy = "";
+	        
+	        while(aFromResultSet.next())
+	        {
+	        	aFromBuddy += aFromResultSet.getString("username") + " ";
+	        }
+	        String[] aFromBuddyList = aFromBuddy.split(" ");
+	        
+	        aStatement = aConnection.createStatement();
+	        aStatement.executeQuery ("SELECT username FROM users " +
+	        						"WHERE user_id IN (SELECT buddy_id from buddy_list " +
+	        						"WHERE user_id IN (SELECT user_id " +
+	        						"FROM users WHERE username='" + aToUserName + "'))");
+	        
+	        ResultSet aToResultSet = aStatement.getResultSet();
+	        String aToBuddy = "";
+	        
+	        while(aToResultSet.next())
+	        {
+	        	aToBuddy += aToResultSet.getString("username") + " ";
+	        }
+	        String[] aToBuddyList = aToBuddy.split(" ");
+	        
+	        String aList = "";
+	        int count = 0;
+	        
+	        for(int i=0; i < aFromBuddyList.length; i++)
+	        {
+	        	for(int j=0; j < aToBuddyList.length; j++)
+	        	{
+	        		if( aFromBuddyList[i].equals( aToBuddyList[j]))
+	        		{
+	        			aList += aFromBuddyList[i] + " ";
+	        			count++;
+	        		}
+	        	}
+	        }
+	        
+	        server.Server.SendMessageToSingleClient( aFromUserName, "15 " + aFromUserName + " " 
+	        																+ aToUserName + " " + count + " " + aList);
+	        
+	        aFromResultSet.close();
+	        aStatement.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.toString());
+		}
 	}
 	
+	public static void SendLoginMessage( String[] pMessage)
+	{
+		server.Server.SendMessageToClients("16 " + pMessage[1]);
+	}
 	
+	public static void SendLogoutNotification( String[] pMessage)
+	{
+		server.Server.SendMessageToClients("17 " + pMessage[1]);
+	}
+	
+	public static void SendStatusChangeNotification( String[] pMessage)
+	{
+		server.Server.SendMessageToClients("18 " + pMessage[1] + " " + pMessage[2]);
+	}
 }

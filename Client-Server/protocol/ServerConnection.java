@@ -54,7 +54,8 @@ public class ServerConnection implements Runnable
 			catch( Exception e) 
 			{
 				mIsRunning = false;
-				server.Server.RemoveUser(this.mClientSocket);
+				server.Server.ReceiveMessageFromClient("17 " + server.Server.mReverseUserMap.get(mClientSocket));
+				server.Server.RemoveUser( mClientSocket);
 				
 				try	
 				{
