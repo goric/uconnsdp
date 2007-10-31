@@ -17,10 +17,11 @@ public class receiverClient {
 		    // receive file
 		    byte [] mybytearray  = new byte [filesize];
 		    InputStream is = sock.getInputStream();
-		    FileOutputStream fos = new FileOutputStream("test.txt");
+		    FileOutputStream fos = new FileOutputStream("fishing_the_sky.mp3");
 		    BufferedOutputStream bos = new BufferedOutputStream(fos);
 		    bytesRead = is.read(mybytearray,0,mybytearray.length);
 		    current = bytesRead;
+		    System.out.println("Transferring...");
 
 		    do {
 		       bytesRead =
@@ -30,7 +31,7 @@ public class receiverClient {
 
 		    bos.write(mybytearray, 0 , current);
 		    long end = System.currentTimeMillis();
-		    System.out.println(end-start);
+		    System.out.println("Transfer complete.");
 		    bos.close();
 		    sock.close();
 		  }

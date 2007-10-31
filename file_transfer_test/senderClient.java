@@ -12,7 +12,7 @@ public class senderClient {
 	      System.out.println("Accepted connection : " + sock);
 
 	      // sendfile
-	      File myFile = new File ("test.txt");
+	      File myFile = new File ("fishing_the_sky.mp3");
 	      byte [] mybytearray  = new byte [(int)myFile.length()];
 	      FileInputStream fis = new FileInputStream(myFile);
 	      BufferedInputStream bis = new BufferedInputStream(fis);
