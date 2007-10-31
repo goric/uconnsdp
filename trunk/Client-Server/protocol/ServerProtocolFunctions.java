@@ -4,6 +4,8 @@ import java.sql.*;
 
 public class ServerProtocolFunctions 
 {
+	private static String mConnectionURL =  "jdbc:mysql://66.29.103.254:3306/gamex_chatterim?user=gamex_chatterim&password=w3e65i6k0n";
+	
 	
 	//message code 01
 	public static void ClientLogIn( String[] pMessage)
@@ -15,9 +17,8 @@ public class ServerProtocolFunctions
 		//open DB connection
 		try
 		{
-			String url = "jdbc:mysql://66.29.103.150:3306/gamex_chatterim?user=gamex_chatterim&password=w3e65i6k0n";
 	        Class.forName ( "com.mysql.jdbc.Driver").newInstance();
-	        Connection aConnection = DriverManager.getConnection( url);
+	        Connection aConnection = DriverManager.getConnection( mConnectionURL);
 	        
 	        Statement aStatement = aConnection.createStatement();
 	        aStatement.executeQuery ( "SELECT password FROM users WHERE username='" + aUserName 
@@ -71,6 +72,7 @@ public class ServerProtocolFunctions
 	        }
 	        aResultSet.close();
 	        aStatement.close();
+	        aConnection.close();
 	        
 	        System.out.println("There are now " + server.Server.mUserMap.size() + " users logged in.");
 	        server.Server.mConnectedList.remove( aMachineAddress);
@@ -90,9 +92,8 @@ public class ServerProtocolFunctions
 		//open DB connection
 		try
 		{
-			String url = "jdbc:mysql://66.29.103.150:3306/gamex_chatterim?user=gamex_chatterim&password=w3e65i6k0n";
 	        Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-	        Connection aConnection = DriverManager.getConnection (url);
+	        Connection aConnection = DriverManager.getConnection (mConnectionURL);
 	        
 	        Statement aStatement = aConnection.createStatement();
 	        aStatement.executeQuery ("SELECT username FROM users " +
@@ -115,6 +116,7 @@ public class ServerProtocolFunctions
 	        
 	        aResultSet.close();
 	        aStatement.close();
+	        aConnection.close();
 		}
 		catch(Exception e)
 		{
@@ -175,7 +177,46 @@ public class ServerProtocolFunctions
 	//message code 11
 	public static void GetUserInfo( String[] pMessage)
 	{
-		System.out.println("Message code 11 entered.");
+		String aUserName = pMessage[1];
+		String aRequestingUserName = pMessage[2];
+		
+		try
+		{
+			Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+	        Connection aConnection = DriverManager.getConnection (mConnectionURL);
+	        
+	        Statement aStatement = aConnection.createStatement();
+	        
+	        //get date/time registered
+	        aStatement.executeQuery("SELECT date_joined FROM users WHERE username='" + aRequestingUserName + "'");
+	        ResultSet aRegResult = aStatement.getResultSet();
+	        
+	        int aRegisteredTime = 0;
+	        aRegResult.next();
+	        aRegisteredTime = aRegResult.getInt("date_joined");
+	        System.out.println("registered: " + aRegisteredTime);
+	        
+	        //get current online time in seconds
+	        long aTimeOnline = 0;
+	        if(server.Server.mUserMap.containsKey(aRequestingUserName))
+	        {
+		        aStatement.executeQuery("SELECT last_login FROM users WHERE username='" + aRequestingUserName + "'");
+		        ResultSet aLoginResult = aStatement.getResultSet();
+		        
+		        aLoginResult.next();
+		        aTimeOnline = aLoginResult.getInt("last_login");
+		        aTimeOnline = (java.lang.System.currentTimeMillis() / 1000) - aTimeOnline;
+	        }
+	        System.out.println("logged in for: " + aTimeOnline + " seconds.");
+	        
+	        //get profile - not in DB yet
+	        
+	        //get status + status info - not in DB yet
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error in ServerProtocolFunctions.GetUserInfo: " + e.toString());
+		}
 	}
 	
 	//message code 12
@@ -205,9 +246,8 @@ public class ServerProtocolFunctions
 		//open DB connection
 		try
 		{
-			String url = "jdbc:mysql://66.29.103.150:3306/gamex_chatterim?user=gamex_chatterim&password=w3e65i6k0n";
 	        Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-	        Connection aConnection = DriverManager.getConnection (url);
+	        Connection aConnection = DriverManager.getConnection (mConnectionURL);
 	        
 	        Statement aStatement = aConnection.createStatement();
 	        aStatement.executeQuery ("SELECT username FROM users " +
@@ -240,7 +280,7 @@ public class ServerProtocolFunctions
 	        String[] aToBuddyList = aToBuddy.split(" ");
 	        
 	        String aList = "";
-	        int count = 0;
+	        int aCount = 0;
 	        
 	        for(int i=0; i < aFromBuddyList.length; i++)
 	        {
@@ -249,16 +289,17 @@ public class ServerProtocolFunctions
 	        		if( aFromBuddyList[i].equals( aToBuddyList[j]))
 	        		{
 	        			aList += aFromBuddyList[i] + " ";
-	        			count++;
+	        			aCount++;
 	        		}
 	        	}
 	        }
 	        
 	        server.Server.SendMessageToSingleClient( aFromUserName, "15 " + aFromUserName + " " 
-	        																+ aToUserName + " " + count + " " + aList);
+	        																+ aToUserName + " " + aCount + " " + aList);
 	        
 	        aFromResultSet.close();
 	        aStatement.close();
+	        aConnection.close();
 		}
 		catch(Exception e)
 		{
@@ -268,16 +309,64 @@ public class ServerProtocolFunctions
 	
 	public static void SendLoginMessage( String[] pMessage)
 	{
-		server.Server.SendMessageToClients("16 " + pMessage[1]);
+		server.Server.SendMessageToAllClients("16 " + pMessage[1]);
 	}
 	
 	public static void SendLogoutNotification( String[] pMessage)
 	{
-		server.Server.SendMessageToClients("17 " + pMessage[1]);
+		server.Server.SendMessageToAllClients("17 " + pMessage[1]);
 	}
 	
 	public static void SendStatusChangeNotification( String[] pMessage)
 	{
-		server.Server.SendMessageToClients("18 " + pMessage[1] + " " + pMessage[2]);
+		server.Server.SendMessageToAllClients("18 " + pMessage[1] + " " + pMessage[2]);
+	}
+	
+	public static void AddUserToBuddyList( String[] pMessage)
+	{
+		String aUserName = pMessage[1];
+		String aBuddyToAdd = pMessage[2];
+		
+		try
+		{
+			Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+	        Connection aConnection = DriverManager.getConnection (mConnectionURL);
+	        
+	        Statement aStatement = aConnection.createStatement();
+	        aStatement.executeUpdate( "INSERT INTO buddy_list VALUES ( "
+	        					+ "(SELECT user_id FROM users WHERE username='" + aUserName + "'), " 
+	        					+ "(SELECT user_id FROM users WHERE username='" + aBuddyToAdd + "' ) )");
+
+	        aStatement.close();
+	        aConnection.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("Exception in ServerProtocolFunctions.AddUserToBuddyList: " + e.toString());
+		}
+	}
+	
+	public static void RemoveUserFromBuddyList( String[] pMessage)
+	{
+		String aUserName = pMessage[1];
+		String aBuddyToAdd = pMessage[2];
+		
+		try
+		{
+			Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+	        Connection aConnection = DriverManager.getConnection (mConnectionURL);
+	        
+	        Statement aStatement = aConnection.createStatement();
+	        aStatement.executeUpdate( "DELETE FROM buddy_list WHERE user_id="
+	        					+ "(SELECT user_id FROM users WHERE username='" + aUserName + "') AND " 
+	        					+ "buddy_id=(SELECT user_id FROM users WHERE username='" + aBuddyToAdd + "')");
+	        
+	        aStatement.close();
+	        aConnection.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("Exception in ServerProtocolFunctions.AddUserToBuddyList: " + e.toString());
+		}
 	}
 }
