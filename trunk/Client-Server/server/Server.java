@@ -62,7 +62,7 @@ public class Server
 			aStr[2] = "8cb2237d0679ca88db6464eac60da96345513964";
 			protocol.ServerProtocolFunctions.ClientLogIn( aStr);
 			
-			String[] Str = new String[4];
+			/*String[] Str = new String[4];
 			Str[0] = "01";
 			Str[1] = "User1";
 			protocol.ServerProtocolFunctions.SendContactList( Str);*/
@@ -109,64 +109,8 @@ public class Server
 	}
 	
 	/*
-	 * Temporarily this is a stub. This will eventually be a number of functions which will,
-	 *  depending on the circumstances, send a number of different messages (i.e. connection status,
-	 *  buddy list, another user's status change, messages..)
-	 *  
-	 *  This function will be used to notify all users on about status changes and people
-	 *  	signing on and off.
-	 */
-	public static synchronized void SendMessageToClients( String pMessage)
-	{
-		DataOutputStream aDataOutStream;
-		
-		/*for(int i=0; i < mConnectedList.size(); i++) 
-		{	
-			try 
-			{
-				aDataOutStream = new DataOutputStream( ( mConnectedList.get(i) ).getOutputStream());
-				aDataOutStream.writeUTF( pMessage);
-			}
-			catch(Exception e) 
-			{
-				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
-			}
-		}*/
-		Set<String> aKeySet = mUserMap.keySet();
-		Iterator<String> aIterator = aKeySet.iterator();
-		//for(int i=0; i < mConnectedList.size(); i++)
-		while(aIterator.hasNext())
-		{
-			String aKey = aIterator.next();
-			try
-			{
-				aDataOutStream = new DataOutputStream( ( mUserMap.get(aKey) ).getOutputStream());
-				aDataOutStream.writeUTF( pMessage);
-			}
-			catch(Exception e) 
-			{
-				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
-			}
-		}
-	}
-	public static synchronized void SendMessageToSingleClient( String pToUserName, String pMessage)
-	{
-		DataOutputStream aDataOutStream;
-		try
-		{
-			aDataOutStream= new DataOutputStream( ( mUserMap.get(pToUserName) ).getOutputStream());
-			aDataOutStream.writeUTF( pMessage);
-		}
-		catch(Exception e)
-		{
-			System.out.println("Error in Server.SendMessageToSingleClient: " + e.toString());
-		}
-	}
-	
-	/*
-	 * Temporarily this function is a stub.  It will eventually be responsible for parsing the text
-	 *  received according to our protocol and from there calling the proper function to do the 
-	 *  task required.
+	 * This function is responsible for parsing the message received from any user
+	 *  to determine the message code it uses, and then calling the proper method to handle it.
 	 */
 	public static void ReceiveMessageFromClient( String pMessage)
 	{	
@@ -185,91 +129,156 @@ public class Server
 				//depending on message code, call proper function, passing message as param
 				switch( aMsgCode)
 				{
-				case 1:
-					protocol.ServerProtocolFunctions.ClientLogIn( aMessage);
-					break;
+					case 1:
+						protocol.ServerProtocolFunctions.ClientLogIn( aMessage);
+						break;
+						
+					case 2:
+						protocol.ServerProtocolFunctions.SendContactList( aMessage);
+						break;
+						
+					case 3:
+						protocol.ServerProtocolFunctions.SendSingleMessage( aMessage);
+						break;
+						
+					case 4:
+						// server should NEVER receive this code - client use only
+						break;
+						
+					case 5:
+						protocol.ServerProtocolFunctions.SendSingleChatInvite( aMessage);
+						break;
+						
+					case 6:
+						protocol.ServerProtocolFunctions.SendMultipleChatInvites( aMessage);
+						break;
+						
+					case 7:
+						//server should NEVER receive this code - client use only
+						break;
+						
+					case 8:
+						protocol.ServerProtocolFunctions.SendMessageToEntireChat( aMessage);
+						break;
+						
+					case 9:
+						protocol.ServerProtocolFunctions.SendFileTransferRequest( aMessage);
+						break;
+						
+					case 10:
+						//server should NEVER receive this code - client use only
+						break;
+						
+					case 11:
+						protocol.ServerProtocolFunctions.GetUserInfo( aMessage);
+						break;
+						
+					case 12:
+						protocol.ServerProtocolFunctions.SetStatusMessage( aMessage);
+						break;
+						
+					case 13:
+						protocol.ServerProtocolFunctions.RemoveStatusMessage( aMessage);
+						break;
+						
+					case 14:
+						protocol.ServerProtocolFunctions.SetProfileInformation( aMessage);
+						break;
+						
+					case 15:
+						protocol.ServerProtocolFunctions.GetCommonContacts( aMessage);
+						break;
+						
+					case 16:
+						protocol.ServerProtocolFunctions.SendLoginMessage( aMessage);
+						break;
 					
-				case 2:
-					protocol.ServerProtocolFunctions.SendContactList( aMessage);
-					break;
+					case 17:
+						protocol.ServerProtocolFunctions.SendLogoutNotification( aMessage);
+						break;
+						
+					case 18:
+						protocol.ServerProtocolFunctions.SendStatusChangeNotification( aMessage);
+						break;
+						
+					case 19:
+						RemoveUser( server.Server.mUserMap.get( aMessage[1]));
+						break;
 					
-				case 3:
-					protocol.ServerProtocolFunctions.SendSingleMessage( aMessage);
-					break;
+					case 20:
+						protocol.ServerProtocolFunctions.AddUserToBuddyList( aMessage);
+						break;
+						
+					case 21:
+						protocol.ServerProtocolFunctions.RemoveUserFromBuddyList( aMessage);
+						break;
 					
-				case 4:
-					// server should NEVER receive this code - client use only
-					break;
-					
-				case 5:
-					protocol.ServerProtocolFunctions.SendSingleChatInvite( aMessage);
-					break;
-					
-				case 6:
-					protocol.ServerProtocolFunctions.SendMultipleChatInvites( aMessage);
-					break;
-					
-				case 7:
-					//server should NEVER receive this code - client use only
-					break;
-					
-				case 8:
-					protocol.ServerProtocolFunctions.SendMessageToEntireChat( aMessage);
-					break;
-					
-				case 9:
-					protocol.ServerProtocolFunctions.SendFileTransferRequest( aMessage);
-					break;
-					
-				case 10:
-					//server should NEVER receive this code - client use only
-					break;
-					
-				case 11:
-					protocol.ServerProtocolFunctions.GetUserInfo( aMessage);
-					break;
-					
-				case 12:
-					protocol.ServerProtocolFunctions.SetStatusMessage( aMessage);
-					break;
-					
-				case 13:
-					protocol.ServerProtocolFunctions.RemoveStatusMessage( aMessage);
-					break;
-					
-				case 14:
-					protocol.ServerProtocolFunctions.SetProfileInformation( aMessage);
-					break;
-					
-				case 15:
-					protocol.ServerProtocolFunctions.GetCommonContacts( aMessage);
-					break;
-					
-				case 16:
-					protocol.ServerProtocolFunctions.SendLoginMessage( aMessage);
-					break;
-				
-				case 17:
-					protocol.ServerProtocolFunctions.SendLogoutNotification( aMessage);
-					break;
-					
-				case 18:
-					protocol.ServerProtocolFunctions.SendStatusChangeNotification( aMessage);
-					break;
-					
-				case 19:
-					RemoveUser( server.Server.mUserMap.get( aMessage[1]));
-					break;
-				
-				default:
-					//SendMessageToClients( );
-					break;
+					default:
+						//SendMessageToClients( );
+						break;
 				}
 			}
 		}
 		else
 		{
 			
+		}
+	}
+	
+	
+	/*
+	 * Temporarily this is a stub. This will eventually be a number of functions which will,
+	 *  depending on the circumstances, send a number of different messages (i.e. connection status,
+	 *  buddy list, another user's status change, messages..)
+	 *  
+	 *  This function will be used to notify all users on about status changes and people
+	 *  	signing on and off.
+	 */
+	public static synchronized void SendMessageToAllClients( String pMessage)
+	{
+		DataOutputStream aDataOutStream;
+		
+		/*for(int i=0; i < mConnectedList.size(); i++) 
+		{	
+			try 
+			{
+				aDataOutStream = new DataOutputStream( ( mConnectedList.get(i) ).getOutputStream());
+				aDataOutStream.writeUTF( pMessage);
+			}
+			catch(Exception e) 
+			{
+				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
+			}
+		}*/
+		Set<String> aKeySet = mUserMap.keySet();
+		Iterator<String> aIterator = aKeySet.iterator();
+		
+		while(aIterator.hasNext())
+		{
+			String aKey = aIterator.next();
+			try
+			{
+				aDataOutStream = new DataOutputStream( ( mUserMap.get(aKey) ).getOutputStream());
+				aDataOutStream.writeUTF( pMessage);
+			}
+			catch(Exception e) 
+			{
+				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
+			}
+		}
+	}
+	
+	public static synchronized void SendMessageToSingleClient( String pToUserName, String pMessage)
+	{
+		DataOutputStream aDataOutStream;
+		try
+		{
+			aDataOutStream= new DataOutputStream( ( mUserMap.get(pToUserName) ).getOutputStream());
+			aDataOutStream.writeUTF( pMessage);
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error in Server.SendMessageToSingleClient: " + e.toString());
 		}
 	}
 	
