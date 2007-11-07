@@ -10,6 +10,8 @@ public class Server
 	public static Map<String, Socket> mConnectedList = new HashMap<String, Socket>();
 	public static Map<Socket, String> mReverseUserMap = new HashMap<Socket, String>();
 	
+	public static Map<String, String[]> mUserStatusMap = new HashMap<String, String[]>();
+	
 	private ServerSocket mServerSocket ;
 	public protocol.ServerConnection mServerConnection;
 	
@@ -21,8 +23,6 @@ public class Server
      */
 	public Server()
 	{
-		mConnectedList = new HashMap<String, Socket>();
-		
 		try	
 		{
 			mServerSocket= new ServerSocket( 6013);
@@ -86,6 +86,7 @@ public class Server
 					//    We're all in OS, right?  Look how easy it is here compared to in C..
 					synchronized( mConnectedList) {
 						mConnectedList.put( aSocket.getRemoteSocketAddress().toString(), aSocket);
+						System.out.println("Server reads connection as: " + aSocket.getRemoteSocketAddress().toString());
 					}
 					
 					mServerConnection = new protocol.ServerConnection( aSocket);
@@ -190,7 +191,8 @@ public class Server
 						break;
 						
 					case 16:
-						protocol.ServerProtocolFunctions.SendLoginMessage( aMessage);
+						//server should NEVER receive this code - client use only
+						//protocol.ServerProtocolFunctions.SendLoginMessage( aMessage);
 						break;
 					
 					case 17:
@@ -198,10 +200,12 @@ public class Server
 						break;
 						
 					case 18:
-						protocol.ServerProtocolFunctions.SendStatusChangeNotification( aMessage);
+						//server should NEVER receive this code - client use only
+						//protocol.ServerProtocolFunctions.SendStatusChangeNotification( aMessage);
 						break;
 						
 					case 19:
+						protocol.ServerProtocolFunctions.WriteLogoutTime( aMessage);
 						RemoveUser( server.Server.mUserMap.get( aMessage[1]));
 						break;
 					
@@ -211,6 +215,10 @@ public class Server
 						
 					case 21:
 						protocol.ServerProtocolFunctions.RemoveUserFromBuddyList( aMessage);
+						break;
+						
+					case 22:
+						protocol.ServerProtocolFunctions.SendFileTransferRequestResponse( aMessage);
 						break;
 					
 					default:
