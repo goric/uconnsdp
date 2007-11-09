@@ -34,6 +34,7 @@ public class Server
 		}
 		
 		RunServer();
+		
 	}
 	
 	/*
@@ -50,6 +51,9 @@ public class Server
 	 */
 	private void RunServer()
 	{
+		server_gui frame = new server_gui();
+		frame.setVisible(true);
+		
 		Socket aSocket = null;
 		
 		try
