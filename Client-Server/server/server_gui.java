@@ -82,7 +82,7 @@ public class server_gui extends javax.swing.JFrame {
         
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
-        jTextArea1.setText("user names go here");
+        //jTextArea1.setText("user names go here");
         jScrollPane1.setViewportView(jTextArea1);
 
         
@@ -91,7 +91,7 @@ public class server_gui extends javax.swing.JFrame {
         
         jTextArea4.setColumns(20);
         jTextArea4.setRows(5);
-        jTextArea4.setText("server activity goes here");
+        //jTextArea4.setText("server activity goes here");
         jScrollPane2.setViewportView(jTextArea4);
 
         
@@ -148,6 +148,20 @@ public class server_gui extends javax.swing.JFrame {
         pack();
     }
     
+    
+    public void actout(String t){
+    	String tempact = jTextArea4.getText();
+    	jTextArea4.setText(tempact + "\n" + t);
+    }
+    
+    public void clearusers(){
+    	jTextArea1.setText(" ");
+    }
+    
+    public void userlist(String u){
+    	String tempuser = jTextArea1.getText();
+    	jTextArea1.setText(tempuser + "\n" + u);
+    }
 ///// MAIN////////////////////////////////////////////
    /* public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {

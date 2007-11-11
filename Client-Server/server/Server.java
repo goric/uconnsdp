@@ -16,6 +16,7 @@ public class Server
 	public protocol.ServerConnection mServerConnection;
 	
     private boolean mIsConnected;
+    public static server_gui frame = new server_gui();
     
     /*
      * Constructor - make a new list of clients connected and create a server socket
@@ -51,7 +52,6 @@ public class Server
 	 */
 	private void RunServer()
 	{
-		server_gui frame = new server_gui();
 		frame.setVisible(true);
 		
 		Socket aSocket = null;
@@ -60,6 +60,10 @@ public class Server
 		{
 			System.out.println( "Server started at " + InetAddress.getLocalHost().toString()
 																		+ " port " + 6013);
+			
+			frame.actout("Server started at " + InetAddress.getLocalHost().toString()
+																		+ " port " + 6013);
+			
 			/*String[] aStr = new String[3];
 			aStr[0] = "01";
 			aStr[1] = "User1";
@@ -91,6 +95,10 @@ public class Server
 					synchronized( mConnectedList) {
 						mConnectedList.put( aSocket.getRemoteSocketAddress().toString(), aSocket);
 						System.out.println("Server reads connection as: " + aSocket.getRemoteSocketAddress().toString());
+						frame.actout("Server reads connection as: " + aSocket.getRemoteSocketAddress().toString());
+						
+						frame.clearusers();
+						UpdateUserList();
 					}
 					
 					mServerConnection = new protocol.ServerConnection( aSocket);
@@ -302,6 +310,29 @@ public class Server
 		mUserMap.remove(mReverseUserMap.get(pSocket));
 		mReverseUserMap.remove(pSocket);
 		
+		frame.clearusers();
+		UpdateUserList();
+		
 		System.out.println("One client left. There are now " + mUserMap.size() + " clients." );
+		frame.actout("One client left. There are now " + mUserMap.size() + " clients.");
+	}
+	
+	public static synchronized void UpdateUserList(){
+		Set<String> aKeySet = mUserMap.keySet();
+		Iterator<String> aIterator = aKeySet.iterator();
+		
+		while(aIterator.hasNext())
+		{
+			String aKey = aIterator.next();
+			try
+			{
+				String user = mUserMap.get(aKey).toString();
+				frame.userlist(user);
+			}
+			catch(Exception e) 
+			{
+				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
+			}
+		}
 	}
 }
