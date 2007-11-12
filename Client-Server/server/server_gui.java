@@ -18,13 +18,17 @@ public class server_gui extends javax.swing.JFrame {
     	// Create all components
         jLabel1 = new javax.swing.JLabel();
         jTextArea2 = new javax.swing.JTextArea();
+        jTextArea2.setEditable(false);
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        jTextArea1.setEditable(false);
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea4 = new javax.swing.JTextArea();
+        jTextArea4.setEditable(false);
         jTextArea5 = new javax.swing.JTextArea();
+        jTextArea5.setEditable(false);
 
         // Default title and close operation
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -68,11 +72,43 @@ public class server_gui extends javax.swing.JFrame {
             	      int minutes = timeinseconds / 60;
             	      timeinseconds = timeinseconds - (minutes * 60);
             	      int seconds = timeinseconds;
+            	      
             	      String day, hour, min, sec;
-            	      day = String.valueOf(days);
-            	      hour = String.valueOf(hours);
-            	      min = String.valueOf(minutes);
-            	      sec = String.valueOf(seconds);
+            	      if(days >= 10)
+            	      {
+            	    	  day = String.valueOf(days);
+            	      }
+            	      else
+            	      {
+            	    	  day = "0" + String.valueOf(days);
+            	      }
+            	      
+            	      if(hours >= 10)
+            	      {
+            	    	  hour = String.valueOf(hours);
+            	      }
+            	      else
+            	      {
+            	    	  hour = "0" + String.valueOf(hours);
+            	      }
+            	      
+            	      if(minutes >= 10)
+            	      {
+            	    	  min = String.valueOf(minutes);
+            	      }
+            	      else
+            	      {
+            	    	  min = "0" + String.valueOf(minutes);
+            	      }
+            	      
+            	      if(seconds >= 10)
+            	      {
+            	    	  sec = String.valueOf(seconds);
+            	      }
+            	      else
+            	      {
+            	    	  sec = "0" + String.valueOf(seconds);
+            	      }
                 jTextArea2.setText(day + ":" + hour + ":" + min + ":" + sec);
             }
         }, delay, period);
@@ -99,6 +135,7 @@ public class server_gui extends javax.swing.JFrame {
         jTextArea5.setColumns(20);
         jTextArea5.setRows(5);
         jTextArea5.setText("ChatterIM Logo\nGoes Here");
+        
 
         // Layout
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -151,7 +188,7 @@ public class server_gui extends javax.swing.JFrame {
     
     public void actout(String t){
     	String tempact = jTextArea4.getText();
-    	jTextArea4.setText(tempact + "\n" + t);
+    	jTextArea4.setText(tempact + t + "\n");
     }
     
     public void clearusers(){
@@ -160,7 +197,7 @@ public class server_gui extends javax.swing.JFrame {
     
     public void userlist(String u){
     	String tempuser = jTextArea1.getText();
-    	jTextArea1.setText(tempuser + "\n" + u);
+    	jTextArea1.setText(tempuser + u + "\n");
     }
 ///// MAIN////////////////////////////////////////////
    /* public static void main(String args[]) {

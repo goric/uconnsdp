@@ -17,7 +17,6 @@ public class Server
 	
     private boolean mIsConnected;
     public static server_gui frame = new server_gui();
-    
     /*
      * Constructor - make a new list of clients connected and create a server socket
      * The choice of 6013 for a port is arbitrary...
@@ -33,9 +32,8 @@ public class Server
 		{
 			System.out.println( "Error in Server constructor:  " + e);
 		}
-		
+		//frame.setVisible( true);
 		RunServer();
-		
 	}
 	
 	/*
@@ -44,6 +42,7 @@ public class Server
 	public static void main(String args[])
 	{
 		Server aNewServer = new Server();
+		//frame.setVisible( true);
 	}
 	
 	/*
@@ -52,7 +51,7 @@ public class Server
 	 */
 	private void RunServer()
 	{
-		frame.setVisible(true);
+		frame.setVisible( true);
 		
 		Socket aSocket = null;
 		
@@ -95,10 +94,6 @@ public class Server
 					synchronized( mConnectedList) {
 						mConnectedList.put( aSocket.getRemoteSocketAddress().toString(), aSocket);
 						System.out.println("Server reads connection as: " + aSocket.getRemoteSocketAddress().toString());
-						frame.actout("Server reads connection as: " + aSocket.getRemoteSocketAddress().toString());
-						
-						frame.clearusers();
-						UpdateUserList();
 					}
 					
 					mServerConnection = new protocol.ServerConnection( aSocket);
@@ -131,6 +126,8 @@ public class Server
 		{
 			System.out.println(pMessage);
 			
+			frame.actout(pMessage);
+			
 			synchronized( pMessage)
 			{
 				//find user who sent message
@@ -144,6 +141,8 @@ public class Server
 				{
 					case 1:
 						protocol.ServerProtocolFunctions.ClientLogIn( aMessage);
+						frame.clearusers();
+						UpdateUserList();
 						break;
 						
 					case 2:
@@ -209,6 +208,7 @@ public class Server
 					
 					case 17:
 						protocol.ServerProtocolFunctions.SendLogoutNotification( aMessage);
+						protocol.ServerProtocolFunctions.WriteLogoutTime( aMessage);
 						break;
 						
 					case 18:
@@ -217,7 +217,7 @@ public class Server
 						break;
 						
 					case 19:
-						protocol.ServerProtocolFunctions.WriteLogoutTime( aMessage);
+						//protocol.ServerProtocolFunctions.WriteLogoutTime( aMessage);
 						RemoveUser( server.Server.mUserMap.get( aMessage[1]));
 						break;
 					
@@ -302,22 +302,10 @@ public class Server
 		}
 	}
 	
-	//remove a user from list of connected.
-	//should also kill/close the socket connection and kill the thread
-	// also notify all clients of the removal (for buddy list)
-	public static synchronized void RemoveUser( Socket pSocket)
+	public static synchronized void UpdateUserList()
 	{
-		mUserMap.remove(mReverseUserMap.get(pSocket));
-		mReverseUserMap.remove(pSocket);
-		
 		frame.clearusers();
-		UpdateUserList();
 		
-		System.out.println("One client left. There are now " + mUserMap.size() + " clients." );
-		frame.actout("One client left. There are now " + mUserMap.size() + " clients.");
-	}
-	
-	public static synchronized void UpdateUserList(){
 		Set<String> aKeySet = mUserMap.keySet();
 		Iterator<String> aIterator = aKeySet.iterator();
 		
@@ -326,7 +314,7 @@ public class Server
 			String aKey = aIterator.next();
 			try
 			{
-				String user = mUserMap.get(aKey).toString();
+				String user = aKey;
 				frame.userlist(user);
 			}
 			catch(Exception e) 
@@ -334,5 +322,18 @@ public class Server
 				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
 			}
 		}
+	}
+	
+	//remove a user from list of connected.
+	//should also kill/close the socket connection and kill the thread
+	// also notify all clients of the removal (for buddy list)
+	public static synchronized void RemoveUser( Socket pSocket)
+	{
+		mUserMap.remove(mReverseUserMap.get(pSocket));
+		mReverseUserMap.remove(pSocket);
+		
+		UpdateUserList();
+		
+		System.out.println("One client left. There are now " + mUserMap.size() + " clients." );
 	}
 }
