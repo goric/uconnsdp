@@ -12,6 +12,7 @@ private Thread mClientThread;
 public static String ip;
 public static String[] anythingMessage;
 public static String[] buddyarray;
+public static String[] recarray;
 public static String[] anythingMessage2;
 
 private DataInputStream mDataInStream;
@@ -23,7 +24,6 @@ public static String mClientAddress;
 
 public Client()
 {
-	//frame = new ClientGUI(this);
 	InputStreamReader aInReader = new InputStreamReader( System.in);
 	BufferedReader aBufferedReader = new BufferedReader( aInReader);
 	anythingMessage = new String[1];
@@ -79,10 +79,10 @@ public void run()
 public void GetMessageFromServer()
 {
 	String aMessage = "";
+	String tehMessage = "";
 	try
 	{
 		aMessage = mDataInStream.readUTF();
-		String gotit = aMessage;
 		System.out.println( aMessage);
 	}
 	catch(Exception e)
@@ -98,12 +98,17 @@ public void GetMessageFromServer()
 	}
 	else if (anythingMessage[0].contentEquals("04"))
 	{
+        String boob = anythingMessage[3];
+        int p = Integer.valueOf(boob).intValue();
+        p = p + 4;
+        for (int i = 4; i < p; i++)
+        {
+        	tehMessage = tehMessage + " " + anythingMessage[i];
+        }
 		String toUser = anythingMessage[2];
 		User user = new User(toUser);
-		System.out.println(user);
-		System.out.println(anythingMessage[3]);
-		System.out.println(anythingMessage[4]);
-	//	frame.createFrame(user,false);
+		ClientGUI.createFrame(user);	
+		ChatWindow.appendData2(toUser, tehMessage, false);
 	}
 	
 }
