@@ -34,12 +34,9 @@ public class UserList extends JPanel {
     private Hashtable nodeTable = new Hashtable();
     String[] ThisBuddyArray;
 
-    //Optionally play with line styles.  Possible values are
-    //"Angled" (the default), "Horizontal", and "None".
     private static boolean playWithLineStyle = false;
     private static String lineStyle = "Horizontal";
     
-    //Optionally set the look and feel.
     private static boolean useSystemLookAndFeel = false;
 
     public UserList(ClientGUI frame) {
@@ -59,17 +56,13 @@ public class UserList extends JPanel {
     	toop = top;
         createNodes(top);
 
-        //Create a tree that allows one selection at a time.
         treeModel = new DefaultTreeModel(top);
         tree = new JTree(top);
         tree.getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         tree.addMouseListener(new MyMouseAdapter(frame,tree));
-        //Listen for when the selection changes.
-     //   tree.addTreeSelectionListener(this);
 
-        //Create the scroll pane and add the tree to it. 
 		JScrollPane scrollpane;
 		scrollpane = new JScrollPane(tree);
 		scrollpane.setPreferredSize(new Dimension(200,100));
@@ -96,28 +89,6 @@ public class UserList extends JPanel {
     	((DefaultTreeModel)tree.getModel()).reload();
     }
 
-    /** Required by TreeSelectionListener interface. */
-  /*  public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                           tree.getLastSelectedPathComponent();
-
-        if (node == null) return;
-
-        Object nodeInfo = node.getUserObject();
-        if (node.isLeaf()) {
-            UserInfo auser = (UserInfo)nodeInfo;
-            initilizeChat(auser);
-            if (DEBUG) {
-                System.out.print(auser.aUserInfo + ":  \n    ");
-            }
-        } else {
-            System.out.println("else");
-        }
-        if (DEBUG) {
-            System.out.println(nodeInfo.toString());
-        }
-    }*/
-
 class MyMouseAdapter extends MouseAdapter
     {
     	private ClientGUI frame;
@@ -138,13 +109,7 @@ class MyMouseAdapter extends MouseAdapter
     			if(e.getClickCount() == 2) {
     				node = (DefaultMutableTreeNode)selPath.getLastPathComponent();
     				User user = (User)(node.getUserObject());
-    			//	if(user.isOnline != OFFLINE) {
-    					frame.createFrame(user,false);
-    			//	} else {
-    			//		JOptionPane.showMessageDialog(frame,
-    			//				"Click on an online user to send a message",
-    			//				"Error",JOptionPane.INFORMATION_MESSAGE);
-    			//	}
+    				frame.createFrame(user);
     			}
     		}
     	}
@@ -163,7 +128,7 @@ class DefaultObserver implements Observer
 	public void update(Observable observable,Object object)
 	{
 		Message message = (Message)object;
-		frame.createFrame(message._user,true);
+		frame.createFrame(message._user);
 	}
 }
     

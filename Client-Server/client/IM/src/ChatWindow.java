@@ -11,16 +11,15 @@ public class ChatWindow extends JFrame implements ActionListener
 	private ClientGUI frame;
 	private ChatWindow thisframe;
 	private Container container;
-	private JEditorPane recv;
+	private static JEditorPane recv;
 	private JTextArea type;
 	private JButton send;
 	private User user;
 	private Timer timer=null;
 	boolean isFocused = false;
 
-	public ChatWindow(ClientGUI frame,User user)
+	public ChatWindow(User user)
 	{
-		this.frame = frame;
 		this.user = user;
 		initAwtContainer();
 	}
@@ -65,7 +64,7 @@ public class ChatWindow extends JFrame implements ActionListener
 			{
 				if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					setVisible(false);
-					frame.removeFrame(user);
+					ClientGUI.removeFrame(user);
 				} else if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
 						Client myclient = new Client();
@@ -88,7 +87,7 @@ public class ChatWindow extends JFrame implements ActionListener
 			{
 				if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					setVisible(false);
-					frame.removeFrame(user);
+					ClientGUI.removeFrame(user);
 				}
 			}
 		});
@@ -99,7 +98,7 @@ public class ChatWindow extends JFrame implements ActionListener
 					{
 						if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 							setVisible(false);
-							frame.removeFrame(user);
+							ClientGUI.removeFrame(user);
 						}
 					}
 		});
@@ -121,7 +120,7 @@ public class ChatWindow extends JFrame implements ActionListener
 			{
 				setVisible(false);
 				if(timer != null) timer.stop();
-				frame.removeFrame(user);
+				ClientGUI.removeFrame(user);
 			}
 
 			public void windowActivated(WindowEvent ae) {
@@ -151,9 +150,11 @@ public class ChatWindow extends JFrame implements ActionListener
 	public void actionPerformed(ActionEvent event)
 	{
 		if((event.getSource() == type)||(event.getSource() == send)) {
+			if(type.getText().length() == 0) return;
+			appendData(LogIn.username,type.getText(),false);
+			String blah = type.getText();
 			try {
-				String temp = "03 " + LogIn.username + " " + user + " " + "hardcoded message";
-				System.out.println(temp);
+				String temp = "03 " + LogIn.username + " " + user + " " + blah;
 				LogIn.thisclient.SendMessage(temp);
 			}
 			catch(Exception e) {
@@ -161,5 +162,46 @@ public class ChatWindow extends JFrame implements ActionListener
 			}
 			type.setText("");
 		}
+	}
+	public static void appendData(String user,String str,boolean received)
+	{
+		if(user != null) {
+			if(received) {
+				str ="<FONT COLOR='red' STYLE='font-size:10pt;font-family:Arial'>"+user+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
+			} else {
+				str ="<FONT COLOR='blue' STYLE='font-size:10pt;font-family:Arial'>"+user+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
+			}
+		} else {
+			str ="<FONT COLOR='red' STYLE='font-size:10pt;font-family:Arial'><B>"+str;
+		}
+
+		str+="</FONT>";
+
+		try {
+		((HTMLEditorKit)recv.getEditorKit()).read(new java.io.StringReader(str),
+		 						recv.getDocument(), recv.getDocument().getLength());
+		 recv.setCaretPosition(recv.getDocument().getLength());
+	 	} catch(Exception e){}
+	}
+	public static void appendData2(String user,String str,boolean received)
+	{
+		StringBuffer  bfr= new StringBuffer(str);
+		if(user != null) {
+			if(received) {
+				str ="<FONT COLOR='blue' STYLE='font-size:10pt;font-family:Arial'>"+user+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
+			} else {
+				str ="<FONT COLOR='red' STYLE='font-size:10pt;font-family:Arial'>"+user+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
+			}
+		} else {
+			str ="<FONT COLOR='red' STYLE='font-size:10pt;font-family:Arial'><B>"+str;
+		}
+
+		str+="</FONT>";//Line break
+
+		try {
+		((HTMLEditorKit)recv.getEditorKit()).read(new java.io.StringReader(str),
+		 						recv.getDocument(), recv.getDocument().getLength());
+		 recv.setCaretPosition(recv.getDocument().getLength());
+	 	} catch(Exception e){}
 	}
 }

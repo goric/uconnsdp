@@ -94,10 +94,13 @@ public class ClientGUI extends JFrame implements ActionListener {
 		ClientGUI gui = new ClientGUI();
 	}
 
+	public static void giveitawhirl2()
+	{
+		container2.setVisible(false);
+	}
 	
     public static void RefreshGUI(JTree tree)
     {
-    	System.out.println("i got to refresh");
   	((DefaultTreeModel)tree.getModel()).reload();
     }
     protected void quit() {
@@ -105,17 +108,14 @@ public class ClientGUI extends JFrame implements ActionListener {
         System.exit(0);
     }
     
-    public void createFrame(User user,boolean auto)
+    public static void createFrame(User user)
 	{
 		ChatWindow dialog ;
 		synchronized(frameTable) {
 				dialog = (ChatWindow) frameTable.get(user.toString());
 				if(dialog == null) {
-					dialog = new ChatWindow(this,user);
+					dialog = new ChatWindow(user);
 					dialog.setLocation(500, 500);
-					if(auto){
-						dialog.setState(Frame.ICONIFIED);
-					}
 					frameTable.put(user.toString(),dialog);
 					//getDispatcher().addObserver(dialog);
 				}
@@ -123,7 +123,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		}
 	
 
-public void removeFrame(User user)
+public static void removeFrame(User user)
 {
 	synchronized(frameTable) {
 		frameTable.remove(user.toString());
