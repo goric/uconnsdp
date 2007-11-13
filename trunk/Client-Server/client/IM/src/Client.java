@@ -108,7 +108,7 @@ public void GetMessageFromServer()
 		String toUser = anythingMessage[2];
 		User user = new User(toUser);
 		ClientGUI.createFrame(user);	
-		ChatWindow.appendData2(toUser, tehMessage, false);
+		AppendChatWindow.appendData2(toUser, tehMessage, false,(ChatWindow)ClientGUI.frameTable.get(user.toString()) );
 	}
 	
 }

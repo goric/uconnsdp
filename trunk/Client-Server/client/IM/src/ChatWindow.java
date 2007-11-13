@@ -11,7 +11,7 @@ public class ChatWindow extends JFrame implements ActionListener
 	private ClientGUI frame;
 	private ChatWindow thisframe;
 	private Container container;
-	private static JEditorPane recv;
+	public JEditorPane recv;
 	private JTextArea type;
 	private JButton send;
 	private User user;
@@ -151,7 +151,7 @@ public class ChatWindow extends JFrame implements ActionListener
 	{
 		if((event.getSource() == type)||(event.getSource() == send)) {
 			if(type.getText().length() == 0) return;
-			appendData(LogIn.username,type.getText(),false);
+			AppendChatWindow.appendData(LogIn.username,type.getText(),false, (ChatWindow)ClientGUI.frameTable.get(user.toString()));
 			String blah = type.getText();
 			try {
 				String temp = "03 " + LogIn.username + " " + user + " " + blah;
@@ -162,46 +162,5 @@ public class ChatWindow extends JFrame implements ActionListener
 			}
 			type.setText("");
 		}
-	}
-	public static void appendData(String user,String str,boolean received)
-	{
-		if(user != null) {
-			if(received) {
-				str ="<FONT COLOR='red' STYLE='font-size:10pt;font-family:Arial'>"+user+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
-			} else {
-				str ="<FONT COLOR='blue' STYLE='font-size:10pt;font-family:Arial'>"+user+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
-			}
-		} else {
-			str ="<FONT COLOR='red' STYLE='font-size:10pt;font-family:Arial'><B>"+str;
-		}
-
-		str+="</FONT>";
-
-		try {
-		((HTMLEditorKit)recv.getEditorKit()).read(new java.io.StringReader(str),
-		 						recv.getDocument(), recv.getDocument().getLength());
-		 recv.setCaretPosition(recv.getDocument().getLength());
-	 	} catch(Exception e){}
-	}
-	public static void appendData2(String user,String str,boolean received)
-	{
-		StringBuffer  bfr= new StringBuffer(str);
-		if(user != null) {
-			if(received) {
-				str ="<FONT COLOR='blue' STYLE='font-size:10pt;font-family:Arial'>"+user+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
-			} else {
-				str ="<FONT COLOR='red' STYLE='font-size:10pt;font-family:Arial'>"+user+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
-			}
-		} else {
-			str ="<FONT COLOR='red' STYLE='font-size:10pt;font-family:Arial'><B>"+str;
-		}
-
-		str+="</FONT>";//Line break
-
-		try {
-		((HTMLEditorKit)recv.getEditorKit()).read(new java.io.StringReader(str),
-		 						recv.getDocument(), recv.getDocument().getLength());
-		 recv.setCaretPosition(recv.getDocument().getLength());
-	 	} catch(Exception e){}
 	}
 }

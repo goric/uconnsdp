@@ -25,7 +25,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 	private static Container container2;
 	private String username,password;
 	private JButton optbutton, manbutton;
-	public static Boolean rflag = true, pflag = true;
+	public static boolean rflag = true, pflag = true;
 	public static Hashtable frameTable = new Hashtable();
     private static DefaultMutableTreeNode poop;
 	
