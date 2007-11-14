@@ -68,7 +68,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		
 		if ((Client.anythingMessage2[0].contentEquals("02")) && (pflag == true))
 		{
-			UserList contacts = new UserList(this);
+			OnlineTree contacts = new OnlineTree(this);
 			container.add(contacts);
 			pflag = false;
 			rflag = false;
@@ -121,14 +121,30 @@ public class ClientGUI extends JFrame implements ActionListener {
 				}
 			}
 		}
+    
+    public static void createInfoFrame(User user)
+	{
+		UserInfo dialog ;
+		dialog = new UserInfo(user);
+		dialog.setLocation(500, 500);
+	}
+
+    public static void createNotesFrame(User user)
+	{
+		UserNotes dialog ;
+		dialog = new UserNotes(user);
+		dialog.setLocation(600, 500);
+	}
+		
 	
 
-public static void removeFrame(User user)
-{
-	synchronized(frameTable) {
-		frameTable.remove(user.toString());
-	}
-}
+    public static void removeFrame(User user)
+    {
+    	synchronized(frameTable) 
+    	{
+    		frameTable.remove(user.toString());
+    	}
+    }
     
 	public void actionPerformed(ActionEvent e)
 	{
