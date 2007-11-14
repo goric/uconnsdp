@@ -132,7 +132,7 @@ public class server_gui extends javax.swing.JFrame {
 
         
  ////LOGO///////////////////////////////////////////////
-        ImageIcon icon = new ImageIcon("C:/Documents and Settings/Chris Rindfleisch/Desktop/Senior Design Project/Client-Server/server/logo.jpg" );
+        ImageIcon icon = new ImageIcon("E:/Documents/School/CSE/CSE 269/workspace/seniordesign/server/logo.jpg" );
         
         jLabel5 = new javax.swing.JLabel();
         jLabel5.setIcon(icon);

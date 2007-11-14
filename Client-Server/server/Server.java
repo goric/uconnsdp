@@ -17,6 +17,7 @@ public class Server
 	
     private boolean mIsConnected;
     public static server_gui frame = new server_gui();
+    
     /*
      * Constructor - make a new list of clients connected and create a server socket
      * The choice of 6013 for a port is arbitrary...
@@ -32,7 +33,6 @@ public class Server
 		{
 			System.out.println( "Error in Server constructor:  " + e);
 		}
-		//frame.setVisible( true);
 		RunServer();
 	}
 	
@@ -42,7 +42,6 @@ public class Server
 	public static void main(String args[])
 	{
 		Server aNewServer = new Server();
-		//frame.setVisible( true);
 	}
 	
 	/*
@@ -126,7 +125,7 @@ public class Server
 		{
 			System.out.println(pMessage);
 			
-			frame.actout(pMessage);
+			//frame.actout(pMessage);
 			
 			synchronized( pMessage)
 			{
@@ -143,14 +142,17 @@ public class Server
 						protocol.ServerProtocolFunctions.ClientLogIn( aMessage);
 						frame.clearusers();
 						UpdateUserList();
+						frame.actout( aMessage[1] + " logged in.");
 						break;
 						
 					case 2:
 						protocol.ServerProtocolFunctions.SendContactList( aMessage);
+						frame.actout( aMessage[1] + " requested buddy list.");
 						break;
 						
 					case 3:
 						protocol.ServerProtocolFunctions.SendSingleMessage( aMessage);
+						frame.actout( aMessage[1] + " sent a message to " + aMessage[2] + ".");
 						break;
 						
 					case 4:
@@ -159,6 +161,7 @@ public class Server
 						
 					case 5:
 						protocol.ServerProtocolFunctions.SendSingleChatInvite( aMessage);
+						frame.actout( aMessage[1] + " sent a chat invite to " + aMessage[2] + ".");
 						break;
 						
 					case 6:
@@ -175,6 +178,7 @@ public class Server
 						
 					case 9:
 						protocol.ServerProtocolFunctions.SendFileTransferRequest( aMessage);
+						frame.actout( aMessage[1] + " sent a file transfer request to " + aMessage[2] + ".");
 						break;
 						
 					case 10:
@@ -183,22 +187,27 @@ public class Server
 						
 					case 11:
 						protocol.ServerProtocolFunctions.GetUserInfo( aMessage);
+						frame.actout( aMessage[1] + " requested buddy info for " + aMessage[2] + ".");
 						break;
 						
 					case 12:
 						protocol.ServerProtocolFunctions.SetStatusMessage( aMessage);
+						frame.actout( aMessage[1] + " changed their status to " + aMessage[2] + ".");
 						break;
 						
 					case 13:
 						protocol.ServerProtocolFunctions.RemoveStatusMessage( aMessage);
+						frame.actout( aMessage[1] + " removed their status message.");
 						break;
 						
 					case 14:
 						protocol.ServerProtocolFunctions.SetProfileInformation( aMessage);
+						frame.actout( aMessage[1] + " changed profile information.");
 						break;
 						
 					case 15:
 						protocol.ServerProtocolFunctions.GetCommonContacts( aMessage);
+						frame.actout( aMessage[1] + " requested contacts in common with " + aMessage[2] + ".");
 						break;
 						
 					case 16:
@@ -209,6 +218,7 @@ public class Server
 					case 17:
 						protocol.ServerProtocolFunctions.SendLogoutNotification( aMessage);
 						protocol.ServerProtocolFunctions.WriteLogoutTime( aMessage);
+						frame.actout( aMessage[1] + " logged out.");
 						break;
 						
 					case 18:
@@ -223,14 +233,17 @@ public class Server
 					
 					case 20:
 						protocol.ServerProtocolFunctions.AddUserToBuddyList( aMessage);
+						frame.actout( aMessage[1] + " added a buddy (" + aMessage[2] + ") to their buddy list.");
 						break;
 						
 					case 21:
 						protocol.ServerProtocolFunctions.RemoveUserFromBuddyList( aMessage);
+						frame.actout( aMessage[1] + " removed a buddy (" + aMessage[2] + ") from their buddy list.");
 						break;
 						
 					case 22:
 						protocol.ServerProtocolFunctions.SendFileTransferRequestResponse( aMessage);
+						frame.actout( aMessage[2] + " responded " + aMessage[3] + " to " + aMessage[1] + "'s file transfer request.");
 						break;
 					
 					default:
