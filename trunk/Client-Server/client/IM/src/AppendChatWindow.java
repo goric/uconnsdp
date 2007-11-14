@@ -25,7 +25,6 @@ public class AppendChatWindow {
 	}
 	public static void appendData2(String user,String str,boolean received, ChatWindow window)
 	{
-		StringBuffer  bfr= new StringBuffer(str);
 		if(user != null) {
 			if(received) {
 				str ="<FONT COLOR='blue' STYLE='font-size:10pt;font-family:Arial'>"+user+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;

@@ -174,7 +174,7 @@ public class LogIn extends JFrame implements ActionListener
 			e.printStackTrace();
 		}
 		//hashpass = "8cb2237d0679ca88db6464eac60da96345513964";
-		thisclient.GetServerConnection("137.99.129.59");
+		thisclient.GetServerConnection("137.99.130.195");
 		String ipsend = Client.ip;
 		String temp = "01 " + username + " " + hashpass + " " + ipsend;
 		thisclient.SendMessage(temp);
