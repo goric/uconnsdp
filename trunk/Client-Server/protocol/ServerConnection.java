@@ -1,21 +1,27 @@
+/**
+ * Class for maintaining connections to the server.  This class is given one instance per connection that the
+ * server recieves, and each instance is run as its own thread.
+ *  
+ * @author Tim Goric
+ */
+
 package protocol;
+
 import java.io.*;
 import java.net.Socket;
 
 public class ServerConnection implements Runnable
 {
 	private DataInputStream mDataInStream;
-	private DataOutputStream mDataOutStream;
 	
 	private Socket mClientSocket;
 	private Thread mThread;
 	
 	private boolean mIsRunning;
 
-	/*
-	 * Constructor - Create a new ServerConnection thread with the socket passed in.
-	 * 
-	 * I don't think this class will really need to do too much more than this.
+	/**
+	 * Constructor for the ServerConnection class.
+	 * @param pSocket - The instance of socket that this instance of ServerConnection is tied to.
 	 */
 	public ServerConnection( Socket pSocket)
 	{
@@ -25,7 +31,6 @@ public class ServerConnection implements Runnable
 			this.mIsRunning = true;
 
 			mDataInStream = new DataInputStream( mClientSocket.getInputStream());
-			mDataOutStream = new DataOutputStream( mClientSocket.getOutputStream());
 			
 			mThread = new Thread( this);
 			mThread.start();
@@ -36,12 +41,11 @@ public class ServerConnection implements Runnable
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Runnable#run()
+	/**
+	 * This function is necessary in any class which implements Runnable. This function accepts messages from the client
+	 * who belongs to that particluar thread and sends any recieved messages to the server's ReceiveMessageFromClient function.
 	 * 
-	 * Obligatory implementation of run().  Thread will accept input and send it to 
-	 * the Server's ReceiveMessageFromClient function
+	 * @see java.lang.Runnable#run()
 	 */
 	public void run()
 	{
