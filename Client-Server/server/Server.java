@@ -1,3 +1,8 @@
+/**
+ * Class for running the server application.  This class contains the main logic for keeping the server up,
+ * managing the online users, and deciding what to do with the messages that are recieved.
+ * @author Tim Goric
+ */
 package server;
 
 import java.util.*;
@@ -18,9 +23,8 @@ public class Server
     private boolean mIsConnected;
     public static server_gui frame = new server_gui();
     
-    /*
-     * Constructor - make a new list of clients connected and create a server socket
-     * The choice of 6013 for a port is arbitrary...
+    /**
+     * Constructor for the server class. Opens a ServerSocket at port 6013 for the clients to connect to.
      */
 	public Server()
 	{
@@ -36,17 +40,22 @@ public class Server
 		RunServer();
 	}
 	
-	/*
-	 * Main - all this needs to do is make an instance of the server
+	/**
+	 * Main function for the server - creates an instance of Server.
 	 */
 	public static void main(String args[])
 	{
-		Server aNewServer = new Server();
+		new Server();
 	}
 	
 	/*
 	 * Guts of the server.  This accepts connections from clients and add then to the
 	 * currently connected list.  Creates a new ServerConnection for each client.
+	 */
+	/**
+	 * Function that the server runs infinitely. Waits for and accepts connedctions from clients and
+	 * adds them to the currently connected list. Creates a new thread containing an instance of
+	 * ServerConnection for each client that logs in. 
 	 */
 	private void RunServer()
 	{
@@ -56,22 +65,9 @@ public class Server
 		
 		try
 		{
-			System.out.println( "Server started at " + InetAddress.getLocalHost().toString()
-																		+ " port " + 6013);
+			System.out.println( "Server started at " + InetAddress.getLocalHost().toString() + " port " + 6013);
 			
-			frame.actout("Server started at " + InetAddress.getLocalHost().toString()
-																		+ " port " + 6013);
-			
-			/*String[] aStr = new String[3];
-			aStr[0] = "01";
-			aStr[1] = "User1";
-			aStr[2] = "8cb2237d0679ca88db6464eac60da96345513964";
-			protocol.ServerProtocolFunctions.ClientLogIn( aStr);
-			
-			/*String[] Str = new String[4];
-			Str[0] = "01";
-			Str[1] = "User1";
-			protocol.ServerProtocolFunctions.SendContactList( Str);*/
+			frame.actout("Server started at " + InetAddress.getLocalHost().toString() + " port " + 6013);
 		}
 		catch(Exception e)
 		{
@@ -88,8 +84,6 @@ public class Server
 				
 				if( aSocket != null)	
 				{
-					//use synchronized on all accesses to any item that could be shared between threads.
-					//    We're all in OS, right?  Look how easy it is here compared to in C..
 					synchronized( mConnectedList) {
 						mConnectedList.put( aSocket.getRemoteSocketAddress().toString(), aSocket);
 						System.out.println("Server reads connection as: " + aSocket.getRemoteSocketAddress().toString());
@@ -103,21 +97,23 @@ public class Server
 			{
 				System.out.println( "Error in Server.RunServer's thread creation process: " + e.toString() );
 				
-				//attempt to shut down gracefully on error
 				try 
 				{
 					aSocket.close();
 				}
-				catch( Exception ee) {
+				catch( Exception ee) 
+				{
 					System.out.println( "Error in closing Server.RunServer's socket: " + ee.toString());
 				}
 			}
 		}
 	}
-	
-	/*
-	 * This function is responsible for parsing the message received from any user
-	 *  to determine the message code it uses, and then calling the proper method to handle it.
+
+	/**
+	 * Function which decides what to do with each message recieved. Calls various functions in ServerProtocolFunctions
+	 * after parsing the message recieved to access the message code.
+	 * 
+	 * @param pMessage - a Message that a client sent to the server. 
 	 */
 	public static void ReceiveMessageFromClient( String pMessage)
 	{	
@@ -125,17 +121,12 @@ public class Server
 		{
 			System.out.println(pMessage);
 			
-			//frame.actout(pMessage);
-			
 			synchronized( pMessage)
 			{
-				//find user who sent message
 				String[] aMessage = pMessage.split( " ");
 				
-				//Parse message to get the message code
 				int aMsgCode = Integer.parseInt( aMessage[0]);
 				
-				//depending on message code, call proper function, passing message as param
 				switch( aMsgCode)
 				{
 					case 1:
@@ -166,6 +157,8 @@ public class Server
 						
 					case 6:
 						protocol.ServerProtocolFunctions.SendMultipleChatInvites( aMessage);
+						frame.actout( aMessage[1] + " sent chat invitations to " + aMessage[2] + " users to join"
+															+ " the chat in " + aMessage[aMessage.length - 1] + ".");
 						break;
 						
 					case 7:
@@ -174,6 +167,7 @@ public class Server
 						
 					case 8:
 						protocol.ServerProtocolFunctions.SendMessageToEntireChat( aMessage);
+						frame.actout(aMessage[1] + " sent a message to everyone in chat " + aMessage[aMessage.length - 1] + ".");
 						break;
 						
 					case 9:
@@ -212,7 +206,6 @@ public class Server
 						
 					case 16:
 						//server should NEVER receive this code - client use only
-						//protocol.ServerProtocolFunctions.SendLoginMessage( aMessage);
 						break;
 					
 					case 17:
@@ -223,11 +216,9 @@ public class Server
 						
 					case 18:
 						//server should NEVER receive this code - client use only
-						//protocol.ServerProtocolFunctions.SendStatusChangeNotification( aMessage);
 						break;
 						
 					case 19:
-						//protocol.ServerProtocolFunctions.WriteLogoutTime( aMessage);
 						RemoveUser( server.Server.mUserMap.get( aMessage[1]));
 						break;
 					
@@ -245,9 +236,13 @@ public class Server
 						protocol.ServerProtocolFunctions.SendFileTransferRequestResponse( aMessage);
 						frame.actout( aMessage[2] + " responded " + aMessage[3] + " to " + aMessage[1] + "'s file transfer request.");
 						break;
+						
+					case 23:
+						protocol.ServerProtocolFunctions.RespondToChatInvite( aMessage);
+						frame.actout( aMessage[1] + " responded " + aMessage[4] + " to " + aMessage[2] + "'s invite to chat in " + aMessage[3] + ".");
+						break;
 					
 					default:
-						//SendMessageToClients( );
 						break;
 				}
 			}
@@ -258,31 +253,16 @@ public class Server
 		}
 	}
 	
-	
-	/*
-	 * Temporarily this is a stub. This will eventually be a number of functions which will,
-	 *  depending on the circumstances, send a number of different messages (i.e. connection status,
-	 *  buddy list, another user's status change, messages..)
-	 *  
-	 *  This function will be used to notify all users on about status changes and people
-	 *  	signing on and off.
+	/**
+	 * Function for sending mass messages to all connected clients, for cases such as a login, status change, or
+	 * logout where all clients need to be notified.
+	 * 
+	 * @param pMessage - The message to be sent.
+	 * @param pFromUser - The user it originated from.
 	 */
-	public static synchronized void SendMessageToAllClients( String pMessage)
+	public static synchronized void SendMessageToAllClients( String pMessage, String pFromUser)
 	{
 		DataOutputStream aDataOutStream;
-		
-		/*for(int i=0; i < mConnectedList.size(); i++) 
-		{	
-			try 
-			{
-				aDataOutStream = new DataOutputStream( ( mConnectedList.get(i) ).getOutputStream());
-				aDataOutStream.writeUTF( pMessage);
-			}
-			catch(Exception e) 
-			{
-				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
-			}
-		}*/
 		Set<String> aKeySet = mUserMap.keySet();
 		Iterator<String> aIterator = aKeySet.iterator();
 		
@@ -291,8 +271,11 @@ public class Server
 			String aKey = aIterator.next();
 			try
 			{
-				aDataOutStream = new DataOutputStream( ( mUserMap.get(aKey) ).getOutputStream());
-				aDataOutStream.writeUTF( pMessage);
+				if(!aKey.contentEquals(pFromUser))
+				{
+					aDataOutStream = new DataOutputStream( ( mUserMap.get(aKey) ).getOutputStream());
+					aDataOutStream.writeUTF( pMessage);
+				}
 			}
 			catch(Exception e) 
 			{
@@ -300,7 +283,14 @@ public class Server
 			}
 		}
 	}
-	
+
+	/**
+	 * Function for sending a message from the server to a single client, used very often as a result of the
+	 * client sending the server a message.
+	 * 
+	 * @param pToUserName - The user to send the message to
+	 * @param pMessage - The message to be sent
+	 */
 	public static synchronized void SendMessageToSingleClient( String pToUserName, String pMessage)
 	{
 		DataOutputStream aDataOutStream;
@@ -315,6 +305,10 @@ public class Server
 		}
 	}
 	
+	/**
+	 * Function for updating the userlist in the ClientGUI. Clears the GUI list and then repopulates
+	 * it by looping through the list of online users.
+	 */
 	public static synchronized void UpdateUserList()
 	{
 		frame.clearusers();
@@ -337,9 +331,10 @@ public class Server
 		}
 	}
 	
-	//remove a user from list of connected.
-	//should also kill/close the socket connection and kill the thread
-	// also notify all clients of the removal (for buddy list)
+	/**
+	 * Function for removing a client.  Removes the username and socket instance that are stored
+	 * on ther server, and also updates the GUI's user list.
+	 */
 	public static synchronized void RemoveUser( Socket pSocket)
 	{
 		mUserMap.remove(mReverseUserMap.get(pSocket));
