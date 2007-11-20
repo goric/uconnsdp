@@ -1,10 +1,24 @@
 package server;
 import java.util.*;
+import java.util.Timer;
 import java.net.*;
 import java.io.*;
 import java.lang.*;
 import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 public class server_gui extends javax.swing.JFrame {
     
@@ -120,7 +134,6 @@ public class server_gui extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         //jTextArea1.setText("user names go here");
         jScrollPane1.setViewportView(jTextArea1);
-
         
 //ACTIVITY///////////////////////////////////////////
         jLabel3.setText("Activity:");
@@ -185,17 +198,30 @@ public class server_gui extends javax.swing.JFrame {
     
     public void actout(String t){
     	String tempact = jTextArea4.getText();
-    	jTextArea4.setText(tempact + t + "\n");
+    	jTextArea4.setText(tempact + timestamp() + t + "\n");
+    	
     }
     
     public void clearusers(){
     	jTextArea1.setText(" ");
     }
     
+    public void clearactivity(){
+    	jTextArea4.setText(" ");
+    }
+    
     public void userlist(String u){
     	String tempuser = jTextArea1.getText();
     	jTextArea1.setText(tempuser + u + "\n");
+    	
     }
+    
+    public String timestamp(){
+    	String ts = null;
+    	ts = "<" + jTextArea2.getText() + "> ";
+    	return ts;
+    }
+    
 ///// MAIN////////////////////////////////////////////
    /* public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -215,5 +241,6 @@ public class server_gui extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea4;
     private javax.swing.JLabel jLabel5;
+    private JTextArea answer = null;
 }
 
