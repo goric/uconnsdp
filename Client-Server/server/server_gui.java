@@ -43,6 +43,7 @@ public class server_gui extends javax.swing.JFrame {
         jTextArea4 = new javax.swing.JTextArea();
         jTextArea4.setEditable(false);
         jLabel5 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         
         // Default title and close operation
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -58,7 +59,7 @@ public class server_gui extends javax.swing.JFrame {
         jLabel1.setText("Server Up-Time:");
         
         // Start Time
-        final long stime = System.currentTimeMillis();
+        stime = System.currentTimeMillis();
         
         // Box Dimensions
         jTextArea2.setColumns(20);
@@ -146,10 +147,18 @@ public class server_gui extends javax.swing.JFrame {
         
  ////LOGO///////////////////////////////////////////////
         ImageIcon icon = new ImageIcon("E:/Documents/School/CSE/CSE 269/workspace/seniordesign/server/logo.jpg" );
-        
+        //ImageIcon icon = new ImageIcon("C:/Documents and Settings/Chris Rindfleisch/Desktop/Senior Design Project/Client-Server/server/logo.jpg" );
         jLabel5 = new javax.swing.JLabel();
         jLabel5.setIcon(icon);
 
+ // RESET BUTTON//////////////////////////////////////////
+        jButton1.setText("Reset");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                clicked(evt);
+            }
+        });
+        
      // Layout
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -171,7 +180,8 @@ public class server_gui extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(170, 170, 170)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -182,14 +192,16 @@ public class server_gui extends javax.swing.JFrame {
                     .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(34, 34, 34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pack();
@@ -210,6 +222,10 @@ public class server_gui extends javax.swing.JFrame {
     	jTextArea4.setText(" ");
     }
     
+    public void resettime(){
+    	stime = System.currentTimeMillis();
+    }
+    
     public void userlist(String u){
     	String tempuser = jTextArea1.getText();
     	jTextArea1.setText(tempuser + u + "\n");
@@ -220,6 +236,15 @@ public class server_gui extends javax.swing.JFrame {
     	String ts = null;
     	ts = "<" + jTextArea2.getText() + "> ";
     	return ts;
+    }
+    
+    private void clicked(java.awt.event.MouseEvent evt) {
+    	clearactivity();
+    	clearusers();
+    	resettime();
+    	
+    	Server.ResetServer();
+    	actout("Server Reset");
     }
     
 ///// MAIN////////////////////////////////////////////
@@ -241,6 +266,7 @@ public class server_gui extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea4;
     private javax.swing.JLabel jLabel5;
-    private JTextArea answer = null;
+    private long stime;
+    private javax.swing.JButton jButton1;
 }
 

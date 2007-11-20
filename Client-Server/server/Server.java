@@ -326,14 +326,37 @@ public class Server
 			}
 			catch(Exception e) 
 			{
-				System.out.println("Error in Server.SendMessageToClients: " + e.toString());
+				System.out.println("Error in Server.UpdateUserList: " + e.toString());
 			}
 		}
 	}
 	
+	/* Function to reset the server, remove connections to all clients, and clear all frames in GUI */
+	
+	public static synchronized void ResetServer()
+	{
+		Set<String> aKeySet = mUserMap.keySet();
+		Iterator<String> aIterator = aKeySet.iterator();
+		
+		while(aIterator.hasNext())
+		{
+			String aKey = aIterator.next();
+			try
+			{
+				Socket pSocket = mUserMap.get(aKey);
+				RemoveUser(pSocket);
+				
+			}
+			catch(Exception e) 
+			{
+				System.out.println("Error in Server.Reset: " + e.toString());
+			}
+		}
+	
+	}
 	/**
 	 * Function for removing a client.  Removes the username and socket instance that are stored
-	 * on ther server, and also updates the GUI's user list.
+	 * on the server, and also updates the GUI's user list.
 	 */
 	public static synchronized void RemoveUser( Socket pSocket)
 	{
