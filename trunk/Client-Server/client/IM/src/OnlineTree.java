@@ -33,16 +33,13 @@ public class OnlineTree extends JPanel implements ActionListener {
     private static DefaultTreeModel otreeModel;
     private Hashtable nodeTable = new Hashtable();
     String[] oThisBuddyArray;
-    public static String[] o2ThisBuddyArray;
+    public ArrayList<String> OnlineList = new ArrayList<String>();
     private JPopupMenu menu;
     private User user2;
     private static int j = 0;
-    private static String[] o3BuddyArray;
+	public static FileTrans f;
 
     public OnlineTree(ClientGUI frame) {
-    	String okfine = Client.buddyarray[2];
-    	int okfineint = Integer.valueOf(okfine).intValue();
-    	o2ThisBuddyArray = new String[okfineint];
         this.frame = frame;
         initAwtContainer();
     }
@@ -53,7 +50,6 @@ public class OnlineTree extends JPanel implements ActionListener {
     private void initAwtContainer()
     {
     	this.setLayout(new FlowLayout());
-        //Create the nodes.
     	DefaultMutableTreeNode top =
             new DefaultMutableTreeNode("Contacts");
     	otoop = top;
@@ -66,18 +62,22 @@ public class OnlineTree extends JPanel implements ActionListener {
 
         otree.addMouseListener(new MyMouseAdapter(frame,otree));
         menu = new JPopupMenu();
-        JMenuItem whatever = new JMenuItem("Get Info");
-        menu.add(whatever);
-        JMenuItem whatever2 = new JMenuItem("Send Message");
-        menu.add(whatever2);
-        JMenuItem whatever3 = new JMenuItem("Get Notes");
-        menu.add(whatever3);
-        whatever2.addActionListener(this);
-        whatever3.addActionListener(this);
-        whatever.addActionListener(this);
-        whatever3.setActionCommand("notes");
-        whatever2.setActionCommand("msg");
-		whatever.setActionCommand("info");
+        JMenuItem infoitem = new JMenuItem("Get Info");
+        menu.add(infoitem);
+        JMenuItem msgitem = new JMenuItem("Send Message");
+        menu.add(msgitem);
+        JMenuItem notesitem = new JMenuItem("Get Notes");
+        menu.add(notesitem);
+        JMenuItem xferitem = new JMenuItem("Send File");
+        menu.add(xferitem);
+        msgitem.addActionListener(this);
+        notesitem.addActionListener(this);
+        infoitem.addActionListener(this);
+        xferitem.addActionListener(this);
+        notesitem.setActionCommand("notes");
+        msgitem.setActionCommand("msg");
+		infoitem.setActionCommand("info");
+		xferitem.setActionCommand("xfer");
 		JScrollPane scrollpane;
 		scrollpane = new JScrollPane(otree);
 		scrollpane.setPreferredSize(new Dimension(200,100));
@@ -102,9 +102,9 @@ public class OnlineTree extends JPanel implements ActionListener {
 	public void actionPerformed(java.awt.event.ActionEvent e) 
 	{
 		if ("info".contentEquals(e.getActionCommand())) 
-		{
-			System.out.println("Getting User Info");	
-			ClientGUI.createInfoFrame(user2);
+		{	
+			String temp = ("11 " + LogIn.username + " " + user2);
+			LogIn.thisclient.SendMessage(temp);
         }
 		else if ("msg".contentEquals(e.getActionCommand()))
 		{
@@ -113,6 +113,11 @@ public class OnlineTree extends JPanel implements ActionListener {
 		else if ("notes".contentEquals(e.getActionCommand()))
 		{
 			ClientGUI.createNotesFrame(user2);
+		}
+		else if ("xfer".contentEquals(e.getActionCommand()))
+		{
+        	JFrame frame = new JFrame();
+        	f = new FileTrans(frame);
 		}
         
     }
@@ -178,7 +183,8 @@ class DefaultObserver implements Observer
 }
     
 
-    private void createNodes(DefaultMutableTreeNode top) {
+    private void createNodes(DefaultMutableTreeNode top) 
+    {
         DefaultMutableTreeNode category = null;
         DefaultMutableTreeNode auser = null;
         oThisBuddyArray = Client.buddyarray;
@@ -186,54 +192,42 @@ class DefaultObserver implements Observer
         int p = Integer.valueOf(boob).intValue();
         p = p + p;
         p = p + 2;
-        int f = 0;
         for (int i = 3; i < p; i++)
         {
         	if (oThisBuddyArray[i+1].contentEquals("online"))
         	{
-        	System.out.println("i added one to the array");
         	String blab = oThisBuddyArray[i];
-        	o2ThisBuddyArray[f] = blab;
+        	OnlineList.add(blab);
         	i++;
-        	f++;
         	}
         	else 
         	{
         		i++;
         	}
         }
-        createtehNodes(top, o2ThisBuddyArray);
+        createtehNodes(top, OnlineList);
     }
-    public static void createtehNodes(DefaultMutableTreeNode top, String[] array)
+    public void createtehNodes(DefaultMutableTreeNode top, ArrayList array)
         {
         DefaultMutableTreeNode category = null;
         DefaultMutableTreeNode auser = null;
-        o3BuddyArray = o2ThisBuddyArray;
-        	for (int i = 0; i < o3BuddyArray.length; i++)
+        	for (int i = 0; i < OnlineList.size(); i++)
         	{
-        		/*if (o2ThisBuddyArray[i].isEmpty())
-        		{
-        			System.out.println("i didnt put it in");
-        		}
-        		else*/
-        		System.out.println("length " + o2ThisBuddyArray.length);
-        		System.out.println(i);
-        		auser = new DefaultMutableTreeNode(new User(o2ThisBuddyArray[i]));
+        		auser = new DefaultMutableTreeNode(new User(OnlineList.get(i)));
                 top.add(auser);
-                System.out.println("i went through");
         	}
         }
-    public static void createtehNodes2(String[] array)
+    public void createtehNodes2(String[] array)
     {
     DefaultMutableTreeNode category = null;
     DefaultMutableTreeNode auser = null;
     DefaultMutableTreeNode top = new DefaultMutableTreeNode("Contacts");
-    j = o2ThisBuddyArray.length;
+    j = OnlineList.size();
     j = j+1;
     	for (int i = 0; i < j; i++)
     	{
     	auser = new DefaultMutableTreeNode(new User
-            	(o2ThisBuddyArray[i]));
+            	(OnlineList.get(i)));
             	top.add(auser);
             	i++;
     	}

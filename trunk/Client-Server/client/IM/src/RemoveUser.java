@@ -93,7 +93,6 @@ public class RemoveUser extends JDialog implements ActionListener
         	String temp = "21 " + LogIn.username + " " + username;
         	LogIn.thisclient.SendMessage(temp);
         	this.setVisible(false);
-        	ClientGUI.giveitawhirl();
         } 
         else
         {

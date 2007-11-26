@@ -9,56 +9,47 @@ public class PopManage extends JFrame implements ActionListener
 {
 	private JLabel descript;
 	private Container container;
-	private JButton addc, addb, ret;
+	private JButton addcon, removecon, ret;
 	JLabel userlab;
 	JTextField userfield;
 	JButton subbutton, canbutton;
+	private static Container container2;
 	
-	public PopManage (JFrame aframe)
+	public PopManage ()
 	{
-		ManageFrame(aframe);
+		ManageFrame();
 	}
 	
-	private void ManageFrame(JFrame aframe)
+	private void ManageFrame()
 	{
 		SpringLayout layout = new SpringLayout();
 		container = this.getContentPane();
 		container.setLayout(layout);
-		addc = new JButton("Add User");
-		addb = new JButton("Remove User");
+		addcon = new JButton("Add User");
+		removecon = new JButton("Remove");
 		ret = new JButton("Return");
-		addc.setActionCommand("con");
-		addb.setActionCommand("block");
+		addcon.setActionCommand("con");
+		removecon.setActionCommand("removec");
 		ret.setActionCommand("ret");
-        layout.putConstraint(SpringLayout.NORTH, addc,
-				 320,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, addc,
-				 200,
-				 SpringLayout.WEST, container);
-        layout.putConstraint(SpringLayout.NORTH, addb,
-				 320,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, addb,
-				 50,
-				 SpringLayout.WEST, container);
-        layout.putConstraint(SpringLayout.NORTH, ret,
-				 350,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, ret,
-				 125,
-				 SpringLayout.WEST, container);
-		container.add(addc);
-		container.add(addb);
+        layout.putConstraint(SpringLayout.NORTH, removecon, 310, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, removecon, 15, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, addcon, 310, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, addcon, 115, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, ret, 350, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, ret, 70, SpringLayout.WEST, container);
+		container.add(addcon);
+		container.add(removecon);
 		container.add(ret);
 		UserList thislist = new UserList(this);
+        layout.putConstraint(SpringLayout.WEST, thislist, 20, SpringLayout.WEST, container);
 		container.add(thislist);
-		addc.addActionListener(this);
-		addb.addActionListener(this);
+		addcon.addActionListener(this);
+		removecon.addActionListener(this);
 		ret.addActionListener(this);
-		this.setSize(320,420);
+		container2 = this;
+		this.setSize(220,420);
 		this.setResizable(false);
-		this.setLocation(400,200);
+		this.setLocation(440,230);
 		this.setVisible(true);
 	}
 	
@@ -69,19 +60,16 @@ public class PopManage extends JFrame implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		if ("con".contentEquals(e.getActionCommand())) 
+		if ("removec".contentEquals(e.getActionCommand())) 
 		{
-        	System.out.println("Adding a User to Contact List");
-        	addContact();
+        	removeContact();
         } 
-        else if ("block".contentEquals(e.getActionCommand()))
+        else if ("con".contentEquals(e.getActionCommand()))
         {
-        	System.out.println("Removing a User from the Contact List");
-        	addBlock();
+        	addContact();
         }
         else if ("ret".contentEquals(e.getActionCommand()))
   		{
-        	System.out.println("Returning from Manage Screen");
         	this.setVisible(false);
   		}
         else
@@ -90,12 +78,17 @@ public class PopManage extends JFrame implements ActionListener
         	quit();
         }
 	}
+	public static void reload()
+	{
+		container2.setVisible(false);
+		PopManage man = new PopManage();	
+	}
 	public void addContact()
 	{
 		ShowAdd();
 
 	}
-	public void addBlock()
+	public void removeContact()
 	{
 		ShowRemove();
 	}

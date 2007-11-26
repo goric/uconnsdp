@@ -15,6 +15,7 @@ public class RecieveFile extends JDialog {
 	  
 int cancel,n;
 private ProgressMonitor progressMon;
+public ProgMonitor progress;
 
 	private File file_loc(JFileChooser f){
 		 File file;
@@ -63,10 +64,6 @@ private ProgressMonitor progressMon;
 		      f = file_loc(fc);
 		    	
 
-		    	
-		     
-		    //System.out.println("asdd");
-		    //fc.showSaveDialog(recieverClient.this);
 		    if (cancel==0){
 			
 		    String temp = "22 " + Client.filetran[2] + " " + Client.filetran[1] + " " +"accept" + " " + 123;
@@ -85,32 +82,40 @@ private ProgressMonitor progressMon;
 		    
 		    int port = Integer.parseInt(Client.filetran[5]);
 		    
-		    if (f !=null){
-		    Socket sock = new Socket(blah , port);
+		    if (f != null){
+		    Socket sock2 = new Socket(blah , port);
 		    System.out.println("Connecting...");
 
 		    // receive file
 		    byte [] mybytearray  = new byte [filesize];
-		    InputStream is = sock.getInputStream();
+		    InputStream is = sock2.getInputStream();
 		    FileOutputStream fos = new FileOutputStream(f.getAbsolutePath());
 		    BufferedOutputStream bos = new BufferedOutputStream(fos);
 		    bytesRead = is.read(mybytearray,0,mybytearray.length);
 		    current = bytesRead;
 		    System.out.println("Transferring...");
 
-		    progressMon = new ProgressMonitor(RecieveFile.this,
-                    "Transfering "+ Client.filetran[3],
-                    "", 0, Integer.parseInt(Client.filetran[6]));
 
-
-
+		    JFrame pro_frame = new JFrame();
+		    int total = 0;
+		    progress = new ProgMonitor();
+		    progress.setfilesize(filesize);
+		    progress.setprog(total);
+		    
 		    do {
-		    	progressMon.setProgress((int)(bytesRead/(Integer.parseInt(Client.filetran[6]))));
-		       bytesRead =
-		          is.read(mybytearray, current, (mybytearray.length-current));
+		    	//progressMon.setProgress((int)(bytesRead/(Integer.parseInt(Client.filetran[6]))));
+		   System.out.println("bytes read   " + bytesRead + "  filesize left  "+ (filesize-bytesRead));
+		    	bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
+		    	
+		    	total += bytesRead;
+		    	progress.setprog(total);
+		    	
+		    	filesize=filesize-bytesRead;
+		    	
 		       if(bytesRead >= 0) current += bytesRead;
 		    } while(bytesRead > -1);
 
+		    progress.setVisible(false);
 		    bos.write(mybytearray, 0 , current);
 		    long end = System.currentTimeMillis();
 		    System.out.println("Transfer complete.");
@@ -120,7 +125,7 @@ private ProgressMonitor progressMon;
 		    		    "Success",
 		    		    JOptionPane.PLAIN_MESSAGE);
 		    bos.close();
-		    sock.close();
+		    sock2.close();
 		    }
 		    }
 		    }

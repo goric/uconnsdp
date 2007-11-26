@@ -1,6 +1,7 @@
 import java.net.InetAddress;
 import java.net.Socket;
 import java.io.*;
+
 import javax.swing.JOptionPane;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -15,9 +16,12 @@ public static String[] anythingMessage;
 public static String[] buddyarray;
 public static String[] recarray;
 public static String[] anythingMessage2;
+public static String[] userInfoArray;
 private String[] ans;
 public static String[] filetran;
 public static String[] filetran2;
+private int counter;
+private boolean addorremove = false;
 
 private DataInputStream mDataInStream;
 private DataOutputStream mDataOutStream;
@@ -36,6 +40,7 @@ public Client()
 	anythingMessage2[0] = "0";
 	anythingMessage2[1] = "0";
 	anythingMessage2[2] = "0";
+	counter = 0;
 }
 
 public void GetServerConnection( String pServer)
@@ -97,8 +102,22 @@ public void GetMessageFromServer()
 	anythingMessage = aMessage.split(" ");
 	if (anythingMessage[0].contentEquals("02"))
 	{
+		if (counter == 0)
+		{
 		anythingMessage2 = anythingMessage;
 		buddyarray = anythingMessage;
+		counter = 1;
+		}
+		else
+		{
+		anythingMessage2 = anythingMessage;
+		buddyarray = anythingMessage;
+		if (addorremove == true)
+		{
+			PopManage.reload();
+		}
+		ClientGUI.giveitawhirl();
+		}
 	}
 	else if (anythingMessage[0].contentEquals("04"))
 	{
@@ -114,22 +133,23 @@ public void GetMessageFromServer()
 		ClientGUI.createFrame(user);	
 		AppendChatWindow.appendData2(toUser, tehMessage, false,(ChatWindow)ClientGUI.frameTable.get(user.toString()) );
 	}
-	/*else if (anythingMessage[0].contentEquals("16"))
+	else if (anythingMessage[0].contentEquals("16")  || anythingMessage[0].contentEquals("17") || anythingMessage[0].contentEquals("20") || anythingMessage[0].contentEquals("21"))
 	{
 		if(anythingMessage[1].contentEquals(LogIn.username))
 	{
-			System.out.println("i didn't do the 16");
+
 	}
-		else
-		{        String theadd = anythingMessage[1];
-    	addToArray(OnlineTree.o2ThisBuddyArray, theadd);
-    	OnlineTree.o2ThisBuddyArray = ans;
-    	System.out.println(OnlineTree.o2ThisBuddyArray[1]);
-    	OnlineTree.createtehNodes2(OnlineTree.o2ThisBuddyArray);
-    	ClientGUI.giveitawhirl();
-			
+		if (anythingMessage[0].contentEquals("20") || anythingMessage[0].contentEquals("21"))
+		{
+			addorremove = true;
 		}
-	}*/
+		else
+		{
+			addorremove = false;
+		}
+		String temp = "02 " + LogIn.username;
+		LogIn.thisclient.SendMessage(temp);
+	}
 	else if (anythingMessage[0].contentEquals("10"))
 	{
 		
@@ -140,7 +160,12 @@ public void GetMessageFromServer()
 
 		
 	}
-	
+	else if (anythingMessage[0].contentEquals("11"))
+	{
+		userInfoArray = anythingMessage;
+		User user = new User(userInfoArray[2]);
+		UserInfo userinfo = new UserInfo(user);
+	}
 	
 	
 	//Client sends: [22][FromUser][ToUser][accept/reject][public key (if accepting)]
@@ -152,10 +177,10 @@ public void GetMessageFromServer()
 		
 		if (filetran2[3].contentEquals("accept")){
 			try{
-				PopOptions.f.send();}
+				OnlineTree.f.send();}
 			catch (IOException ioe){};
 			
-			try{PopOptions.f.servsock.close();}
+			try{OnlineTree.f.servsock.close();}
 			catch (IOException ioe){};
 		}
 		else{
@@ -167,7 +192,7 @@ public void GetMessageFromServer()
 			//System.out.println("no go");
 			//PopOptions.f.wait=false;
 			
-			try{PopOptions.f.servsock.close();}
+			try{OnlineTree.f.servsock.close();}
 			catch (IOException ioe){};
 			
 		}

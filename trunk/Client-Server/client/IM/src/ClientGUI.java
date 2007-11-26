@@ -82,10 +82,10 @@ public class ClientGUI extends JFrame implements ActionListener {
 		container2 = this;
 		this.setJMenuBar(menu);
 		this.setSize(225, 400);
-		this.setLocation(400,100);
+		this.setLocation(200,100);
 		this.setVisible(true);
 		this.setResizable(false);
-		this.setTitle("/dance");
+		this.setTitle("/dance " + LogIn.username + " dance");
 	}
 	
 	public static void giveitawhirl()
@@ -126,7 +126,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 	{
 		UserInfo dialog ;
 		dialog = new UserInfo(user);
-		dialog.setLocation(500, 500);
+		dialog.setLocation(200, 700);
 	}
 
     public static void createNotesFrame(User user)
@@ -150,12 +150,11 @@ public class ClientGUI extends JFrame implements ActionListener {
 	{
 		if ("opt".contentEquals(e.getActionCommand())) 
 		{
-			System.out.println("Options Screen Brought Up");	
 			popOptions();
         } 
         else if ("man".contentEquals(e.getActionCommand()))
         {
-        	System.out.println("Manage Screen Brought Up");
+        	System.out.println("i got here");
         	popManage();
         }
 		else if ("quit".contentEquals(e.getActionCommand()))
@@ -164,7 +163,8 @@ public class ClientGUI extends JFrame implements ActionListener {
 		}
 		else
 		{
-			System.out.println("I Got Bad Input in ClientGUI");
+			System.out.println("Program Terminated by User");
+			quit();
 		}
 	}
 	public void authenticate()
@@ -179,7 +179,7 @@ public class ClientGUI extends JFrame implements ActionListener {
     
     public void popManage()
     {
-    	PopManage dialog = new PopManage(this);
+    	PopManage dialog = new PopManage();
     }
     
     private void showLogIn()
