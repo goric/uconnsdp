@@ -16,6 +16,7 @@ public class UserInfo extends JFrame implements ActionListener
 	private User user;
 	private Timer timer=null;
 	boolean isFocused = false;
+	private String blank = "---------------------------------------------------------------";
 
 	public UserInfo(User user)
 	{
@@ -32,12 +33,11 @@ public class UserInfo extends JFrame implements ActionListener
 		recv = new JEditorPane();
 		recv.setEditorKit(new HTMLEditorKit());
 		recv.setEditable(false);
-
 		JScrollPane pane
 			= new JScrollPane(recv,
 					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		pane.setBounds(10,10,290,100);
+		pane.setBounds(10,10,340,100);
 
 		send = new JButton("Close");
 		send.setBounds(105,120,95,50);
@@ -46,7 +46,7 @@ public class UserInfo extends JFrame implements ActionListener
 
 		container.add(pane);
 		container.add(send);
-
+		setUserInfo();
 
 		send.addKeyListener(new KeyAdapter() {
 					public void keyPressed(KeyEvent ke)
@@ -65,7 +65,7 @@ public class UserInfo extends JFrame implements ActionListener
 		});
 
 		this.setResizable(false);
-		this.setSize(310,210);
+		this.setSize(360,210);
 		this.setTitle(user+"'s Info");
 		this.setLocation(300,300);
 
@@ -95,7 +95,140 @@ public class UserInfo extends JFrame implements ActionListener
 	{
 		return user.toString();
 	}
+	
+	public void setUserInfo()
+	{
+		String str = new String();
+		int ihours, iminutes, idays, iseconds;
+		String [] myUserInfoArray = Client.userInfoArray;
+		long l = Long.parseLong(myUserInfoArray[4].trim());
+		long timestamp = l * 1000;
+		java.util.Date d = new java.util.Date(timestamp);
+		str = ("Member Since : " + d);
+		append(str);
+		if ((myUserInfoArray[3].contentEquals("online")))
+		{
+			String sseconds = myUserInfoArray[5];
+			int itotal = Integer.parseInt(sseconds.trim());
+			if (itotal > 86399)
+			{
+			    idays = itotal / 86400;
+			    if (idays > 0)
+			    {itotal = itotal - (idays * 86400);}
+				ihours = itotal / 3600;
+				if (ihours > 0)
+				{itotal = itotal - (ihours * 3600);}
+				iminutes = itotal / 60;
+				if (iminutes > 0)
+				{itotal = itotal - (iminutes * 60);}
+				iseconds = itotal;
+				str = ("Online Time : " + idays + " days " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
+			}
+			else if (itotal > 3599 && itotal < 86399)
+			{
+				ihours = itotal / 3600;
+				if (ihours > 0)
+				{itotal = itotal - (ihours * 3600);}
+				iminutes = itotal / 60;
+				if (iminutes > 0)
+				{itotal = itotal - (iminutes * 60);}
+				iseconds = itotal;
+				str = ("Online Time : " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
+			}
+			else if (itotal > 59 && itotal < 3599)
+			{
+				iminutes = itotal / 60;
+				if (iminutes > 0)
+				{itotal = itotal - (iminutes * 60);}
+				iseconds = itotal;
+				str = ("Online Time : " + iminutes + " minutes " + iseconds + " seconds");
+			}
+			else
+			{
+				iseconds = itotal;
+				str = ("Online Time : " + iseconds + " seconds");
+			}
+			append(str);
+		}
+		else if ((myUserInfoArray[3].contentEquals("offline")))
+		{
+			String sseconds = myUserInfoArray[5];
+			int itotal = Integer.parseInt(sseconds.trim());
+			if (itotal > 86399)
+			{
+			    idays = itotal / 86400;
+			    if (idays > 0)
+			    {itotal = itotal - (idays * 86400);}
+				ihours = itotal / 3600;
+				if (ihours > 0)
+				{itotal = itotal - (ihours * 3600);}
+				iminutes = itotal / 60;
+				if (iminutes > 0)
+				{itotal = itotal - (iminutes * 60);}
+				iseconds = itotal;
+				str = ("Last Seen : " + idays + " days " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
+			}
+			else if (itotal > 3599 && itotal < 86399)
+			{
+				ihours = itotal / 3600;
+				if (ihours > 0)
+				{itotal = itotal - (ihours * 3600);}
+				iminutes = itotal / 60;
+				if (iminutes > 0)
+				{itotal = itotal - (iminutes * 60);}
+				iseconds = itotal;
+				str = ("Last Seen : " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
+			}
+			else if (itotal > 59 && itotal < 3599)
+			{
+				iminutes = itotal / 60;
+				if (iminutes > 0)
+				{itotal = itotal - (iminutes * 60);}
+				iseconds = itotal;
+				str = ("Last Seen : " + iminutes + " minutes " + iseconds + " seconds");
+			}
+			else
+			{
+				iseconds = itotal;
+				str = ("Last Seen : " + iseconds + " seconds");
+			}
+			append(str);
+		}
+		String sprofile = myUserInfoArray[6];
+		int iprofile = Integer.parseInt(sprofile.trim());
+		int awayspot = iprofile + 6;
+		String saway = myUserInfoArray[awayspot];
+		int iaway = Integer.parseInt(saway.trim());
+		String temp = "";
+		if(iaway > 0)
+		{
+			for (int i = 0; i < iaway; i++)
+			{
+				temp = temp + myUserInfoArray[i+awayspot] + " ";
+			}
+			append(temp);
+		}
+		append(blank);
+		temp = "";
+		if (iprofile > 0)
+		{
+			for (int i = 0; i < iprofile; i++)
+			{
+				temp = temp + myUserInfoArray[i+7] + " ";
+			}
+			append(temp);
+		}
+	}
 
+	public void append(String str)
+	{
+		try {
+			((HTMLEditorKit)recv.getEditorKit()).read(new java.io.StringReader(str),
+					recv.getDocument(), recv.getDocument().getLength());
+			recv.setCaretPosition(recv.getDocument().getLength());
+		 	} catch(Exception e){}
+	}
+	
 	public void actionPerformed(ActionEvent e)
 	{
 		if ("close".contentEquals(e.getActionCommand())) 

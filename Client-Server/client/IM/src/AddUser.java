@@ -93,24 +93,13 @@ public class AddUser extends JDialog implements ActionListener
 	{
 		if ("can".contentEquals(e.getActionCommand())) 
 		{
-        	System.out.println("Not Adding Any User");
         	this.setVisible(false);
         } 
         else if ("add".contentEquals(e.getActionCommand())) 
 		{
         	String username = userfield.getText();
         	String temp = "20 " + LogIn.username + " " + username;
-        	System.out.println(temp);
         	LogIn.thisclient.SendMessage(temp);
-        	String boob = Client.buddyarray[2];
-            int p = Integer.valueOf(boob).intValue();
-            p = p + 1;
-            String myString = Integer.toString(p);
-            Client.buddyarray[2] = myString;
-        	addToArray(Client.buddyarray, username);
-        	Client.buddyarray = ans;
-        	UserList.refreshIt(username);
-        	ClientGUI.giveitawhirl();
         	this.setVisible(false);
         } 
         else

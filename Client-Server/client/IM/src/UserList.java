@@ -25,7 +25,7 @@ import javax.swing.tree.*;
 
 public class UserList extends JPanel implements ActionListener {
 	
-    private static JTree tree;
+    private JTree tree;
     private static boolean DEBUG = false;
     public static DefaultMutableTreeNode toop;
     private ClientGUI frame;
@@ -34,9 +34,10 @@ public class UserList extends JPanel implements ActionListener {
     private Hashtable nodeTable = new Hashtable();
     String[] ThisBuddyArray;
     private JPopupMenu menu;
-    private User user2;
+    private static User user2;
+    public static JTree stree;
 
-    public UserList(ClientGUI frame) {
+    public UserList() {
         this.frame = frame;
         initAwtContainer();
     }
@@ -55,30 +56,27 @@ public class UserList extends JPanel implements ActionListener {
 
         treeModel = new DefaultTreeModel(top);
         tree = new JTree(top);
+    	tree.setEditable(true);
         tree.getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
-
         tree.addMouseListener(new MyMouseAdapter(frame,tree));
         menu = new JPopupMenu();
-        JMenuItem whatever = new JMenuItem("Get Info");
-        menu.add(whatever);
-        JMenuItem whatever2 = new JMenuItem("Send Message");
-        menu.add(whatever2);
-        JMenuItem whatever3 = new JMenuItem("Get Notes");
-        menu.add(whatever3);
-        whatever2.addActionListener(this);
-        whatever3.addActionListener(this);
-        whatever.addActionListener(this);
-        whatever3.setActionCommand("notes");
-        whatever2.setActionCommand("msg");
-		whatever.setActionCommand("info");
+        JMenuItem getinfo = new JMenuItem("Get Info");
+        menu.add(getinfo);
+        JMenuItem getnotes = new JMenuItem("Get Notes");
+        menu.add(getnotes);
+        getnotes.addActionListener(this);
+        getinfo.addActionListener(this);
+        getnotes.setActionCommand("notes");
+		getinfo.setActionCommand("info");
 		JScrollPane scrollpane;
+		stree = tree;
 		scrollpane = new JScrollPane(tree);
-		scrollpane.setPreferredSize(new Dimension(200,100));
+		scrollpane.setPreferredSize(new Dimension(160,280));
 		this.add(scrollpane);
     }
     
-    public static void refreshIt(String user)
+   /* public static void refreshIt(String user)
     {
         DefaultMutableTreeNode tehuser = null;
     	tehuser = new DefaultMutableTreeNode(new User
@@ -87,7 +85,7 @@ public class UserList extends JPanel implements ActionListener {
     	((DefaultTreeModel)tree.getModel()).reload();
     	treeModel.reload(tehuser);
     	ClientGUI.RefreshGUI(tree);
-    }
+    }*/
 	public void removeUser(String user)
 	{
 
@@ -98,12 +96,10 @@ public class UserList extends JPanel implements ActionListener {
 		if ("info".contentEquals(e.getActionCommand())) 
 		{
 			System.out.println("Getting User Info");	
-			ClientGUI.createInfoFrame(user2);
+			String temp = ("11 " + LogIn.username + " " + user2);
+			System.out.println(temp);
+			LogIn.thisclient.SendMessage(temp);
         }
-		else if ("msg".contentEquals(e.getActionCommand()))
-		{
-			ClientGUI.createFrame(user2);
-		}
 		else if ("notes".contentEquals(e.getActionCommand()))
 		{
 			ClientGUI.createNotesFrame(user2);
@@ -116,10 +112,10 @@ public class UserList extends JPanel implements ActionListener {
 		menu.show(tree,x,y);
 	}
 
-    public static void refreshit2(JTree tehtree)
+  /*  public static void refreshit2(JTree tehtree)
     {
     	((DefaultTreeModel)tree.getModel()).reload();
-    }
+    }*/
 
 class MyMouseAdapter extends MouseAdapter
     {

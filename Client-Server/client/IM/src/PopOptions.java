@@ -7,10 +7,11 @@ import java.io.*;
 
 public class PopOptions extends JDialog implements ActionListener
 {
-	private JLabel descript;
+	private JLabel awaylabel;
+	private JTextField awayfield;
 	private Container container;
-	private JButton save, cancel, file;
-	public static FileTrans f;
+	private JButton awaybutton, backbutton, dndbutton;
+	private String awaymsg;
 	
 	
 	public PopOptions (JFrame aframe)
@@ -24,46 +25,32 @@ public class PopOptions extends JDialog implements ActionListener
 		SpringLayout layout = new SpringLayout();
 		container = this.getContentPane();
 		container.setLayout(layout);
-		save = new JButton("Save");
-		cancel = new JButton("Cancel");
-		file = new JButton("File Transfer");
-		descript = new JLabel("Options Will Be Here");
-		save.setActionCommand("sav");
-		cancel.setActionCommand("can");
-		file.setActionCommand("fil");
-        layout.putConstraint(SpringLayout.NORTH, descript,
-				 5,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, descript,
-				 60,
-				 SpringLayout.WEST, container);
-        layout.putConstraint(SpringLayout.NORTH, save,
-				 320,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, save,
-				 200,
-				 SpringLayout.WEST, container);
-        layout.putConstraint(SpringLayout.NORTH, cancel,
-				 320,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, cancel,
-				 50,
-				 SpringLayout.WEST, container);
-        layout.putConstraint(SpringLayout.NORTH, file,
-				 120,
-				 SpringLayout.NORTH, container);
-       layout.putConstraint(SpringLayout.WEST, file,
-				 50,
-				 SpringLayout.WEST, container);
-        
-		container.add(descript);
-		container.add(save);
-		container.add(cancel);
-		container.add(file);
-		save.addActionListener(this);
-		cancel.addActionListener(this);
-		file.addActionListener(this);
-		
+		awaybutton = new JButton("Set Away");
+		backbutton = new JButton("Set Back");
+		dndbutton = new JButton("Set Do Not Disturb");
+		awayfield = new JTextField(15);
+		awaylabel = new JLabel("Enter Away Message");
+		awaybutton.setActionCommand("away");
+		backbutton.setActionCommand("back");
+		dndbutton.setActionCommand("dnd");
+        layout.putConstraint(SpringLayout.NORTH, awaylabel, 20, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, awaylabel, 20, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, awayfield, 40, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, awayfield, 20, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, awaybutton, 37, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, awaybutton, 200, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, backbutton, 120, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, backbutton, 50, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, dndbutton, 120, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, dndbutton, 50, SpringLayout.WEST, container);
+		container.add(awayfield);
+		container.add(awaylabel);
+		container.add(awaybutton);
+		container.add(backbutton);
+		container.add(dndbutton);
+		awaybutton.addActionListener(this);
+		backbutton.addActionListener(this);
+		dndbutton.addActionListener(this);
 		this.setSize(320,420);
 		this.setResizable(false);
 		this.setLocation(400,200);
@@ -77,24 +64,21 @@ public class PopOptions extends JDialog implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		if ("sav".contentEquals(e.getActionCommand())) 
+		if ("away".contentEquals(e.getActionCommand())) 
 		{
-        	System.out.println("Changes Were Saved");
-        	// Update Info with Independent Methods
+			String awaymsg = awayfield.getText();
+        	System.out.println("Set to Away");
+        	String temp = "12 " + LogIn.username + " " + "away " + awaymsg;
+    		LogIn.thisclient.SendMessage(temp);
         	this.setVisible(false);
         } 
-        else if ("can".contentEquals(e.getActionCommand()))
+        else if ("back".contentEquals(e.getActionCommand()))
         {
-        	System.out.println("Changes Were Thrown Out");
+        	System.out.println("Set to Back");
         	this.setVisible(false);
         }
         else if ("fil".contentEquals(e.getActionCommand()))
-        {
-        	//System.out.println("Changes Were Thrown Out");
-        	this.setVisible(false);
-        	JFrame frame = new JFrame();
-        	f = new FileTrans(frame);
-        	
+        {	
         	
         }
         else
