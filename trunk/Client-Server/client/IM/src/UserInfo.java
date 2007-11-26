@@ -196,17 +196,26 @@ public class UserInfo extends JFrame implements ActionListener
 		}
 		String sprofile = myUserInfoArray[6];
 		int iprofile = Integer.parseInt(sprofile.trim());
-		int awayspot = iprofile + 6;
+		int awayspot = iprofile + 7;
+		System.out.println(awayspot);
 		String saway = myUserInfoArray[awayspot];
 		int iaway = Integer.parseInt(saway.trim());
 		String temp = "";
-		if(iaway > 0)
+		if(iaway > 0 && (!(myUserInfoArray[3].contentEquals("offline"))))
 		{
-			for (int i = 0; i < iaway; i++)
+			System.out.println("I got here");
+			temp = "Status : Away";
+			append(temp);
+			temp = "";
+			for (int i = 2; i < iaway+1; i++)
 			{
 				temp = temp + myUserInfoArray[i+awayspot] + " ";
 			}
 			append(temp);
+		}
+		else if (myUserInfoArray[3].contentEquals("offline"))
+		{
+			temp = "Status : Offline";
 		}
 		append(blank);
 		temp = "";
