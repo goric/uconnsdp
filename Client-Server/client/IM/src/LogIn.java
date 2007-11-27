@@ -38,7 +38,7 @@ public class LogIn extends JFrame implements ActionListener
 		passfield = new JPasswordField(9);
 		logbutton = new JButton("Login");
 		logbutton.setActionCommand("log");
-		logbutton.setMnemonic(KeyEvent.VK_ENTER); 
+		logbutton.setMnemonic(KeyEvent.VK_ENTER);
 		qbutton = new JButton("Quit");
 		qbutton.setActionCommand("quit");
         layout.putConstraint(SpringLayout.NORTH, userfield,

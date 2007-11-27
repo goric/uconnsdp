@@ -17,6 +17,9 @@ public class ChatWindow extends JFrame implements ActionListener
 	private User user;
 	private Timer timer=null;
 	boolean isFocused = false;
+	String temp = "";
+	String msg;
+	Client myclient = new Client();
 
 	public ChatWindow(User user)
 	{
@@ -59,28 +62,26 @@ public class ChatWindow extends JFrame implements ActionListener
 		container.add(typepane);
 		container.add(send);
 
-		type.addKeyListener(new KeyAdapter() {
+		type.addKeyListener(new KeyAdapter() 
+		{
 			public void keyPressed(KeyEvent ke)
 			{
-				if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) 
+				{
 					setVisible(false);
 					ClientGUI.removeFrame(user);
-				} else if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
-					try {
-						Client myclient = new Client();
-						String temp = "03 " + LogIn.username + " " + user + " " + "boob";
-						System.out.println(temp);
-						myclient.SendMessage(temp);
-					}
-					catch(Exception e) {
-						JOptionPane.showMessageDialog(container, "DOH!", "Error", JOptionPane.ERROR_MESSAGE);
-						}
+				} else if(ke.getKeyCode() == KeyEvent.VK_ENTER) 
+				{
+					if(type.getText().length() == 0) return;
+					msg = type.getText();
+					temp = "03 " + LogIn.username + " " + user + " " + msg;
+					System.out.println(temp);
+					LogIn.thisclient.SendMessage(temp);
 					type.setText("");
 				}
 			}
 		}
 		);
-
 
 		type.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent ke)

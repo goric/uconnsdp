@@ -31,7 +31,7 @@ public class ProgMonitor extends JFrame{
 		prog = new JLabel("prog " );
 		
 		bit_rate = new JLabel("Avg. Bits Transfered: ");
-		avg_bits = new JLabel("zxc");
+		avg_bits = new JLabel("0 kb/s");
 		
 		bar = new JProgressBar();
 		

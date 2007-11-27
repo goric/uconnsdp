@@ -1,9 +1,6 @@
 import java.awt.*;
 import java.util.Hashtable;
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.*;
 
 import java.awt.event.*;
@@ -28,6 +25,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 	public static boolean rflag = true, pflag = true;
 	public static Hashtable frameTable = new Hashtable();
     private static DefaultMutableTreeNode poop;
+    public static int i = 0;
 	
 	public ClientGUI()
 	{
@@ -135,6 +133,8 @@ public class ClientGUI extends JFrame implements ActionListener {
 		dialog = new UserNotes(user);
 		dialog.setLocation(600, 500);
 	}
+    
+
 		
 	
 
@@ -167,10 +167,6 @@ public class ClientGUI extends JFrame implements ActionListener {
 			quit();
 		}
 	}
-	public void authenticate()
-	{
-		showLogIn();
-	}
 	
     public void popOptions()
     {
@@ -181,11 +177,4 @@ public class ClientGUI extends JFrame implements ActionListener {
     {
     	PopManage dialog = new PopManage();
     }
-    
-    private void showLogIn()
-    {
-	//	LogIn dialog = new LogIn(this);
-	//	username = dialog.getUsername();
-	//	password = dialog.getPassword();
-	}
 }

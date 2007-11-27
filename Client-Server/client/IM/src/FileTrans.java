@@ -6,6 +6,7 @@ import java.net.*;
 import java.awt.event.*;
 import java.util.EventObject;
 import java.io.*;
+
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.*;
 
@@ -20,6 +21,7 @@ public class FileTrans extends JDialog implements ActionListener
 	public static boolean wait, go;
 	public static Socket sock;
 	public static ServerSocket servsock;
+	public ProgMonitor p ;
 	
 	public FileTrans (JFrame aframe)
 	{
@@ -167,7 +169,9 @@ public class FileTrans extends JDialog implements ActionListener
 	}
 	
 	public  void send() throws IOException {
-	      sock = servsock.accept();
+	   
+		
+		/*  sock = servsock.accept();
 
 	      System.out.println("Accepted connection : " + sock);
 
@@ -184,6 +188,68 @@ public class FileTrans extends JDialog implements ActionListener
 	      sock.close();
 	      wait = false;
 	      //System.out.println("Finished");
+	       * 
+	       */
+		
+		
+		//try
+	//	{
+		try { 
+		ServerSocket servsock = new ServerSocket(13267);
+		}
+		catch (IOException io){}
+	    // while (true) 
+	    // {
+		      System.out.println("Waiting...");
+		      Socket sock = servsock.accept();
+		      System.out.println("Accepted connection : " + sock);
+
+		      // sendfile
+		      byte [] mybytearray  = new byte [(int)file.length()];
+		      FileInputStream fis = new FileInputStream(file);
+		      BufferedInputStream bis = new BufferedInputStream(fis);
+		      bis.read(mybytearray,0,mybytearray.length);
+		      OutputStream os = sock.getOutputStream();
+		      
+		      System.out.println("Sending...");
+		      
+		      p = new ProgMonitor();
+
+		     
+		      p.setfilesize(mybytearray.length);
+		     
+		      int send = 64724;
+		      int offset = 0;
+		      
+		      while (mybytearray.length > offset){
+		      
+		      	if ((mybytearray.length-offset) > 64724){
+		      		
+		      		os.write(mybytearray, offset, send);
+		      		offset += send;
+		      		System.out.println("offset " + offset);
+		      		set(offset, send);
+		      	
+		      	}
+		      	else{
+		      		os.write(mybytearray, offset, (mybytearray.length-offset));
+		      		offset += mybytearray.length-offset;
+		      		System.out.println("ELSE offset " + offset);
+		      		set(offset, send);
+		      		
+		      	}
+				//try {Thread.sleep(500);}
+				//catch (InterruptedException ek){};
+		      }  
+		      	
+		      os.flush();
+		      p.setVisible(false);
+		      sock.close();
+		 // }
+		//}
+		//catch (IOException io){}
+		
+		
 	      
 	      JFrame frame = new JFrame();
 	      JOptionPane.showMessageDialog(frame,
@@ -192,6 +258,10 @@ public class FileTrans extends JDialog implements ActionListener
 	    		    JOptionPane.PLAIN_MESSAGE);
 	      
 		
+	}
+	
+	public void set(int off, int sent){
+		p.setprog(off, sent);
 	}
 	
 	public static void main(String args[]){
