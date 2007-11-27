@@ -216,6 +216,7 @@ public class UserInfo extends JFrame implements ActionListener
 		else if (myUserInfoArray[3].contentEquals("offline"))
 		{
 			temp = "Status : Offline";
+			append(temp);
 		}
 		append(blank);
 		temp = "";

@@ -108,7 +108,7 @@ public ProgMonitor progress;
 		    	bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
 		    	
 		    	total += bytesRead;
-		    	progress.setprog(total);
+		    	progress.setprog(total, bytesRead);
 		    	
 		    	filesize=filesize-bytesRead;
 		    	

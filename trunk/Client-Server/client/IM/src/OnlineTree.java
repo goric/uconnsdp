@@ -38,6 +38,7 @@ public class OnlineTree extends JPanel implements ActionListener {
     private User user2;
     private static int j = 0;
 	public static FileTrans f;
+	public static int i;
 
     public OnlineTree(ClientGUI frame) {
         this.frame = frame;
@@ -54,7 +55,7 @@ public class OnlineTree extends JPanel implements ActionListener {
             new DefaultMutableTreeNode("Contacts");
     	otoop = top;
         createNodes(top);
-
+        i = 0;
         otreeModel = new DefaultTreeModel(top);
         otree = new JTree(top);
         otree.getSelectionModel().setSelectionMode
@@ -70,14 +71,22 @@ public class OnlineTree extends JPanel implements ActionListener {
         menu.add(notesitem);
         JMenuItem xferitem = new JMenuItem("Send File");
         menu.add(xferitem);
+        JMenuItem invite = new JMenuItem("Invite to Chizzat");
+        menu.add(invite);
+        JMenuItem common = new JMenuItem("Contacts in Common");
+        menu.add(common);
         msgitem.addActionListener(this);
         notesitem.addActionListener(this);
         infoitem.addActionListener(this);
         xferitem.addActionListener(this);
+        invite.addActionListener(this);
+        common.addActionListener(this);
         notesitem.setActionCommand("notes");
         msgitem.setActionCommand("msg");
 		infoitem.setActionCommand("info");
 		xferitem.setActionCommand("xfer");
+		invite.setActionCommand("invite");
+		common.setActionCommand("common");
 		JScrollPane scrollpane;
 		scrollpane = new JScrollPane(otree);
 		scrollpane.setPreferredSize(new Dimension(200,100));
@@ -119,8 +128,18 @@ public class OnlineTree extends JPanel implements ActionListener {
         	JFrame frame = new JFrame();
         	f = new FileTrans(frame);
 		}
+		else if ("invite".contentEquals(e.getActionCommand()))
+		{
+			ChatName aNewChat = new ChatName(user2);
+		}
+		else if ("common".contentEquals(e.getActionCommand()))
+		{
+			String temp = "15 " + LogIn.username + " " + user2;
+			LogIn.thisclient.SendMessage(temp);
+		}
         
     }
+    
 	public void showit(Component com, int x, int y, User user1)
 	{
 		user2 = user1;

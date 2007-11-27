@@ -17,6 +17,7 @@ public static String[] buddyarray;
 public static String[] recarray;
 public static String[] anythingMessage2;
 public static String[] userInfoArray;
+public static String[] commonArray;
 private String[] ans;
 public static String[] filetran;
 public static String[] filetran2;
@@ -149,6 +150,23 @@ public void GetMessageFromServer()
 		}
 		String temp = "02 " + LogIn.username;
 		LogIn.thisclient.SendMessage(temp);
+	}
+	else if (anythingMessage[0].contentEquals("07"))
+	{
+		String inviter = anythingMessage[2];
+		String chatname = anythingMessage[3];
+		ChatName.RespondtoInvite(inviter,chatname);
+	}
+	else if (anythingMessage[0].contentEquals("24"))
+	{
+		String fromUser = anythingMessage[2];
+		
+	}
+	else if (anythingMessage[0].contentEquals("15"))
+	{
+		String theUser = anythingMessage[2];
+		commonArray = anythingMessage;
+		CommonContacts newCommon = new CommonContacts(theUser);
 	}
 	else if (anythingMessage[0].contentEquals("10"))
 	{
