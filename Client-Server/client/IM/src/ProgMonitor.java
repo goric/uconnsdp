@@ -102,10 +102,7 @@ layout.putConstraint(SpringLayout.WEST, bar,
 		bar.setValue(Math.min(pro, filesize));
 		
 		avg_bits.setText(""+ ((bytesR)/1000)+ " kb/s");
-				
-		try {Thread.sleep(500);}
-		catch (InterruptedException ek){};
-		
+
 		
 	}
 	public void setprog(int pro){
@@ -113,10 +110,7 @@ layout.putConstraint(SpringLayout.WEST, bar,
 		System.out.println("set prog bar");
 		prog.setText("" + pro + " / " + filesize);
 		bar.setValue(Math.min(pro, filesize));
-						
-		try {Thread.sleep(500);}
-		catch (InterruptedException ek){};
-		
+							
 		
 	}
 	

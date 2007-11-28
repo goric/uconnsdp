@@ -10,6 +10,11 @@ import java.io.*;
 
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.*;
+import java.security.*;
+
+import javax.crypto.*;
+import javax.crypto.spec.*;
+
 
 public class RecieveFile extends JDialog {
 	  
@@ -17,13 +22,17 @@ int cancel,n;
 private ProgressMonitor progressMon;
 public ProgMonitor progress;
 
-	private File file_loc(JFileChooser f){
+private static PrivateKey privateKey;
+private static PublicKey publicKey;
+
+static String cipherFile = "chatter_encrypted2";
+
+private File file_loc(JFileChooser f){
 		 File file;
 		 file = null;
 		int returnVal = f.showSaveDialog(RecieveFile.this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
              file = f.getSelectedFile();
-            //This is where a real application would save the file.
             System.out.println("Save location: " + file.getAbsolutePath());
         }
         else if (returnVal == JFileChooser.CANCEL_OPTION) {
@@ -32,21 +41,16 @@ public ProgMonitor progress;
 		      LogIn.thisclient.SendMessage(temp2);
 		     cancel =1;
 		    // n=1;
-		     
-		      
+ 
         }
-        
         return file;
-		
 	}
-	
 	public void RecieveFile()  throws IOException{
 		File f;   
 		 f=null;
 		 cancel=0;
-		int filesize = Integer.parseInt(Client.filetran[6])+10000  ; // filesize temporary hardcoded
+		int filesize = Integer.parseInt(Client.filetran[6])+1  ; 
 
-			//RecieveFile rc = new RecieveFile();
 		    JFileChooser fc = new JFileChooser();
 		   
 		    JFrame frame = new JFrame("Confirm");
@@ -83,18 +87,65 @@ public ProgMonitor progress;
 		    int port = Integer.parseInt(Client.filetran[5]);
 		    
 		    if (f != null){
+		    
+				Security.addProvider(new com.sun.crypto.provider.SunJCE());
+				
+				try
+				{
+					KeyPairGenerator aKeyGen = KeyPairGenerator.getInstance("RSA");
+					KeyPair aPair = aKeyGen.generateKeyPair();
+					
+					privateKey = aPair.getPrivate();
+					publicKey = aPair.getPublic();
+					
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.toString());
+				}
+
+			     String cleanFile = f.getAbsolutePath();
+			System.out.println("Asdadad");	
 		    Socket sock2 = new Socket(blah , port);
 		    System.out.println("Connecting...");
 
-		    // receive file
+		    OutputStream out = sock2.getOutputStream();
+		    ObjectOutputStream objOut = new ObjectOutputStream(out);
+			objOut.writeObject(publicKey);
+		
+			SecretKey aSecretKey = null;
+			Cipher AEScipher = null;
+			
+			try
+			{
+				byte[] mykey = new byte[128];
+				InputStream in = sock2.getInputStream();
+				DataInputStream objIn = new DataInputStream(in);
+				in.read(mykey, 0, mykey.length);
+
+				for(int i=0;i<mykey.length; i++)
+				{
+					System.out.println(mykey[i]);
+				}
+				Cipher RSAcipher = Cipher.getInstance("RSA");
+				RSAcipher.init(Cipher.DECRYPT_MODE, privateKey);
+				
+				byte[] mydeckey = RSAcipher.doFinal(mykey);
+				aSecretKey = new SecretKeySpec(mydeckey, "AES");
+			}
+			catch(Exception e)
+			{
+				System.out.println(e.toString());
+			}
+  
 		    byte [] mybytearray  = new byte [filesize];
 		    InputStream is = sock2.getInputStream();
-		    FileOutputStream fos = new FileOutputStream(f.getAbsolutePath());
+
+		    FileOutputStream fos = new FileOutputStream(cipherFile);
 		    BufferedOutputStream bos = new BufferedOutputStream(fos);
 		    bytesRead = is.read(mybytearray,0,mybytearray.length);
 		    current = bytesRead;
 		    System.out.println("Transferring...");
-
 
 		    JFrame pro_frame = new JFrame();
 		    int total = 0;
@@ -103,8 +154,7 @@ public ProgMonitor progress;
 		    progress.setprog(total);
 		    
 		    do {
-		    	//progressMon.setProgress((int)(bytesRead/(Integer.parseInt(Client.filetran[6]))));
-		   System.out.println("bytes read   " + bytesRead + "  filesize left  "+ (filesize-bytesRead));
+		    	System.out.println("bytes read   " + bytesRead + "  filesize left  "+ (filesize-bytesRead));
 		    	bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
 		    	
 		    	total += bytesRead;
@@ -119,14 +169,50 @@ public ProgMonitor progress;
 		    bos.write(mybytearray, 0 , current);
 		    long end = System.currentTimeMillis();
 		    System.out.println("Transfer complete.");
-		    //  JFrame frame = new JFrame();
-		      JOptionPane.showMessageDialog(frame,
+		    JOptionPane.showMessageDialog(frame,
 		    		    "File Transfer Complete", 
 		    		    "Success",
 		    		    JOptionPane.PLAIN_MESSAGE);
 		    bos.close();
 		    sock2.close();
+		    
+		    
+		    try
+		    {
+		    	
+		    	byte[] block = new byte[8];
+		    	AEScipher = Cipher.getInstance("AES");
+		    	AEScipher.init(Cipher.DECRYPT_MODE, aSecretKey);
+		    	
+		    	File aCipherFile = new File(cipherFile);
+		    	File aCleanFile = new File(cleanFile);
+		    	FileInputStream fis = new FileInputStream(aCipherFile);
+		    	FileOutputStream aFos = new FileOutputStream(aCleanFile);
+		    	
+		    	byte[] myencbytes = new byte[(int)aCipherFile.length()];
+		    	int offset = 0;
+		        int numRead = 0;
+		        fis.read(myencbytes);
+		        fis.close();
+		    	byte[] mybytes = AEScipher.doFinal(myencbytes);
+		    	aFos.write(mybytes);
+		    	aFos.flush();
+		    	aFos.close();
+		    	System.out.println("Decryption complete. DONE");
+
+		    	boolean success = (new File("chatter_encrypted2")).delete();
+		    	if (!success) System.out.println("didn't delete file2");
+		    	
 		    }
+		    catch(Exception e)
+		    {
+		    	System.out.println(e.toString());
+		    }
+    
+
+		    }
+		    else 
+		    	System.out.println("file null");
 		    }
 		    }
 		    if (n==1)
