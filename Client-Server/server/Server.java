@@ -16,6 +16,9 @@ public class Server
 	public static Map<Socket, String> mReverseUserMap = new HashMap<Socket, String>();
 	
 	public static Map<String, String[]> mUserStatusMap = new HashMap<String, String[]>();
+	public static Map<String, ArrayList<String>> mChatRoomMap = new HashMap<String, ArrayList<String>>();
+	
+	public static Map<String, ArrayList<String>> mUserDNDList = new HashMap<String, ArrayList<String>>();
 	
 	private ServerSocket mServerSocket ;
 	public protocol.ServerConnection mServerConnection;
@@ -48,10 +51,6 @@ public class Server
 		new Server();
 	}
 	
-	/*
-	 * Guts of the server.  This accepts connections from clients and add then to the
-	 * currently connected list.  Creates a new ServerConnection for each client.
-	 */
 	/**
 	 * Function that the server runs infinitely. Waits for and accepts connedctions from clients and
 	 * adds them to the currently connected list. Creates a new thread containing an instance of
@@ -220,6 +219,7 @@ public class Server
 						
 					case 19:
 						RemoveUser( server.Server.mUserMap.get( aMessage[1]));
+						protocol.ServerProtocolFunctions.RemoveLoggedOffUser(aMessage[1]);
 						break;
 					
 					case 20:
@@ -240,6 +240,25 @@ public class Server
 					case 23:
 						protocol.ServerProtocolFunctions.RespondToChatInvite( aMessage);
 						frame.actout( aMessage[1] + " responded " + aMessage[4] + " to " + aMessage[2] + "'s invite to chat in " + aMessage[3] + ".");
+						break;
+						
+					case 24:
+						//server should NEVER receive this code - client use only
+						break;
+						
+					case 25:
+						protocol.ServerProtocolFunctions.SendUserEnteringChatNotification(aMessage);
+						frame.actout( aMessage[1] + " entered the chat " + aMessage[2] + ".");
+						break;
+						
+					case 26:
+						protocol.ServerProtocolFunctions.SendUserLeavingChatNotification( aMessage);
+						frame.actout( aMessage[1] + " left the chat " + aMessage[2] + ".");
+						break;
+						
+					case 27:
+						protocol.ServerProtocolFunctions.SendAutoResponse( aMessage);
+						frame.actout( aMessage[1] + " sent an automated response to " + aMessage[2]);
 						break;
 					
 					default:
