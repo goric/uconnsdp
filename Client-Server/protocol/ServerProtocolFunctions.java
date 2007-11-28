@@ -135,7 +135,14 @@ public abstract class ServerProtocolFunctions
 	        	
 	        	if(server.Server.mUserMap.containsKey(aUser))
 	        	{
-	        		aBuddyList += "online ";
+	        		if(server.Server.mUserStatusMap.containsKey(aUser))
+	        		{
+	        			aBuddyList += "away ";
+	        		}
+	        		else
+	        		{
+	        			aBuddyList += "online ";
+	        		}
 	        	}
 	        	else
 	        	{
@@ -177,8 +184,25 @@ public abstract class ServerProtocolFunctions
 			
 			try
 			{
-				server.Server.SendMessageToSingleClient( aToUser, aMessage);
-				server.Server.SendMessageToSingleClient( aFromUser, "03 " + aFromUser + " successful");
+				if(server.Server.mUserStatusMap.containsKey(aToUser))
+				{
+					if(server.Server.mUserStatusMap.get(aToUser)[0].toLowerCase().contentEquals("dnd"))
+					{
+						if(server.Server.mUserDNDList.containsKey(aToUser))
+						{
+							ArrayList<String> aMessageList = server.Server.mUserDNDList.get(aToUser);
+							aMessageList.add(aMessage);
+							
+							server.Server.mUserDNDList.remove(aToUser);
+							server.Server.mUserDNDList.put(aToUser, aMessageList);
+						}
+					}
+				}
+				else
+				{
+					server.Server.SendMessageToSingleClient( aToUser, aMessage);
+					server.Server.SendMessageToSingleClient( aFromUser, "03 " + aFromUser + " successful");
+				}
 			}
 			catch(Exception e)
 			{
@@ -206,6 +230,12 @@ public abstract class ServerProtocolFunctions
 		
 		if(server.Server.mUserMap.containsKey(aToUser))
 		{
+			if(!server.Server.mChatRoomMap.containsKey(pMessage[3]))
+			{
+				ArrayList<String> aList = new ArrayList<String>();
+				aList.add(aFromUser);
+				server.Server.mChatRoomMap.put(pMessage[3], aList);
+			}
 			server.Server.SendMessageToSingleClient(aToUser, "07 " + aToUser + " " + aFromUser + " " + pMessage[3]);
 			server.Server.SendMessageToSingleClient(aFromUser, "05 " + aFromUser + " successful");
 		}
@@ -226,6 +256,13 @@ public abstract class ServerProtocolFunctions
 		String aFromUser = pMessage[1];
 		int aNumRecipients = Integer.parseInt(pMessage[2]);
 		ArrayList<String> aUnavailableRecipients = new ArrayList<String>();
+		
+		if(!server.Server.mChatRoomMap.containsKey(pMessage[3]))
+		{
+			ArrayList<String> aUserList = new ArrayList<String>();
+			aUserList.add(aFromUser);
+			server.Server.mChatRoomMap.put(pMessage[aNumRecipients+3], aUserList);
+		}
 		
 		for(int i=3; i < (aNumRecipients + 3); i++ )
 		{
@@ -268,36 +305,21 @@ public abstract class ServerProtocolFunctions
 	public static void SendMessageToEntireChat( String[] pMessage)
 	{
 		String aFromUser = pMessage[1];
-		int aNumRecipients = Integer.parseInt(pMessage[2]);
-		int aNumOffline = 0;
-		String aUsersOffline = "";
+		String aChatName = pMessage[2];
+		
 		String aMessage = "";
 		
-		for(int i=(aNumRecipients + 3); i < pMessage.length; i++)
+		for(int i = 3; i < pMessage.length; i++)
 		{
 			aMessage += pMessage[i] + " ";
 		}
 		
-		for (int i = 3; i < (aNumRecipients + 3); i++)
-		{
-			if(server.Server.mUserMap.containsKey(pMessage[i]))
-			{
-				server.Server.SendMessageToSingleClient(pMessage[i], "04 " + aFromUser + " " + aMessage);
-			}
-			else
-			{
-				aNumOffline++;
-				aUsersOffline += pMessage[i] + " ";
-			}
-		}
+		ArrayList<String> aUserList = server.Server.mChatRoomMap.get(aChatName);
 		
-		if(aNumOffline != 0)
+		for(int i=0; i< aUserList.size(); i++)
 		{
-			server.Server.SendMessageToSingleClient(aFromUser, "08 " + aFromUser + " error recipients not online " + aUsersOffline);
-		}
-		else
-		{
-			server.Server.SendMessageToSingleClient(aFromUser, "08 " + aFromUser + " successful");
+			server.Server.SendMessageToSingleClient(aUserList.get(i), "24 " + aUserList.get(i) + " " + aFromUser 
+																		+ aMessage.split(" ").length + " " + aMessage);
 		}
 	}
 	
@@ -387,7 +409,7 @@ public abstract class ServerProtocolFunctions
 	        	aProfile = aProfileResult.getString("profile");
 	        	aProfileResult.close();
 	        }
-	        String[] aProfileArray = aProfile.split(" ");
+	        String[] aProfileArray = aProfile.trim().split(" ");
 	        
 	        aStatement.close();
 	        
@@ -397,19 +419,37 @@ public abstract class ServerProtocolFunctions
 	        if( server.Server.mUserStatusMap.containsKey( aRequestingUserName))
 	        {
 	        	aStatusMessageArray = server.Server.mUserStatusMap.get(aRequestingUserName);
-	        	
+
 	        	for (int i=0; i< aStatusMessageArray.length; i++)
 	        	{
 	        		aStatusMessage += aStatusMessageArray[i];
 	        	}
 	        }
 	        
-	        aStatusMessageArray = aStatusMessage.split(" ");
+	        if(aStatusMessage.length() > 0)
+	        {
+	        	aStatusMessageArray = aStatusMessage.trim().split(" ");
+	        }
+	        else
+	        {
+	        	aStatusMessageArray = new String[0];
+	        }
 	        
-	        server.Server.SendMessageToSingleClient(aUserName, "11 " + aUserName + " " + aRequestingUserName +
+	        if(aProfileArray.length == 0)
+	        {
+	        	aProfileArray = new String[0];
+	        	server.Server.SendMessageToSingleClient(aUserName, "11 " + aUserName + " " + aRequestingUserName +
+						" " + aOnlineStatus + " " + aRegisteredTime + " " + aTime + " "
+						+ aProfileArray.length + " " + aStatusMessageArray.length
+						+ " " + aStatusMessage);
+	        }
+	        else
+	        {
+	        	server.Server.SendMessageToSingleClient(aUserName, "11 " + aUserName + " " + aRequestingUserName +
 	        									" " + aOnlineStatus + " " + aRegisteredTime + " " + aTime + " "
-	        									+ aProfileArray.length + " " + aProfile + " " + aStatusMessageArray.length
+	        									+ aProfileArray.length + " " + aProfile.trim() + " " + aStatusMessageArray.length
 	        									+ " " + aStatusMessage);
+	        }
 	        aConnection.close();
 		}
 		catch(Exception e)
@@ -471,6 +511,21 @@ public abstract class ServerProtocolFunctions
 		{
 			if( server.Server.mUserStatusMap.containsKey( aUser))
 			{
+				if(server.Server.mUserStatusMap.get( aUser)[0].toLowerCase().contentEquals("dnd"))
+				{
+					if(server.Server.mUserDNDList.containsKey(aUser))
+					{
+						ArrayList<String> aMessageArray = server.Server.mUserDNDList.get(aUser);
+						
+						for (String aMessage : aMessageArray)
+						{
+							server.Server.SendMessageToSingleClient(aUser, aMessage);
+						}
+						
+						server.Server.mUserDNDList.remove(aUser);
+					}
+				}
+				
 				server.Server.mUserStatusMap.remove( aUser);
 			}
 			
@@ -607,6 +662,21 @@ public abstract class ServerProtocolFunctions
 	public static void SendLogoutNotification( String[] pMessage)
 	{
 		server.Server.SendMessageToAllClients("17 " + pMessage[1], pMessage[1]);
+	}
+	
+	public static void RemoveLoggedOffUser( String aUser)
+	{
+		if(server.Server.mUserDNDList.containsKey(aUser))
+		{
+			server.Server.mUserDNDList.remove(aUser);
+		}
+		
+		if(server.Server.mUserStatusMap.containsKey(aUser))
+		{
+			server.Server.mUserStatusMap.remove(aUser);
+		}
+		
+		//remove other stuff
 	}
 	
 	/**
@@ -757,11 +827,92 @@ public abstract class ServerProtocolFunctions
 		
 		if(pMessage[4].contentEquals("accept"))
 		{
+			if(!server.Server.mChatRoomMap.containsKey(aFromUser))
+			{
+				ArrayList<String> aUserList = server.Server.mChatRoomMap.get(pMessage[3]);
+				aUserList.add(aFromUser);
+				
+				server.Server.mChatRoomMap.remove(pMessage[3]);
+				server.Server.mChatRoomMap.put(aFromUser, aUserList);
+			}
 			server.Server.SendMessageToSingleClient(aToUser, "23 " + aFromUser + " " + aToUser + " " + pMessage[3] + " accept");
 		}
 		else
 		{
 			server.Server.SendMessageToSingleClient(aToUser, "23 " + aFromUser + " " + aToUser + " " + pMessage[3] + " reject");
 		}
+	}
+	
+	/**
+	 * Function to handle Message code 25 - notification of a user entering a chat room.  Sends a message to all 
+	 * users currently in the chat to notify them of the entry.
+	 * @param pMessage - String array as defined by the protocol beginning with message code 25
+	 */
+	public static void SendUserEnteringChatNotification( String[] pMessage)
+	{
+		String aChatName = pMessage[2];
+		String aUserName = pMessage[1];
+		
+		ArrayList<String> aUserList = server.Server.mChatRoomMap.get(aChatName);
+		
+		if(!aUserList.contains(aUserName))
+		{
+			aUserList.add(aUserName);
+			
+			server.Server.mChatRoomMap.remove(aChatName);
+			server.Server.mChatRoomMap.put(aChatName, aUserList);
+			
+			for(int i=0; i<aUserList.size(); i++)
+			{
+				server.Server.SendMessageToSingleClient(aUserList.get(i), "25 " + aUserName + " " + aChatName);
+			}
+		}
+	}
+	
+	/**
+	 * Function to handle Message code 26 - notification of a user leaving a chat room.  Sends a message to all 
+	 * users currently in the chat to notify them of the user leaving.
+	 * @param pMessage - String array as defined by the protocol beginning with message code 26
+	 */
+	public static void SendUserLeavingChatNotification( String[] pMessage)
+	{
+		String aChatName = pMessage[2];
+		String aUserName = pMessage[1];
+		
+		ArrayList<String> aUserList = server.Server.mChatRoomMap.get(aChatName);
+		
+		if(aUserList.contains(aUserName))
+		{
+			aUserList.remove(aUserList.indexOf(aUserName));
+			
+			server.Server.mChatRoomMap.remove(aChatName);
+			server.Server.mChatRoomMap.put(aChatName, aUserList);
+			
+			for(int i=0; i<aUserList.size(); i++)
+			{
+				server.Server.SendMessageToSingleClient(aUserList.get(i), "26 " + aUserName + " " + aChatName);
+			}
+		}
+	}
+	
+	/**
+	 * Function to handle Message code 27 - sending of an automatic response when a user is away.  This is in place
+	 * to allow the client to differentiate between a normal message and an auto-response.
+	 * @param pMessage - String array as defined by the protocol beginning with message code 27
+	 */
+	public static void SendAutoResponse( String[] pMessage)
+	{
+		String aFromUser = pMessage[1];
+		String aToUser = pMessage[2];
+		
+		String aMessage = "";
+		
+		for(int i=3; i < pMessage.length; i++)
+		{
+			aMessage += pMessage[i] + " ";
+		}
+		
+		server.Server.SendMessageToSingleClient(aToUser, "27 " + aToUser + " " + aFromUser + " " 
+															+ aMessage.trim().split(" ").length + " " + aMessage.trim());
 	}
 }
