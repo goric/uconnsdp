@@ -10,6 +10,10 @@ import java.io.*;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.*;
 
+import java.util.*;
+import java.security.*;
+import javax.crypto.*;
+
 public class FileTrans extends JDialog implements ActionListener
 {
 	private JLabel descript, user;
@@ -112,7 +116,6 @@ public class FileTrans extends JDialog implements ActionListener
 		if ("opn".contentEquals(e.getActionCommand())) 
 		{
         	System.out.println("Open File to send");
-        	//int x = fc.showOpenDialog(FileTrans.this);
         	
         	fc = new JFileChooser();
         	file = null;
@@ -121,24 +124,37 @@ public class FileTrans extends JDialog implements ActionListener
         	
             if (x == JFileChooser.APPROVE_OPTION) {
                 file = fc.getSelectedFile();
-                //This is where a real application would open the file.
                 try {
                 fn.setText(file.getCanonicalPath()); }
                 catch (IOException ioe){}
             } 
             else {
-                
+                file = null;
             }
         } 
         else if ("snd".contentEquals(e.getActionCommand()))
         {
+        	JFrame jf = new JFrame();
         	boolean doSend = true;
         	System.out.println("Send File");
-        	if (file == null)
+        	if (file == null){
         		doSend = false;
-        	if (un.getText() == "")
+        		
+      	      JOptionPane.showMessageDialog(jf,
+  	    		    "No File Selected", 
+  	    		    "Success",
+  	    		    JOptionPane.PLAIN_MESSAGE);
+        		
+        	}
+        	if (un.getText() == ""){
         		doSend = false;
         	
+        	      JOptionPane.showMessageDialog(jf,
+        	    		    "No User Selected", 
+        	    		    "Success",
+        	    		    JOptionPane.PLAIN_MESSAGE);	
+        	}
+        		
         	if (doSend == true)
         	{
         		System.out.println("sending file");
@@ -147,129 +163,178 @@ public class FileTrans extends JDialog implements ActionListener
         		int port = 13267;
         		
         		if (servsock == null){
-        		try
-        		{
+        		try	{
         		 servsock = new ServerSocket(port);
-
-
         		}
-        		catch (IOException io){System.out.println("error");}
+        		catch (IOException io){System.out.println("servsock error");}
         		
         		}
-     		      String temp = "09 " + LogIn.username + " " + un.getText() + " " + file.getName() + " " + Client.ip + " " + port + " " + file.length();
-       		      
+     		      String temp = "09 " + LogIn.username + " " + un.getText() + " " + file.getName() + " " + Client.ip + " " + port + " " + (file.length()+10000);
     		      LogIn.thisclient.SendMessage(temp);
         	}
         }
         
-        else
-        {
+        else {
         	quit();
         }
 	}
 	
 	public  void send() throws IOException {
-	   
-		
-		/*  sock = servsock.accept();
-
-	      System.out.println("Accepted connection : " + sock);
-
-	      // sendfile
-	      // File myFile = new File ("fishing_the_sky.mp3");
-	      byte [] mybytearray  = new byte [(int)file.length()];
-	      FileInputStream fis = new FileInputStream(file);
-	      BufferedInputStream bis = new BufferedInputStream(fis);
-	      bis.read(mybytearray,0,mybytearray.length);
-	      OutputStream os = sock.getOutputStream();
-	      System.out.println("Sending...");
-	      os.write(mybytearray,0,mybytearray.length);
-	      os.flush();
-	      sock.close();
-	      wait = false;
-	      //System.out.println("Finished");
-	       * 
-	       */
-		
 		
 		//try
 	//	{
-		try { 
-		ServerSocket servsock = new ServerSocket(13267);
-		}
-		catch (IOException io){}
+		//if (servsock == null){
+		//try { 
+		//ServerSocket servsock = new ServerSocket(13267);
+		//}
+		///catch (IOException io){System.out.println("no socket created");}
+		//}
 	    // while (true) 
 	    // {
-		      System.out.println("Waiting...");
-		      Socket sock = servsock.accept();
-		      System.out.println("Accepted connection : " + sock);
+		
+		
+		Security.addProvider(new com.sun.crypto.provider.SunJCE());
+		PublicKey key = null;
+		
+		String ciphertextFile = "chatter_encrypted";
+		
+	      System.out.println("Waiting...");
+	      sock = null;
+	      
+	    	  sock = servsock.accept();
 
-		      // sendfile
-		      byte [] mybytearray  = new byte [(int)file.length()];
-		      FileInputStream fis = new FileInputStream(file);
+	      System.out.println("Accepted connection : " + sock);
+		
+		try
+		{
+			InputStream in = sock.getInputStream();
+			System.out.println("Waiting...1");
+			ObjectInputStream objIn = new ObjectInputStream(in);
+			System.out.println("Waiting...2");
+			key = (PublicKey)objIn.readObject();
+		}
+		catch(Exception e)
+		{}
+		
+		Cipher RSAcipher = null;
+		SecretKey secretKey = null;
+		Cipher AEScipher = null;
+		
+		try
+		{
+			System.out.println("Waiting...3");
+			RSAcipher = Cipher.getInstance("RSA");
+			System.out.println("Waiting...4");
+			RSAcipher.init(Cipher.ENCRYPT_MODE, key);
+			System.out.println("Waiting...5");
+			KeyGenerator aGen = KeyGenerator.getInstance("AES");
+			System.out.println("Waiting...6");
+			aGen.init(128);
+			System.out.println("Waiting...7");
+			secretKey = aGen.generateKey();
+			System.out.println("Waiting...8");
+			byte[] aEncodedKey = RSAcipher.doFinal(secretKey.getEncoded());
+			System.out.println("Waiting...9");
+			for(int i=0;i<aEncodedKey.length; i++)
+			{
+				System.out.println(aEncodedKey[i]);
+			}
+			
+			OutputStream os = sock.getOutputStream();
+			DataOutputStream aObjOut = new DataOutputStream(os);
+  
+			aObjOut.write(aEncodedKey,0,aEncodedKey.length);
+		    aObjOut.flush();
+		      
+		    AEScipher = Cipher.getInstance("AES");
+		    AEScipher.init(Cipher.ENCRYPT_MODE, secretKey);
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.toString());
+		}
+		
+		
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		CipherOutputStream cos = null;
+
+		byte[] block = new byte[8];
+		
+		try {
+			fis = new FileInputStream(file);
+			fos = new FileOutputStream(ciphertextFile);
+			cos = new CipherOutputStream(fos, AEScipher);
+					
+			int i = 0;
+		
+			while ((i = fis.read(block)) != -1) {
+				cos.write(block, 0, i);
+			}
+			cos.close();
+			
+		} catch (IOException e) {
+			System.out.println(e.toString());
+		}
+		
+	      File aFile = new File (ciphertextFile);
+	      byte [] mybytearray  = new byte [(int)aFile.length()];
+
+		      fis = new FileInputStream(aFile);
+		      System.out.println("File length "+ aFile.length());
+ 
 		      BufferedInputStream bis = new BufferedInputStream(fis);
 		      bis.read(mybytearray,0,mybytearray.length);
 		      OutputStream os = sock.getOutputStream();
 		      
 		      System.out.println("Sending...");
-		      
 		      p = new ProgMonitor();
-
-		     
 		      p.setfilesize(mybytearray.length);
 		     
-		      int send = 64724;
+		      int send = 65536;
 		      int offset = 0;
-		      
 		      while (mybytearray.length > offset){
 		      
-		      	if ((mybytearray.length-offset) > 64724){
-		      		
+		      	if ((mybytearray.length-offset) > 65536){
 		      		os.write(mybytearray, offset, send);
 		      		offset += send;
-		      		System.out.println("offset " + offset);
-		      		set(offset, send);
-		      	
+		      		System.out.println("offset " + offset + "  sent "+send);
+		      		set(offset, send);	      	
 		      	}
 		      	else{
 		      		os.write(mybytearray, offset, (mybytearray.length-offset));
 		      		offset += mybytearray.length-offset;
-		      		System.out.println("ELSE offset " + offset);
-		      		set(offset, send);
-		      		
+		      		System.out.println("ELSE offset " + offset+ "  sent "+(mybytearray.length-offset));
+		      		set(offset, send);	
 		      	}
-				//try {Thread.sleep(500);}
-				//catch (InterruptedException ek){};
-		      }  
-		      	
+		      }  		    
 		      os.flush();
 		      p.setVisible(false);
-		      sock.close();
+		      sock.close();   
+		      servsock.close();
 		 // }
 		//}
 		//catch (IOException io){}
-		
-		
-	      
+		      
+		      fis.close();
+		      fos.close();
+		      bis.close();
+		      os.close();
+		      
+
 	      JFrame frame = new JFrame();
 	      JOptionPane.showMessageDialog(frame,
 	    		    "File Transfer Complete", 
 	    		    "Success",
 	    		    JOptionPane.PLAIN_MESSAGE);
 	      
+	    	boolean success = (new File("chatter_encrypted")).delete();
+	    	if (!success) System.out.println("didn't delete file");
 		
 	}
 	
 	public void set(int off, int sent){
 		p.setprog(off, sent);
 	}
-	
-	public static void main(String args[]){
-	/*	JFrame f = new JFrame();
-		FileTrans ft = new FileTrans(f);
-		ft.setVisible(true);
-		*/
-	}
-	
 	
 }
