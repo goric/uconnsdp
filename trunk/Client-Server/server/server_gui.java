@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.net.*;
 import java.io.*;
 import java.lang.*;
+import java.text.*;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -234,7 +235,7 @@ public class server_gui extends javax.swing.JFrame {
     
     public String timestamp(){
     	String ts = null;
-    	ts = "<" + jTextArea2.getText() + "> ";
+    	ts = "<" + DateFormat.getTimeInstance(DateFormat.MEDIUM).format(new java.util.Date()) + "> ";
     	return ts;
     }
     
