@@ -213,7 +213,7 @@ class DefaultObserver implements Observer
         p = p + 2;
         for (int i = 3; i < p; i++)
         {
-        	if (oThisBuddyArray[i+1].contentEquals("online"))
+        	if ((oThisBuddyArray[i+1].contentEquals("online")) || (oThisBuddyArray[i+1].contentEquals("away")))
         	{
         	String blab = oThisBuddyArray[i];
         	OnlineList.add(blab);
