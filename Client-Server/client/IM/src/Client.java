@@ -18,6 +18,7 @@ public static String[] recarray;
 public static String[] anythingMessage2;
 public static String[] userInfoArray;
 public static String[] commonArray;
+public static String[] incomingArray;
 private String[] ans;
 public static String[] filetran;
 public static String[] filetran2;
@@ -160,7 +161,17 @@ public void GetMessageFromServer()
 	else if (anythingMessage[0].contentEquals("24"))
 	{
 		String fromUser = anythingMessage[2];
-		
+		incomingArray = anythingMessage;
+        String msg_length = anythingMessage[3];
+        int p = Integer.valueOf(msg_length).intValue();
+        p = p + 4;
+        for (int i = 4; i < p; i++)
+        {
+        	tehMessage = tehMessage + " " + anythingMessage[i];
+        }
+		String toUser = anythingMessage[2];
+		User user = new User(toUser);	
+		AppendChatWindow.appendData3(toUser, tehMessage, false,(OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname) );
 	}
 	else if (anythingMessage[0].contentEquals("15"))
 	{

@@ -14,7 +14,7 @@ public class OneToMany extends JFrame implements ActionListener
 	public JEditorPane recv;
 	private JTextArea type;
 	private JButton send;
-	private String chatname;
+	public static String chatname;
 	private Timer timer=null;
 	boolean isFocused = false;
 

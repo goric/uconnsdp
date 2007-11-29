@@ -19,6 +19,7 @@ public class ChatName extends JDialog implements ActionListener
 	private static int i;
 	static int cancel,n;
 	static JTextField chatname2;
+	static String staticname;
 	
 	public ChatName (User user2)
 	{
@@ -131,8 +132,20 @@ public class ChatName extends JDialog implements ActionListener
     public static void createInvitedFrame(String thechatname)
     {
     	OneToMany dialog ;
-    	dialog = new OneToMany(thechatname);
-   		dialog.setLocation(500,400);
+    	synchronized(onetomanyTable)
+    	{
+    		dialog = (OneToMany) onetomanyTable.get(thechatname);
+    		if(dialog == null)
+    		{
+    			dialog = new OneToMany(thechatname);
+    			dialog.setLocation(500,400);
+    			onetomanyTable.put(thechatname,dialog);
+    		}
+    		else
+    		{
+    			System.out.println("You are already in " + thechatname);
+    		}
+    	}
     }
 	
 	public void actionPerformed(ActionEvent e)
@@ -151,6 +164,7 @@ public class ChatName extends JDialog implements ActionListener
 	    			dialog = new OneToMany(instancename);
 	    			dialog.setLocation(500,400);
 	    			onetomanyTable.put(instancename,dialog);
+	    			staticname = instancename;
 	    			String temp = "05 " + LogIn.username + " " + user2 + " " + instancename;
 	    			System.out.println(temp);
 	    			LogIn.thisclient.SendMessage(temp);
@@ -158,7 +172,7 @@ public class ChatName extends JDialog implements ActionListener
 	    		}
 	    		else
 	    		{
-	    			System.out.println("I chat with that name already exists");
+	    			System.out.println("A chat with that name already exists");
 	    			
 	    		}
 	    	}

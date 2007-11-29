@@ -67,14 +67,14 @@ public class PopOptions extends JDialog implements ActionListener
 		if ("away".contentEquals(e.getActionCommand())) 
 		{
 			String awaymsg = awayfield.getText();
-        	System.out.println("Set to Away");
         	String temp = "12 " + LogIn.username + " " + "away " + awaymsg;
     		LogIn.thisclient.SendMessage(temp);
         	this.setVisible(false);
         } 
         else if ("back".contentEquals(e.getActionCommand()))
         {
-        	System.out.println("Set to Back");
+        	String temp = "13 " + LogIn.username + " " + "away " + awaymsg;
+        	LogIn.thisclient.SendMessage(temp);
         	this.setVisible(false);
         }
         else if ("fil".contentEquals(e.getActionCommand()))

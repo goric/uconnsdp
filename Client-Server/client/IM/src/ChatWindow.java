@@ -74,14 +74,13 @@ public class ChatWindow extends JFrame implements ActionListener
 				{
 					if(type.getText().length() == 0) return;
 					msg = type.getText();
+					AppendChatWindow.appendData(LogIn.username,type.getText(),false, (ChatWindow)ClientGUI.frameTable.get(user.toString()));
 					temp = "03 " + LogIn.username + " " + user + " " + msg;
-					System.out.println(temp);
 					LogIn.thisclient.SendMessage(temp);
 					type.setText("");
 				}
 			}
-		}
-		);
+		});
 
 		type.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent ke)
