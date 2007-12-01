@@ -191,6 +191,13 @@ public void GetMessageFromServer()
 		String user = new String(userInfoArray[2]);
 		UserInfo userinfo = new UserInfo(user);
 	}
+	else if (anythingMessage[0].contentEquals("25"))
+	{
+		String user = anythingMessage[1];
+		String chatname = anythingMessage[2];
+		String str = user + " has joined " + chatname;
+		AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname));
+	}
 	else if (anythingMessage[0].contentEquals("28"))
 	{
 		userInfoArray = anythingMessage;
