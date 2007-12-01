@@ -130,10 +130,15 @@ public void GetMessageFromServer()
         {
         	tehMessage = tehMessage + " " + anythingMessage[i];
         }
-		String toUser = anythingMessage[2];
-		User user = new User(toUser);
+		String user = anythingMessage[2];
 		ClientGUI.createFrame(user);	
-		AppendChatWindow.appendData2(toUser, tehMessage, false,(ChatWindow)ClientGUI.frameTable.get(user.toString()) );
+		AppendChatWindow.appendData2(user, tehMessage, false,(ChatWindow)ClientGUI.frameTable.get(user) );
+	}
+	else if (anythingMessage[0].contentEquals("07"))
+	{
+		String inviter = anythingMessage[2];
+		String chatname = anythingMessage[3];
+		ChatName.RespondtoInvite(inviter,chatname);
 	}
 	else if (anythingMessage[0].contentEquals("16")  || anythingMessage[0].contentEquals("17") || anythingMessage[0].contentEquals("20") || anythingMessage[0].contentEquals("21"))
 	{
@@ -152,17 +157,12 @@ public void GetMessageFromServer()
 		String temp = "02 " + LogIn.username;
 		LogIn.thisclient.SendMessage(temp);
 	}
-	else if (anythingMessage[0].contentEquals("07"))
-	{
-		String inviter = anythingMessage[2];
-		String chatname = anythingMessage[3];
-		ChatName.RespondtoInvite(inviter,chatname);
-	}
 	else if (anythingMessage[0].contentEquals("24"))
 	{
-		String fromUser = anythingMessage[2];
+		tehMessage = "";
 		incomingArray = anythingMessage;
-        String msg_length = anythingMessage[3];
+		String fromUser = incomingArray[2];
+        String msg_length = incomingArray[3];
         int p = Integer.valueOf(msg_length).intValue();
         p = p + 4;
         for (int i = 4; i < p; i++)
@@ -170,7 +170,6 @@ public void GetMessageFromServer()
         	tehMessage = tehMessage + " " + anythingMessage[i];
         }
 		String toUser = anythingMessage[2];
-		User user = new User(toUser);	
 		AppendChatWindow.appendData3(toUser, tehMessage, false,(OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname) );
 	}
 	else if (anythingMessage[0].contentEquals("15"))
@@ -181,19 +180,21 @@ public void GetMessageFromServer()
 	}
 	else if (anythingMessage[0].contentEquals("10"))
 	{
-		
 		filetran = anythingMessage;
 		RecieveFile rf = new RecieveFile();
 		try {rf.RecieveFile();}
-		catch (IOException ioe){};
-
-		
+		catch (IOException ioe){};	
 	}
 	else if (anythingMessage[0].contentEquals("11"))
 	{
 		userInfoArray = anythingMessage;
-		User user = new User(userInfoArray[2]);
+		String user = new String(userInfoArray[2]);
 		UserInfo userinfo = new UserInfo(user);
+	}
+	else if (anythingMessage[0].contentEquals("28"))
+	{
+		userInfoArray = anythingMessage;
+		EditProfile editpro = new EditProfile();
 	}
 	
 	
@@ -227,6 +228,10 @@ public void GetMessageFromServer()
 		}
 		//PopOptions.f.wait=true;
 		//System.out.println("yay " + filetran2[3]);
+	}
+	else
+	{
+		System.out.println("I don't handle that code");
 	}
 }
 

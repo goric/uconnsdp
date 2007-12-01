@@ -15,13 +15,13 @@ public class ChatName extends JDialog implements ActionListener
 	public static Hashtable onetomanyTable = new Hashtable();
 	private boolean chatbool = true;
 	private String instancename;
-	private User user2;
+	private String user2;
 	private static int i;
 	static int cancel,n;
 	static JTextField chatname2;
 	static String staticname;
 	
-	public ChatName (User user2)
+	public ChatName (String user2)
 	{
 		this.user2 = user2;
 		ChatNameFrame();
@@ -71,6 +71,7 @@ public class ChatName extends JDialog implements ActionListener
 		container.add(subbutton);
 		container.add(canbutton);
 		chatname2 = chatfield;
+		staticname = instancename;
 		chatfield.addActionListener(this);
 		subbutton.addActionListener(this);
 		canbutton.addActionListener(this);
@@ -99,7 +100,8 @@ public class ChatName extends JDialog implements ActionListener
 	    if (n == 0)
 	    {
 	    	createInvitedFrame(thechatname);
-	    	
+	    	String temp = "23 " + inviter + " " + LogIn.username + " " + thechatname + " accept";
+	    	LogIn.thisclient.SendMessage(temp);
 	    }	
 	    if (cancel==0)
 	    {
@@ -172,8 +174,10 @@ public class ChatName extends JDialog implements ActionListener
 	    		}
 	    		else
 	    		{
-	    			System.out.println("A chat with that name already exists");
-	    			
+	    	    	instancename = chatfield.getText();
+	    			String temp = "05 " + LogIn.username + " " + user2 + " " + instancename;
+	    			System.out.println(temp);
+	    			LogIn.thisclient.SendMessage(temp);
 	    		}
 	    	}
 			
