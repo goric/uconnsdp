@@ -66,10 +66,10 @@ public class AppendChatWindow {
 	public static void appendData4(String user,String str, OneToMany window)
 	{
 		if(user != null) {
-				str ="<FONT COLOR='black' STYLE='font-size:10pt;font-family:Arial'><B>"+"SystemOP"+": </B></FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
+				str ="<FONT COLOR='black' STYLE='font-weigh:bold;font-size:10pt;font-family:Arial'>"+"SystemOP"+": </FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
 
 		}
-		str+="</FONT>";//Line break
+		str+="</FONT>";
 
 		try {
 		((HTMLEditorKit)window.recv.getEditorKit()).read(new java.io.StringReader(str),

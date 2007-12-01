@@ -162,6 +162,8 @@ public void GetMessageFromServer()
 		tehMessage = "";
 		incomingArray = anythingMessage;
 		String fromUser = incomingArray[2];
+		if (!(fromUser.contentEquals(LogIn.username)))
+		{
         String msg_length = incomingArray[3];
         int p = Integer.valueOf(msg_length).intValue();
         p = p + 4;
@@ -170,7 +172,8 @@ public void GetMessageFromServer()
         	tehMessage = tehMessage + " " + anythingMessage[i];
         }
 		String toUser = anythingMessage[2];
-		AppendChatWindow.appendData3(toUser, tehMessage, false,(OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname) );
+		AppendChatWindow.appendData3(toUser, tehMessage, true,(OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname) );
+		}
 	}
 	else if (anythingMessage[0].contentEquals("15"))
 	{
