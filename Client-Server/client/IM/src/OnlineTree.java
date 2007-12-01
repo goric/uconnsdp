@@ -183,24 +183,6 @@ class MyMouseAdapter extends MouseAdapter
     		}
     	}
     }
-class DefaultObserver implements Observer
-{
-
-	private ClientGUI frame;
-	private ChatWindow dialog;
-
-	public DefaultObserver(ClientGUI frame)
-	{
-		this.frame=frame;
-	}
-
-	public void update(Observable observable,Object object)
-	{
-		Message message = (Message)object;
-		ClientGUI.createFrame(message._user);
-	}
-}
-    
 
     private void createNodes(DefaultMutableTreeNode top) 
     {
