@@ -35,7 +35,7 @@ public class OnlineTree extends JPanel implements ActionListener {
     String[] oThisBuddyArray;
     public ArrayList<String> OnlineList = new ArrayList<String>();
     private JPopupMenu menu;
-    private User user2;
+    private String user2;
     private static int j = 0;
 	public static FileTrans f;
 	public static int i;
@@ -96,7 +96,7 @@ public class OnlineTree extends JPanel implements ActionListener {
     public static void refreshIt(String user)
     {
         DefaultMutableTreeNode tehuser = null;
-    	tehuser = new DefaultMutableTreeNode(new User
+    	tehuser = new DefaultMutableTreeNode(new String
             	(user));
            	otoop.add(tehuser);
     	((DefaultTreeModel)otree.getModel()).reload();
@@ -140,7 +140,7 @@ public class OnlineTree extends JPanel implements ActionListener {
         
     }
     
-	public void showit(Component com, int x, int y, User user1)
+	public void showit(Component com, int x, int y, String user1)
 	{
 		user2 = user1;
 		menu.show(otree,x,y);
@@ -171,13 +171,13 @@ class MyMouseAdapter extends MouseAdapter
         		if (e.getButton() == 3) 
         		{
     				node = (DefaultMutableTreeNode)selPath.getLastPathComponent();
-    				User user = (User)(node.getUserObject());
+    				String user = (String)(node.getUserObject());
     				showit(tree, e.getX(), e.getY(), user);
         		}
     			if(e.getClickCount() == 2) 
     			{
     				node = (DefaultMutableTreeNode)selPath.getLastPathComponent();
-    				User user2 = (User)(node.getUserObject());
+    				String user2 = (String)(node.getUserObject());
     				ClientGUI.createFrame(user2);
     			}
     		}
@@ -232,7 +232,7 @@ class DefaultObserver implements Observer
         DefaultMutableTreeNode auser = null;
         	for (int i = 0; i < OnlineList.size(); i++)
         	{
-        		auser = new DefaultMutableTreeNode(new User(OnlineList.get(i)));
+        		auser = new DefaultMutableTreeNode(new String(OnlineList.get(i)));
                 top.add(auser);
         	}
         }
@@ -245,7 +245,7 @@ class DefaultObserver implements Observer
     j = j+1;
     	for (int i = 0; i < j; i++)
     	{
-    	auser = new DefaultMutableTreeNode(new User
+    	auser = new DefaultMutableTreeNode(new String
             	(OnlineList.get(i)));
             	top.add(auser);
             	i++;

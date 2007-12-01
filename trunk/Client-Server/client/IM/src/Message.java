@@ -5,7 +5,7 @@ public class Message implements java.io.Serializable
 	public String 			_destination;
 	public String 			_message;
 	public String 			_host;
-	public User 			_user;
+	public String 			_user;
 	public String 			_data;
 
 	public Message()

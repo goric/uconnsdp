@@ -15,12 +15,12 @@ public class PopManage extends JFrame implements ActionListener
 	JButton subbutton, canbutton;
 	private static Container container2;
 	
-	public PopManage ()
+	public PopManage (Point x)
 	{
-		ManageFrame();
+		ManageFrame(x);
 	}
 	
-	private void ManageFrame()
+	private void ManageFrame(Point x)
 	{
 		SpringLayout layout = new SpringLayout();
 		container = this.getContentPane();
@@ -49,7 +49,7 @@ public class PopManage extends JFrame implements ActionListener
 		container2 = this;
 		this.setSize(220,420);
 		this.setResizable(false);
-		this.setLocation(440,230);
+		this.setLocation(x);
 		this.setVisible(true);
 	}
 	
@@ -80,8 +80,9 @@ public class PopManage extends JFrame implements ActionListener
 	}
 	public static void reload()
 	{
+		Point y = container2.getLocation();
 		container2.setVisible(false);
-		PopManage man = new PopManage();	
+		PopManage man = new PopManage(y);	
 	}
 	public void addContact()
 	{

@@ -13,8 +13,6 @@ import java.util.*;
 public class ClientGUI extends JFrame implements ActionListener {
 	
 	private Toolkit toolkit = Toolkit.getDefaultToolkit();
-	private JButton login;
-	private JTextField name, send;
 	private JMenuBar menu;
 	private JMenu menu1;
 	private JMenuItem quitmenu;
@@ -22,16 +20,19 @@ public class ClientGUI extends JFrame implements ActionListener {
 	private static Container container2;
 	private String username,password;
 	private JButton optbutton, manbutton;
+	private JLabel logo;
 	public static boolean rflag = true, pflag = true;
 	public static Hashtable frameTable = new Hashtable();
     private static DefaultMutableTreeNode poop;
     public static int i = 0;
+    private static int chat_counter = 0;
+    private Image image;
 	
-	public ClientGUI()
+	public ClientGUI(Point x)
 	{
-		MainWin();
+		MainWin(x);
 	}
-	public void MainWin()
+	public void MainWin(Point x)
 	{
 		rflag = true;
 		pflag = true;
@@ -42,7 +43,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		menu1 = new JMenu("File");
 		quitmenu = new JMenuItem("Quit");
 		menu1.add(quitmenu);
-		menu.add(menu1);
+		menu.add(menu1);;
 		optbutton = new JButton("Options");
 		manbutton = new JButton("Manage");
 		optbutton.setActionCommand("opt");
@@ -62,6 +63,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 				 SpringLayout.WEST, container);
 		container.add(optbutton);
 		container.add(manbutton);
+		container.add(logo);
 		while(rflag == true){
 		
 		if ((Client.anythingMessage2[0].contentEquals("02")) && (pflag == true))
@@ -80,7 +82,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		container2 = this;
 		this.setJMenuBar(menu);
 		this.setSize(225, 400);
-		this.setLocation(200,100);
+		this.setLocation(x);
 		this.setVisible(true);
 		this.setResizable(false);
 		this.setTitle("/dance " + LogIn.username + " dance");
@@ -88,8 +90,9 @@ public class ClientGUI extends JFrame implements ActionListener {
 	
 	public static void giveitawhirl()
 	{
+		Point x = container2.getLocation();
 		container2.setVisible(false);
-		ClientGUI gui = new ClientGUI();
+		ClientGUI gui = new ClientGUI(x);
 	}
 
 	public static void giveitawhirl2()
@@ -106,28 +109,28 @@ public class ClientGUI extends JFrame implements ActionListener {
         System.exit(0);
     }
     
-    public static void createFrame(User user)
-	{
+    public static void createFrame(String user)
+    {
 		ChatWindow dialog ;
 		synchronized(frameTable) {
-				dialog = (ChatWindow) frameTable.get(user.toString());
+				dialog = (ChatWindow) frameTable.get(user);
 				if(dialog == null) {
-					dialog = new ChatWindow(user);
+					dialog = new ChatWindow(user, 15*chat_counter, 15*chat_counter);
 					dialog.setLocation(500, 500);
-					frameTable.put(user.toString(),dialog);
-					//getDispatcher().addObserver(dialog);
+					frameTable.put(user,dialog);
+			    	chat_counter++;
 				}
 			}
 		}
     
-    public static void createInfoFrame(User user)
+    public static void createInfoFrame(String user)
 	{
 		UserInfo dialog ;
 		dialog = new UserInfo(user);
 		dialog.setLocation(200, 700);
 	}
 
-    public static void createNotesFrame(User user)
+    public static void createNotesFrame(String user)
 	{
 		UserNotes dialog ;
 		dialog = new UserNotes(user);
@@ -138,7 +141,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		
 	
 
-    public static void removeFrame(User user)
+    public static void removeFrame(String user)
     {
     	synchronized(frameTable) 
     	{
@@ -175,6 +178,7 @@ public class ClientGUI extends JFrame implements ActionListener {
     
     public void popManage()
     {
-    	PopManage dialog = new PopManage();
+    	Point manageDefaultLoc = new Point(400,330);
+    	PopManage dialog = new PopManage(manageDefaultLoc);
     }
 }

@@ -112,7 +112,7 @@ public class OneToMany extends JFrame implements ActionListener
 
 		this.setResizable(false);
 		this.setSize(310,210);
-		this.setTitle(chatname+" - Message");
+		this.setTitle(chatname+" - " + LogIn.username);
 		this.setLocation(300,300);
 
 		this.addWindowListener(new WindowAdapter() {

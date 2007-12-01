@@ -13,12 +13,12 @@ public class UserInfo extends JFrame implements ActionListener
 	private Container container;
 	public JEditorPane recv;
 	private JButton send;
-	private User user;
+	private String user;
 	private Timer timer=null;
 	boolean isFocused = false;
 	private String blank = "---------------------------------------------------------------";
 
-	public UserInfo(User user)
+	public UserInfo(String user)
 	{
 		this.user = user;
 		initAwtContainer();
@@ -104,8 +104,13 @@ public class UserInfo extends JFrame implements ActionListener
 		long l = Long.parseLong(myUserInfoArray[4].trim());
 		long timestamp = l * 1000;
 		java.util.Date d = new java.util.Date(timestamp);
+		if (PopOptions.reg_flag == true)
+		{
 		str = ("Member Since : " + d);
 		append(str);
+		}
+		if (PopOptions.time_flag == true)
+		{
 		if ((myUserInfoArray[3].contentEquals("online")))
 		{
 			String sseconds = myUserInfoArray[5];
@@ -194,6 +199,7 @@ public class UserInfo extends JFrame implements ActionListener
 			}
 			append(str);
 		}
+		}
 		String sprofile = myUserInfoArray[6];
 		int iprofile = Integer.parseInt(sprofile.trim());
 		int awayspot = iprofile + 7;
@@ -201,6 +207,8 @@ public class UserInfo extends JFrame implements ActionListener
 		String saway = myUserInfoArray[awayspot];
 		int iaway = Integer.parseInt(saway.trim());
 		String temp = "";
+		if (PopOptions.status_flag == true)
+		{
 		if(iaway > 0 && (!(myUserInfoArray[3].contentEquals("offline"))))
 		{
 			System.out.println("I got here");
@@ -217,6 +225,7 @@ public class UserInfo extends JFrame implements ActionListener
 		{
 			temp = "Status : Offline";
 			append(temp);
+		}
 		}
 		append(blank);
 		temp = "";

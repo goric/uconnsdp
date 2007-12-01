@@ -1,5 +1,7 @@
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.EventObject;
 import java.io.*;
@@ -41,60 +43,50 @@ public class LogIn extends JFrame implements ActionListener
 		logbutton.setMnemonic(KeyEvent.VK_ENTER);
 		qbutton = new JButton("Quit");
 		qbutton.setActionCommand("quit");
-        layout.putConstraint(SpringLayout.NORTH, userfield,
-				 30,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, userfield,
-				 60,
-				 SpringLayout.WEST, container);
-        
-        layout.putConstraint(SpringLayout.NORTH, passfield,
-				 85,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, passfield,
-				 60,
-				 SpringLayout.WEST, container);
-       
-        layout.putConstraint(SpringLayout.NORTH, userlab,
-				 5,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, userlab,
-				 60,
-				 SpringLayout.WEST, container);
-       
-        layout.putConstraint(SpringLayout.NORTH, passlab,
-				 60,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, passlab,
-	 			 60,
-				 SpringLayout.WEST, container);
-       
-        layout.putConstraint(SpringLayout.NORTH, logbutton,
-				 125,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, logbutton,
-				 120,
-				 SpringLayout.WEST, container);
-       
-        layout.putConstraint(SpringLayout.NORTH, qbutton,
-				 125,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, qbutton,
-	 			 40,
-				 SpringLayout.WEST, container);
+		ImageIcon icon = new ImageIcon("logo.jpg");
+		JLabel logo = new JLabel(icon);
+		SpringLayout.Constraints okCst =
+			layout.getConstraints(qbutton);
+			okCst.setX(Spring.constant(10));
+			okCst.setY(Spring.constant(5));
+			SpringLayout.Constraints cancelCst =
+				layout.getConstraints(logbutton);
+				cancelCst.setX(Spring.constant(10));
+				cancelCst.setY(Spring.constant(5));
+			Spring widthSpring = Spring.max(
+					okCst.getWidth(),
+					cancelCst.getWidth());
+					okCst.setWidth(widthSpring);
+					cancelCst.setWidth(widthSpring);
+        layout.putConstraint(SpringLayout.NORTH, userfield, 105, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, userfield, 80, SpringLayout.WEST, container);    
+        layout.putConstraint(SpringLayout.NORTH, passfield, 105, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.EAST, passfield, -80, SpringLayout.EAST, container);
+        layout.putConstraint(SpringLayout.NORTH, userlab, 85, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, userlab, 80, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, passlab, 85, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.EAST, passlab, -120, SpringLayout.EAST, container);
+        layout.putConstraint(SpringLayout.NORTH, logbutton, 135, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.EAST, logbutton, -108, SpringLayout.EAST, container);
+        layout.putConstraint(SpringLayout.NORTH, qbutton, 135, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, qbutton, 108, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, logo, 10, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, logo, 10, SpringLayout.WEST, container);
 		container.add(userlab);
 		container.add(passlab);
 		container.add(userfield);
 		container.add(passfield);
 		container.add(logbutton);
 		container.add(qbutton);
+		container.add(logo);
 		
 		userfield.addActionListener(this);
 		passfield.addActionListener(this);
 		logbutton.addActionListener(this);
 		qbutton.addActionListener(this);
 		
-		this.setSize(220,200);
+		this.setTitle("Welcome to Chatter");
+		this.setSize(390,200);
 		this.setResizable(false);
 		this.setLocation(400,200);
 		this.setVisible(true);
@@ -177,7 +169,8 @@ public class LogIn extends JFrame implements ActionListener
 		thisclient.SendMessage(temp);
 		temp = "02 " + username;
 		thisclient.SendMessage(temp);
-		ClientGUI gui = new ClientGUI();
+		Point p = new Point(200,300);
+		ClientGUI gui = new ClientGUI(p);
 	}
 	}
 

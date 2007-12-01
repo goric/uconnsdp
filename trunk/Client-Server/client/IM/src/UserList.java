@@ -34,7 +34,7 @@ public class UserList extends JPanel implements ActionListener {
     private Hashtable nodeTable = new Hashtable();
     String[] ThisBuddyArray;
     private JPopupMenu menu;
-    private static User user2;
+    private static String user2;
     public static JTree stree;
 
     public UserList() {
@@ -94,9 +94,8 @@ public class UserList extends JPanel implements ActionListener {
 	public void actionPerformed(java.awt.event.ActionEvent e) 
 	{
 		if ("info".contentEquals(e.getActionCommand())) 
-		{
-			System.out.println("Getting User Info");	
-			String temp = ("11 " + LogIn.username + " " + user2);
+		{	
+			String temp = ("28 " + LogIn.username + " " + user2);
 			System.out.println(temp);
 			LogIn.thisclient.SendMessage(temp);
         }
@@ -106,16 +105,11 @@ public class UserList extends JPanel implements ActionListener {
 		}
         
     }
-	public void showit(Component com, int x, int y, User user1)
+	public void showit(Component com, int x, int y, String user1)
 	{
 		user2 = user1;
 		menu.show(tree,x,y);
 	}
-
-  /*  public static void refreshit2(JTree tehtree)
-    {
-    	((DefaultTreeModel)tree.getModel()).reload();
-    }*/
 
 class MyMouseAdapter extends MouseAdapter
     {
@@ -137,13 +131,13 @@ class MyMouseAdapter extends MouseAdapter
         		if (e.getButton() == 3) 
         		{
     				node = (DefaultMutableTreeNode)selPath.getLastPathComponent();
-    				User user = (User)(node.getUserObject());
+    				String user = (String)(node.getUserObject());
     				showit(tree, e.getX(), e.getY(), user);
         		}
     			if(e.getClickCount() == 2) 
     			{
     				node = (DefaultMutableTreeNode)selPath.getLastPathComponent();
-    				User user2 = (User)(node.getUserObject());
+    				String user2 = (String)(node.getUserObject());
     				ClientGUI.createFrame(user2);
     			}
     		}
@@ -178,7 +172,7 @@ class DefaultObserver implements Observer
         p = p + 3;
         for (int i = 3; i < p; i++)
         {
-        	auser = new DefaultMutableTreeNode(new User
+        	auser = new DefaultMutableTreeNode(new String
         	(ThisBuddyArray[i]));
         	top.add(auser);
         	i++;

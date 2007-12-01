@@ -14,20 +14,20 @@ public class ChatWindow extends JFrame implements ActionListener
 	public JEditorPane recv;
 	private JTextArea type;
 	private JButton send;
-	private User user;
+	private String user;
 	private Timer timer=null;
 	boolean isFocused = false;
 	String temp = "";
 	String msg;
 	Client myclient = new Client();
 
-	public ChatWindow(User user)
+	public ChatWindow(String user, int x, int y)
 	{
 		this.user = user;
-		initAwtContainer();
+		ChatWindowFrame(x, y);
 	}
 
-	public void initAwtContainer()
+	public void ChatWindowFrame(int x, int y)
 	{
 		thisframe = this;
 		container= this.getContentPane();
@@ -55,7 +55,7 @@ public class ChatWindow extends JFrame implements ActionListener
 
 
 		send = new JButton("Send");
-		send.setBounds(235,120,65,50);
+		send.setBounds(235 + x,120 + y,65,50);
 		send.addActionListener(this);
 
 		container.add(pane);

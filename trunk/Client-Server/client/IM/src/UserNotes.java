@@ -15,20 +15,20 @@ public class UserNotes extends JFrame implements ActionListener
 	private UserNotes thisframe;
 	private Container container;
 	public JTextArea recv;
-	private JButton send;
+	private JButton close;
 	private JButton save;
-	private User user;
+	private String user;
 	private Timer timer=null;
 	boolean isFocused = false;
 	private String str;
 
-	public UserNotes(User user)
+	public UserNotes(String user)
 	{
 		this.user = user;
-		initAwtContainer();
+		MainNotes();
 	}
 
-	public void initAwtContainer()
+	public void MainNotes()
 	{
 		thisframe = this;
 		container= this.getContentPane();
@@ -44,22 +44,22 @@ public class UserNotes extends JFrame implements ActionListener
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		pane.setBounds(10,10,290,100);
 		save = new JButton("Save");
-		send = new JButton("Close");
-		save.setBounds(0,120,95,50);
-		send.setBounds(105,120,95,50);
+		close = new JButton("Close");
+		close.setBounds(50,130,95,30);
+		save.setBounds(160,130,95,30);
 		save.addActionListener(this);
-		send.addActionListener(this);
+		close.addActionListener(this);
 		save.setActionCommand("save");
-		send.setActionCommand("close");
+		close.setActionCommand("close");
 
 		container.add(pane);
-		container.add(send);
+		container.add(close);
 		container.add(save);
 		
 		readnotes();
 
 
-		send.addKeyListener(new KeyAdapter() {
+		close.addKeyListener(new KeyAdapter() {
 					public void keyPressed(KeyEvent ke)
 					{
 						if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -121,20 +121,17 @@ public class UserNotes extends JFrame implements ActionListener
 	public void readnotes()
 	{
         try {
-			FileReader input = new FileReader("notes on " + user + ".txt");
+			FileReader input = new FileReader(LogIn.username + "'s notes on " + user + ".txt");
 			BufferedReader bufRead = new BufferedReader(input);
 			
             String line; 	// String that holds current file line
             int count = 0;	// Line number of count 
 
             line = bufRead.readLine();
-            count++;
 
             while (line != null){
             	recv.setText(line);
-                System.out.println(count+": "+line);
                 line = bufRead.readLine();
-                count++;
             }
             
             bufRead.close();
@@ -151,7 +148,7 @@ public class UserNotes extends JFrame implements ActionListener
 	public void writenotes(String input)
 	{
 		try{
-		    FileWriter fstream = new FileWriter("notes on " + user + ".txt");
+		    FileWriter fstream = new FileWriter(LogIn.username + "'s notes on " + user + ".txt");
 		        BufferedWriter out = new BufferedWriter(fstream);
 		    out.write(str);
 
@@ -159,12 +156,6 @@ public class UserNotes extends JFrame implements ActionListener
 		    }catch (Exception e){//Catch exception if any
 		      System.err.println("Error: " + e.getMessage());
 		    }
-	}
-
-
-	public String toString()
-	{
-		return user.toString();
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -177,7 +168,7 @@ public class UserNotes extends JFrame implements ActionListener
 		{
 			str = recv.getText();
 			writenotes(str);
-			
+			this.setVisible(false);
 		}
 		
 	}
