@@ -55,7 +55,7 @@ public class ChatWindow extends JFrame implements ActionListener
 
 
 		send = new JButton("Send");
-		send.setBounds(235 + x,120 + y,65,50);
+		send.setBounds(235,120,65,50);
 		send.addActionListener(this);
 
 		container.add(pane);
@@ -113,7 +113,8 @@ public class ChatWindow extends JFrame implements ActionListener
 		this.setResizable(false);
 		this.setSize(310,210);
 		this.setTitle(user+" - Message");
-		this.setLocation(300,300);
+		System.out.println(x + " " + y);
+		this.setLocation(500 + x, 400 + y);
 
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e)

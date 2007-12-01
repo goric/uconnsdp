@@ -1,6 +1,7 @@
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.EventObject;
@@ -20,9 +21,11 @@ public class LogIn extends JFrame implements ActionListener
 	private JTextField userfield;
 	private JPasswordField passfield;
 	private JButton logbutton, qbutton;
-	private JLabel userlab, passlab;
+	private JLabel userlab, passlab, link;
 	private Container container;
 	public static Client thisclient = new Client();
+	String url;
+	Color rc;
 	
 	public LogIn (Client client)
 	{
@@ -39,6 +42,8 @@ public class LogIn extends JFrame implements ActionListener
 		userfield = new JTextField(9);
 		passfield = new JPasswordField(9);
 		logbutton = new JButton("Login");
+		link = new HyperLinkLabel("www.chatterim.com", null,
+		"http://www.chatterim.com");
 		logbutton.setActionCommand("log");
 		logbutton.setMnemonic(KeyEvent.VK_ENTER);
 		qbutton = new JButton("Quit");
@@ -63,15 +68,17 @@ public class LogIn extends JFrame implements ActionListener
         layout.putConstraint(SpringLayout.NORTH, passfield, 105, SpringLayout.NORTH, container);
         layout.putConstraint(SpringLayout.EAST, passfield, -80, SpringLayout.EAST, container);
         layout.putConstraint(SpringLayout.NORTH, userlab, 85, SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, userlab, 80, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.WEST, userlab, 95, SpringLayout.WEST, container);
         layout.putConstraint(SpringLayout.NORTH, passlab, 85, SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.EAST, passlab, -120, SpringLayout.EAST, container);
+        layout.putConstraint(SpringLayout.EAST, passlab, -105, SpringLayout.EAST, container);
         layout.putConstraint(SpringLayout.NORTH, logbutton, 135, SpringLayout.NORTH, container);
         layout.putConstraint(SpringLayout.EAST, logbutton, -108, SpringLayout.EAST, container);
         layout.putConstraint(SpringLayout.NORTH, qbutton, 135, SpringLayout.NORTH, container);
         layout.putConstraint(SpringLayout.WEST, qbutton, 108, SpringLayout.WEST, container);
         layout.putConstraint(SpringLayout.NORTH, logo, 10, SpringLayout.NORTH, container);
         layout.putConstraint(SpringLayout.WEST, logo, 10, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, link, 175, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, link, 130, SpringLayout.WEST, container);
 		container.add(userlab);
 		container.add(passlab);
 		container.add(userfield);
@@ -79,24 +86,39 @@ public class LogIn extends JFrame implements ActionListener
 		container.add(logbutton);
 		container.add(qbutton);
 		container.add(logo);
-		
+		container.add(link);
 		userfield.addActionListener(this);
 		passfield.addActionListener(this);
 		logbutton.addActionListener(this);
 		qbutton.addActionListener(this);
 		
 		this.setTitle("Welcome to Chatter");
-		this.setSize(390,200);
+		this.setSize(390,230);
 		this.setResizable(false);
 		this.setLocation(400,200);
 		this.setVisible(true);
+		passfield.addKeyListener(new KeyAdapter() 
+		{
+			public void keyPressed(KeyEvent ke)
+			{
+				if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) 
+				{
+					quit();
+				} else if(ke.getKeyCode() == KeyEvent.VK_ENTER) 
+				{
+		        	username = userfield.getText();
+		        	password = new String(passfield.getPassword());
+					authenticatelogin();
+				}
+			}
+		});
 	}
 	
     protected void quit() {
-    	System.out.println("Program Terminated by User");
+    	System.out.println("Program Terminated by User in LogIn");
         System.exit(0);
     }
-	
+    
 	public void actionPerformed(ActionEvent e)
 	{
 		if ("log".contentEquals(e.getActionCommand())) 
@@ -112,7 +134,6 @@ public class LogIn extends JFrame implements ActionListener
         } 
         else
         {
-        	quit();
         }
 		this.setVisible(false);
 	}

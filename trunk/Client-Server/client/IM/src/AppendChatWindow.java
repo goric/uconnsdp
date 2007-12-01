@@ -63,4 +63,18 @@ public class AppendChatWindow {
 		window.recv.setCaretPosition(window.recv.getDocument().getLength());
 	 	} catch(Exception e){}
 	}
+	public static void appendData4(String user,String str, OneToMany window)
+	{
+		if(user != null) {
+				str ="<FONT COLOR='black' STYLE='font-size:10pt;font-family:Arial'><B>"+"SystemOP"+": </B></FONT><FONT STYLE='font-size:10pt;font-family:Arial'>"+str;
+
+		}
+		str+="</FONT>";//Line break
+
+		try {
+		((HTMLEditorKit)window.recv.getEditorKit()).read(new java.io.StringReader(str),
+				window.recv.getDocument(), window.recv.getDocument().getLength());
+		window.recv.setCaretPosition(window.recv.getDocument().getLength());
+	 	} catch(Exception e){}
+	}
 }

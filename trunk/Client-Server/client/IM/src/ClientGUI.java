@@ -43,7 +43,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		menu1 = new JMenu("File");
 		quitmenu = new JMenuItem("Quit");
 		menu1.add(quitmenu);
-		menu.add(menu1);;
+		menu.add(menu1);
 		optbutton = new JButton("Options");
 		manbutton = new JButton("Manage");
 		optbutton.setActionCommand("opt");
@@ -63,7 +63,6 @@ public class ClientGUI extends JFrame implements ActionListener {
 				 SpringLayout.WEST, container);
 		container.add(optbutton);
 		container.add(manbutton);
-		container.add(logo);
 		while(rflag == true){
 		
 		if ((Client.anythingMessage2[0].contentEquals("02")) && (pflag == true))
@@ -115,8 +114,8 @@ public class ClientGUI extends JFrame implements ActionListener {
 		synchronized(frameTable) {
 				dialog = (ChatWindow) frameTable.get(user);
 				if(dialog == null) {
-					dialog = new ChatWindow(user, 15*chat_counter, 15*chat_counter);
-					dialog.setLocation(500, 500);
+					dialog = new ChatWindow(user, 25*chat_counter, 25*chat_counter);
+					//dialog.setLocation(500, 500);
 					frameTable.put(user,dialog);
 			    	chat_counter++;
 				}
@@ -127,7 +126,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 	{
 		UserInfo dialog ;
 		dialog = new UserInfo(user);
-		dialog.setLocation(200, 700);
+		dialog.setLocation(500, 400);
 	}
 
     public static void createNotesFrame(String user)
