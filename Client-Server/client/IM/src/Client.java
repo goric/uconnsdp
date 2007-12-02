@@ -140,6 +140,25 @@ public void GetMessageFromServer()
 		String chatname = anythingMessage[3];
 		ChatName.RespondtoInvite(inviter,chatname);
 	}
+	else if (anythingMessage[0].contentEquals("10"))
+	{
+		filetran = anythingMessage;
+		RecieveFile rf = new RecieveFile();
+		try {rf.RecieveFile();}
+		catch (IOException ioe){};	
+	}
+	else if (anythingMessage[0].contentEquals("11"))
+	{
+		userInfoArray = anythingMessage;
+		String user = new String(userInfoArray[2]);
+		UserInfo userinfo = new UserInfo(user);
+	}
+	else if (anythingMessage[0].contentEquals("15"))
+	{
+		String theUser = anythingMessage[2];
+		commonArray = anythingMessage;
+		CommonContacts newCommon = new CommonContacts(theUser);
+	}
 	else if (anythingMessage[0].contentEquals("16")  || anythingMessage[0].contentEquals("17") || anythingMessage[0].contentEquals("20") || anythingMessage[0].contentEquals("21"))
 	{
 		if(anythingMessage[1].contentEquals(LogIn.username))
@@ -157,58 +176,6 @@ public void GetMessageFromServer()
 		String temp = "02 " + LogIn.username;
 		LogIn.thisclient.SendMessage(temp);
 	}
-	else if (anythingMessage[0].contentEquals("24"))
-	{
-		tehMessage = "";
-		incomingArray = anythingMessage;
-		String fromUser = incomingArray[2];
-		if (!(fromUser.contentEquals(LogIn.username)))
-		{
-        String msg_length = incomingArray[3];
-        int p = Integer.valueOf(msg_length).intValue();
-        p = p + 4;
-        for (int i = 4; i < p; i++)
-        {
-        	tehMessage = tehMessage + " " + anythingMessage[i];
-        }
-		String toUser = anythingMessage[2];
-		AppendChatWindow.appendData3(toUser, tehMessage, true,(OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname) );
-		}
-	}
-	else if (anythingMessage[0].contentEquals("15"))
-	{
-		String theUser = anythingMessage[2];
-		commonArray = anythingMessage;
-		CommonContacts newCommon = new CommonContacts(theUser);
-	}
-	else if (anythingMessage[0].contentEquals("10"))
-	{
-		filetran = anythingMessage;
-		RecieveFile rf = new RecieveFile();
-		try {rf.RecieveFile();}
-		catch (IOException ioe){};	
-	}
-	else if (anythingMessage[0].contentEquals("11"))
-	{
-		userInfoArray = anythingMessage;
-		String user = new String(userInfoArray[2]);
-		UserInfo userinfo = new UserInfo(user);
-	}
-	else if (anythingMessage[0].contentEquals("25"))
-	{
-		String user = anythingMessage[1];
-		String chatname = anythingMessage[2];
-		String str = user + " has joined " + chatname;
-		AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname));
-	}
-	else if (anythingMessage[0].contentEquals("28"))
-	{
-		userInfoArray = anythingMessage;
-		EditProfile editpro = new EditProfile();
-	}
-	
-	
-	//Client sends: [22][FromUser][ToUser][accept/reject][public key (if accepting)]
 	else if (anythingMessage[0].contentEquals("22"))
 	{
 		filetran2 = anythingMessage;
@@ -238,6 +205,43 @@ public void GetMessageFromServer()
 		}
 		//PopOptions.f.wait=true;
 		//System.out.println("yay " + filetran2[3]);
+	}
+	else if (anythingMessage[0].contentEquals("24"))
+	{
+		tehMessage = "";
+		incomingArray = anythingMessage;
+		String fromUser = incomingArray[2];
+		if (!(fromUser.contentEquals(LogIn.username)))
+		{
+        String msg_length = incomingArray[3];
+        int p = Integer.valueOf(msg_length).intValue();
+        p = p + 4;
+        for (int i = 4; i < p; i++)
+        {
+        	tehMessage = tehMessage + " " + anythingMessage[i];
+        }
+		String toUser = anythingMessage[2];
+		AppendChatWindow.appendData3(toUser, tehMessage, true,(OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname) );
+		}
+	}
+	else if (anythingMessage[0].contentEquals("25"))
+	{
+		String user = anythingMessage[1];
+		String chatname = anythingMessage[2];
+		String str = user + " has joined " + chatname;
+		AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname));
+	}
+	else if (anythingMessage[0].contentEquals("26"))
+	{
+		String user = anythingMessage[1];
+		String chatname = anythingMessage[2];
+		String str = user + " has left " + chatname;
+		AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname));
+	}
+	else if (anythingMessage[0].contentEquals("28"))
+	{
+		userInfoArray = anythingMessage;
+		EditProfile editpro = new EditProfile();
 	}
 	else
 	{
