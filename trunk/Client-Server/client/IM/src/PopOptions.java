@@ -16,13 +16,12 @@ public class PopOptions extends JFrame implements ActionListener
 	public static boolean time_flag = true, reg_flag = true, status_flag = true;
 	
 	
-	public PopOptions (JFrame aframe)
+	public PopOptions ()
 	{
-	//	super (aframe, "Options", true);
-		OptionsFrame(aframe);
+		OptionsFrame();
 	}
 	
-	private void OptionsFrame(JFrame aframe)
+	private void OptionsFrame()
 	{
 		SpringLayout layout = new SpringLayout();
 		container = this.getContentPane();

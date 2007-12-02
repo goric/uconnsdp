@@ -20,6 +20,7 @@ public class ChatName extends JDialog implements ActionListener
 	static int cancel,n;
 	static JTextField chatname2;
 	static String staticname;
+	String[] emptyArray;
 	
 	public ChatName (String user2)
 	{
@@ -99,7 +100,6 @@ public class ChatName extends JDialog implements ActionListener
 	    	    JOptionPane.YES_NO_OPTION);
 	    if (n == 0)
 	    {
-	    	createInvitedFrame(thechatname);
 	    	String temp = "23 " + inviter + " " + LogIn.username + " " + thechatname + " accept";
 	    	LogIn.thisclient.SendMessage(temp);
 	    }	
@@ -109,29 +109,34 @@ public class ChatName extends JDialog implements ActionListener
 	    }
     }
     
-    public static void createConFrame()
-    {
-    	String instancename = "LogIn.username" + i; 
+    public static void createConFrame(String instancename)
+    { 
+    	System.out.println("i got here");
+    	String[] emptyArray = new String[6];
+    	emptyArray[0] = "0";
+    	emptyArray[1] = "0";
+    	emptyArray[2] = "0";
+    	emptyArray[3] = "0";
+    	emptyArray[4] = "0";
+    	emptyArray[5] = "0";
     	OneToMany dialog ;
     	synchronized(onetomanyTable)
     	{
     		dialog = (OneToMany) onetomanyTable.get(instancename);
     		if(dialog == null)
     		{
-    			dialog = new OneToMany(instancename);
+    			dialog = new OneToMany(emptyArray, instancename);
     			dialog.setLocation(500,400);
     			onetomanyTable.put(instancename,dialog);
-    			i++;
     		}
     		else
     		{
-    			i++;
-    			createConFrame();
+    			
     		}
     	}
     }
     
-    public static void createInvitedFrame(String thechatname)
+    public static void createInvitedFrame(String[] memberArray, String thechatname)
     {
     	OneToMany dialog ;
     	synchronized(onetomanyTable)
@@ -139,7 +144,7 @@ public class ChatName extends JDialog implements ActionListener
     		dialog = (OneToMany) onetomanyTable.get(thechatname);
     		if(dialog == null)
     		{
-    			dialog = new OneToMany(thechatname);
+    			dialog = new OneToMany(memberArray, thechatname);
     			dialog.setLocation(500,400);
     			onetomanyTable.put(thechatname,dialog);
     		}
@@ -154,32 +159,29 @@ public class ChatName extends JDialog implements ActionListener
 	{
 		if ("add".contentEquals(e.getActionCommand())) 
 		{
-        	System.out.println("Creating Chat Instance");
 	    	instancename = chatfield.getText(); 
-	    	System.out.println(chatfield.getText());
-	    	OneToMany dialog ;
-	    	synchronized(onetomanyTable)
-	    	{
-	    		dialog = (OneToMany) onetomanyTable.get(instancename);
-	    		if(dialog == null)
-	    		{
-	    			dialog = new OneToMany(instancename);
-	    			dialog.setLocation(500,400);
-	    			onetomanyTable.put(instancename,dialog);
-	    			staticname = instancename;
+	    //	OneToMany dialog ;
+	    //	synchronized(onetomanyTable)
+	    //	{
+	    	//	dialog = (OneToMany) onetomanyTable.get(instancename);
+	    //	if(dialog == null)
+	    	//	{
+	    			//dialog = new OneToMany(instancename);
+	    //			dialog.setLocation(500,400);
+	    //			onetomanyTable.put(instancename,dialog);
+	    //			staticname = instancename;
 	    			String temp = "05 " + LogIn.username + " " + user2 + " " + instancename;
-	    			System.out.println(temp);
 	    			LogIn.thisclient.SendMessage(temp);
 	    			this.setVisible(false);
-	    		}
-	    		else
-	    		{
-	    	    	instancename = chatfield.getText();
-	    			String temp = "05 " + LogIn.username + " " + user2 + " " + instancename;
-	    			System.out.println(temp);
-	    			LogIn.thisclient.SendMessage(temp);
-	    		}
-	    	}
+	    //		}
+	    //		else
+	    //		{
+	    //	    	instancename = chatfield.getText();
+	   // 			String temp = "05 " + LogIn.username + " " + user2 + " " + instancename;
+	   // 			System.out.println(temp);
+	   // 			LogIn.thisclient.SendMessage(temp);
+	   // 		}
+	   // 	}
 			
         } 
         else if ("can".contentEquals(e.getActionCommand()))

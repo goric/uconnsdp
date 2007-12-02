@@ -12,19 +12,22 @@ public class OneToMany extends JFrame implements ActionListener
 	private OneToMany thisframe;
 	private Container container;
 	public JEditorPane recv;
-	private JTextArea type;
+	private JTextArea type, members;
 	private JButton send;
-	public static String chatname;
+	public String chatname;
+	public static String chatnameblah = "chizat";
 	private Timer timer=null;
 	boolean isFocused = false;
+	private String[] array;
 
-	public OneToMany(String instancename)
+	public OneToMany(String[] array, String instancename)
 	{
 		this.chatname = instancename;
-		initAwtContainer();
+		this.array = array;
+		OneToManyFrame(array);
 	}
 
-	public void initAwtContainer()
+	public void OneToManyFrame(String[] array)
 	{
 		thisframe = this;
 		container= this.getContentPane();
@@ -38,23 +41,28 @@ public class OneToMany extends JFrame implements ActionListener
 			= new JScrollPane(recv,
 					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		pane.setBounds(10,10,290,100);
+		pane.setBounds(10,10,290,230);
 
 		type = new JTextArea();
 		type.setFont(new Font("Arial",Font.PLAIN,11));
 		type.setLineWrap(true);
-
+		members = new JTextArea();
+		members.setEditable(false);
 		JScrollPane typepane
 			= new JScrollPane(type,
 					JScrollPane.VERTICAL_SCROLLBAR_NEVER,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		typepane.setBounds(10,120,220,50);
-
-
+		typepane.setBounds(10,250,210,22);
+		JScrollPane memberpane
+		= new JScrollPane(members,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		memberpane.setBounds(310,10,130,260);
 		send = new JButton("Send");
-		send.setBounds(235,120,65,50);
+		send.setBounds(235,250,65,22);
 		send.addActionListener(this);
-
+		appendMembers(array);
+		container.add(memberpane);
 		container.add(pane);
 		container.add(typepane);
 		container.add(send);
@@ -64,17 +72,18 @@ public class OneToMany extends JFrame implements ActionListener
 			{
 				if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					setVisible(false);
-				//	ClientGUI.removeFrame(chatname);
+					ClientGUI.removeFrame(chatname);
 				} else if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
+					if(type.getText().length() == 0) return;
+					AppendChatWindow.appendData3(LogIn.username,type.getText(),false, (OneToMany)ChatName.onetomanyTable.get(chatname));
+					String str = type.getText();
 					try {
-						Client myclient = new Client();
-						String temp = "03 " + LogIn.username + " " + chatname + " " + "boob";
-						System.out.println(temp);
-						myclient.SendMessage(temp);
+						String temp = "08 " + LogIn.username + " " + chatname + " " + str;
+						LogIn.thisclient.SendMessage(temp);
 					}
 					catch(Exception e) {
-						JOptionPane.showMessageDialog(container, "DOH!", "Error", JOptionPane.ERROR_MESSAGE);
-						}
+						System.out.println("Error sending message");
+					}
 					type.setText("");
 				}
 			}
@@ -111,7 +120,7 @@ public class OneToMany extends JFrame implements ActionListener
 		});
 
 		this.setResizable(false);
-		this.setSize(310,210);
+		this.setSize(450,310);
 		this.setTitle(chatname+" - " + LogIn.username);
 		this.setLocation(300,300);
 
@@ -120,7 +129,10 @@ public class OneToMany extends JFrame implements ActionListener
 			{
 				setVisible(false);
 				if(timer != null) timer.stop();
-				//ClientGUI.removeFrame(user);
+				ClientGUI.removeFrame(chatname);
+				String temp = "26 " + LogIn.username + " " + chatname;
+				LogIn.thisclient.SendMessage(temp);
+				System.out.println(temp);
 			}
 
 			public void windowActivated(WindowEvent ae) {
@@ -139,6 +151,31 @@ public class OneToMany extends JFrame implements ActionListener
 		this.setVisible(true);
 		type.requestFocus();
 		isFocused = false;
+	}
+	public void appendMember(String user)
+	{
+		String prevMem = members.getText();
+		members.setText(prevMem + user + "\n");
+	}
+	
+	public void removeMember(String user)
+	{
+		String all_members = members.getText();
+		all_members.replace(user, "");
+	}
+	public void appendMembers(String[] memberArray)
+	{
+		String addMem = "";
+		String prevMem = "";
+		String member_count = memberArray[3];
+		int imember_count = Integer.parseInt(member_count.trim());
+		for (int i = 0; i < imember_count; i++)
+		{
+			System.out.println("i got to append");
+			addMem = memberArray[i+4];
+			prevMem = members.getText();
+			members.setText(prevMem + addMem + "\n");
+		}
 	}
 
 	public void actionPerformed(ActionEvent event)

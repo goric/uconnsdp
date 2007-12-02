@@ -3,6 +3,7 @@ import javax.swing.*;
 
 import java.awt.event.*;
 import java.util.EventObject;
+import java.util.Hashtable;
 import java.io.*;
 
 public class PopManage extends JFrame implements ActionListener
@@ -14,6 +15,7 @@ public class PopManage extends JFrame implements ActionListener
 	JTextField userfield;
 	JButton subbutton, canbutton;
 	private static Container container2;
+	public static Hashtable buddyTable = new Hashtable();
 	
 	public PopManage (Point x)
 	{
@@ -40,13 +42,20 @@ public class PopManage extends JFrame implements ActionListener
 		container.add(addcon);
 		container.add(removecon);
 		container.add(ret);
-		UserList thislist = new UserList(this);
-        layout.putConstraint(SpringLayout.WEST, thislist, 20, SpringLayout.WEST, container);
-		container.add(thislist);
+		String instancename = LogIn.username;
+		UserList contacts;
+		contacts = (UserList) buddyTable.get(instancename);
+		if(contacts == null)
+		{
+			contacts = new UserList(this);
+			
+		buddyTable.put(instancename,contacts);
+		}
+        layout.putConstraint(SpringLayout.WEST, contacts, 20, SpringLayout.WEST, container);
+		container.add(contacts);
 		addcon.addActionListener(this);
 		removecon.addActionListener(this);
 		ret.addActionListener(this);
-		container2 = this;
 		this.setSize(220,420);
 		this.setResizable(false);
 		this.setLocation(x);
@@ -78,16 +87,9 @@ public class PopManage extends JFrame implements ActionListener
         	quit();
         }
 	}
-	public static void reload()
-	{
-		Point y = container2.getLocation();
-		container2.setVisible(false);
-		PopManage man = new PopManage(y);	
-	}
 	public void addContact()
 	{
 		ShowAdd();
-
 	}
 	public void removeContact()
 	{

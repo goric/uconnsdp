@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
-
+import javax.swing.text.*;
 import javax.swing.JTree;
 import javax.swing.tree.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -25,12 +25,12 @@ import javax.swing.tree.*;
 
 public class OnlineTree extends JPanel implements ActionListener {
 	
-    private static JTree otree;
+    private JTree otree;
     private static boolean DEBUG = false;
     public static DefaultMutableTreeNode otoop;
     private ClientGUI frame;
     private UserList frame2;
-    private static DefaultTreeModel otreeModel;
+    private DefaultTreeModel otreeModel;
     private Hashtable nodeTable = new Hashtable();
     String[] oThisBuddyArray;
     public ArrayList<String> OnlineList = new ArrayList<String>();
@@ -92,20 +92,24 @@ public class OnlineTree extends JPanel implements ActionListener {
 		scrollpane.setPreferredSize(new Dimension(200,100));
 		this.add(scrollpane);
     }
-    
-    public static void refreshIt(String user)
+
+
+    public void addUser(String user)
     {
         DefaultMutableTreeNode tehuser = null;
-    	tehuser = new DefaultMutableTreeNode(new String
-            	(user));
+    	tehuser = new DefaultMutableTreeNode(new String(user));
            	otoop.add(tehuser);
     	((DefaultTreeModel)otree.getModel()).reload();
     	otreeModel.reload(tehuser);
-    	ClientGUI.RefreshGUI(otree);
     }
 	public void removeUser(String user)
 	{
-
+	    int startRow = 0;
+	    String prefix = user;
+	    TreePath path = otree.getNextMatch(prefix, startRow, Position.Bias.Forward);
+	    MutableTreeNode node = (MutableTreeNode)path.getLastPathComponent();
+	    otreeModel.removeNodeFromParent(node);
+    	((DefaultTreeModel)otree.getModel()).reload();
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) 
@@ -146,7 +150,7 @@ public class OnlineTree extends JPanel implements ActionListener {
 		menu.show(otree,x,y);
 	}
 
-    public static void refreshit2(JTree tehtree)
+    public void refreshit2(JTree tehtree)
     {
     	((DefaultTreeModel)otree.getModel()).reload();
     }
@@ -195,6 +199,7 @@ class MyMouseAdapter extends MouseAdapter
         p = p + 2;
         for (int i = 3; i < p; i++)
         {
+        	UserList.all_contacts.add(oThisBuddyArray[i]);
         	if ((oThisBuddyArray[i+1].contentEquals("online")) || (oThisBuddyArray[i+1].contentEquals("away")))
         	{
         	String blab = oThisBuddyArray[i];
