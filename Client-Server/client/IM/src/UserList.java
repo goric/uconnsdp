@@ -36,6 +36,7 @@ public class UserList extends JPanel implements ActionListener {
     private JPopupMenu menu;
     private static String user2;
     public static JTree stree;
+    public static ArrayList<String> all_contacts = new ArrayList<String>();
 
     public UserList() {
         this.frame = frame;
@@ -86,6 +87,15 @@ public class UserList extends JPanel implements ActionListener {
     	treeModel.reload(tehuser);
     	ClientGUI.RefreshGUI(tree);
     }*/
+    public void addUser(String user)
+    {
+        DefaultMutableTreeNode tehuser = null;
+    	tehuser = new DefaultMutableTreeNode(new String(user));
+           	toop.add(tehuser);
+    	((DefaultTreeModel)tree.getModel()).reload();
+    	treeModel.reload(tehuser);
+        all_contacts.add(user);
+    }
 	public void removeUser(String user)
 	{
 
@@ -95,7 +105,7 @@ public class UserList extends JPanel implements ActionListener {
 	{
 		if ("info".contentEquals(e.getActionCommand())) 
 		{	
-			String temp = ("28 " + LogIn.username + " " + user2);
+			String temp = ("11 " + LogIn.username + " " + user2);
 			System.out.println(temp);
 			LogIn.thisclient.SendMessage(temp);
         }
@@ -154,6 +164,7 @@ class MyMouseAdapter extends MouseAdapter
         p = p + 3;
         for (int i = 3; i < p; i++)
         {
+        	all_contacts.add(ThisBuddyArray[i]);
         	auser = new DefaultMutableTreeNode(new String
         	(ThisBuddyArray[i]));
         	top.add(auser);

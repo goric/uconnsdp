@@ -1,5 +1,7 @@
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Hashtable;
+import java.awt.Point;
 import java.io.*;
 
 import javax.swing.JOptionPane;
@@ -19,11 +21,13 @@ public static String[] anythingMessage2;
 public static String[] userInfoArray;
 public static String[] commonArray;
 public static String[] incomingArray;
+public static String[] chatListArray;
 private String[] ans;
 public static String[] filetran;
 public static String[] filetran2;
 private int counter;
 private boolean addorremove = false;
+public static boolean validflag = false;
 
 private DataInputStream mDataInStream;
 private DataOutputStream mDataOutStream;
@@ -102,7 +106,19 @@ public void GetMessageFromServer()
 		System.out.println( "Error in Client.GetMessageFromServer: " + e.toString());
 	}
 	anythingMessage = aMessage.split(" ");
-	if (anythingMessage[0].contentEquals("02"))
+	if (anythingMessage[0].contentEquals("01"))
+	{
+		if (!(anythingMessage[2].contentEquals("accepted")))
+		{
+			validflag = false;
+		}
+		else
+		{
+			validflag = true;
+			System.out.println("invalid in client");
+		}
+	}
+	else if (anythingMessage[0].contentEquals("02"))
 	{
 		if (counter == 0)
 		{
@@ -116,9 +132,8 @@ public void GetMessageFromServer()
 		buddyarray = anythingMessage;
 		if (addorremove == true)
 		{
-			PopManage.reload();
 		}
-		ClientGUI.giveitawhirl();
+		
 		}
 	}
 	else if (anythingMessage[0].contentEquals("04"))
@@ -133,6 +148,15 @@ public void GetMessageFromServer()
 		String user = anythingMessage[2];
 		ClientGUI.createFrame(user);	
 		AppendChatWindow.appendData2(user, tehMessage, false,(ChatWindow)ClientGUI.frameTable.get(user) );
+	}
+	else if (anythingMessage[0].contentEquals("05"))
+	{
+		if (anythingMessage[3].contentEquals("successful"))
+		{
+			String chatname = anythingMessage[2];
+			ChatName.createConFrame(chatname);
+		}
+		
 	}
 	else if (anythingMessage[0].contentEquals("07"))
 	{
@@ -159,22 +183,51 @@ public void GetMessageFromServer()
 		commonArray = anythingMessage;
 		CommonContacts newCommon = new CommonContacts(theUser);
 	}
-	else if (anythingMessage[0].contentEquals("16")  || anythingMessage[0].contentEquals("17") || anythingMessage[0].contentEquals("20") || anythingMessage[0].contentEquals("21"))
+	else if(anythingMessage[0].contentEquals("16"))
 	{
-		if(anythingMessage[1].contentEquals(LogIn.username))
-	{
-
-	}
-		if (anythingMessage[0].contentEquals("20") || anythingMessage[0].contentEquals("21"))
+		String user = anythingMessage[1];
+		for (int i = 0; i < UserList.all_contacts.size(); i++)
 		{
-			addorremove = true;
+			System.out.println(i + " " + UserList.all_contacts.get(i));
+		}
+		if (UserList.all_contacts.contains(user) == true)
+		{
+		OnlineTree thisone = (OnlineTree)ClientGUI.buddyTable.get(LogIn.username);
+		thisone.addUser(user);
 		}
 		else
 		{
-			addorremove = false;
+			System.out.println("who the fuck cares");
 		}
-		String temp = "02 " + LogIn.username;
-		LogIn.thisclient.SendMessage(temp);
+	}
+	else if(anythingMessage[0].contentEquals("17"))
+	{
+		String user = anythingMessage[1];
+		OnlineTree thisone = (OnlineTree)ClientGUI.buddyTable.get(LogIn.username);
+		thisone.removeUser(user);
+	}
+	else if (anythingMessage[0].contentEquals("20"))
+	{
+		if (!(anythingMessage[3].contentEquals("error")))
+		{
+		if (anythingMessage[3].contentEquals("online") || anythingMessage[3].contentEquals("away") || anythingMessage[3].contentEquals("dnd")) 
+		{
+		String user = anythingMessage[2];
+		UserList thisone = (UserList)PopManage.buddyTable.get(LogIn.username);
+		thisone.addUser(user);
+		OnlineTree onlinetree = (OnlineTree)ClientGUI.buddyTable.get(LogIn.username);
+		onlinetree.addUser(user);
+		//String temp = "02 " + LogIn.username;
+		//LogIn.thisclient.SendMessage(temp);
+		}
+		else if (anythingMessage[3].contentEquals("offline"))
+		{
+			String user = anythingMessage[2];
+			UserList thisone = (UserList)PopManage.buddyTable.get(LogIn.username);
+			thisone.addUser(user);
+			System.out.println("added but offline");
+		}
+		}
 	}
 	else if (anythingMessage[0].contentEquals("22"))
 	{
@@ -221,7 +274,7 @@ public void GetMessageFromServer()
         	tehMessage = tehMessage + " " + anythingMessage[i];
         }
 		String toUser = anythingMessage[2];
-		AppendChatWindow.appendData3(toUser, tehMessage, true,(OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname) );
+		AppendChatWindow.appendData3(toUser, tehMessage, true,(OneToMany)ChatName.onetomanyTable.get(OneToMany.chatnameblah) );
 		}
 	}
 	else if (anythingMessage[0].contentEquals("25"))
@@ -229,19 +282,35 @@ public void GetMessageFromServer()
 		String user = anythingMessage[1];
 		String chatname = anythingMessage[2];
 		String str = user + " has joined " + chatname;
-		AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname));
+		if (user.contentEquals(LogIn.username))
+		{
+		}
+		else
+		{
+			AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(chatname));
+			OneToMany thisone = (OneToMany)ChatName.onetomanyTable.get(chatname);
+			thisone.appendMember(user);
+		}
 	}
 	else if (anythingMessage[0].contentEquals("26"))
 	{
 		String user = anythingMessage[1];
 		String chatname = anythingMessage[2];
 		String str = user + " has left " + chatname;
-		AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(OneToMany.chatname));
+		AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(chatname));
+		OneToMany thisone = (OneToMany)ChatName.onetomanyTable.get(chatname);
+		thisone.removeMember(user);
 	}
 	else if (anythingMessage[0].contentEquals("28"))
 	{
 		userInfoArray = anythingMessage;
 		EditProfile editpro = new EditProfile();
+	}
+	else if (anythingMessage[0].contentEquals("29"))
+	{
+		chatListArray = anythingMessage;
+		String chatname = chatListArray[2];
+		ChatName.createInvitedFrame(chatListArray, chatname);
 	}
 	else
 	{

@@ -23,7 +23,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 	private JLabel logo;
 	public static boolean rflag = true, pflag = true;
 	public static Hashtable frameTable = new Hashtable();
-    private static DefaultMutableTreeNode poop;
+	public static Hashtable buddyTable = new Hashtable();
     public static int i = 0;
     private static int chat_counter = 0;
     private Image image;
@@ -34,8 +34,6 @@ public class ClientGUI extends JFrame implements ActionListener {
 	}
 	public void MainWin(Point x)
 	{
-		rflag = true;
-		pflag = true;
 		container = this.getContentPane();
 		SpringLayout layout = new SpringLayout();
 		container.setLayout(layout);
@@ -67,42 +65,32 @@ public class ClientGUI extends JFrame implements ActionListener {
 		
 		if ((Client.anythingMessage2[0].contentEquals("02")) && (pflag == true))
 		{
-			OnlineTree contacts = new OnlineTree(this);
+			String instancename = LogIn.username;
+			OnlineTree contacts;
+    		contacts = (OnlineTree) buddyTable.get(instancename);
+    		if(contacts == null)
+    		{
+    			contacts = new OnlineTree(this);
+    			
+    		buddyTable.put(instancename,contacts);
 			container.add(contacts);
 			pflag = false;
 			rflag = false;
+    		}
+    		rflag = false;
 		}
 		}
-		
 		optbutton.addActionListener(this);
 		manbutton.addActionListener(this);
 		quitmenu.addActionListener(this);
-		container2 = container;
-		container2 = this;
 		this.setJMenuBar(menu);
 		this.setSize(225, 400);
 		this.setLocation(x);
 		this.setVisible(true);
 		this.setResizable(false);
 		this.setTitle("/dance " + LogIn.username + " dance");
-	}
+		}
 	
-	public static void giveitawhirl()
-	{
-		Point x = container2.getLocation();
-		container2.setVisible(false);
-		ClientGUI gui = new ClientGUI(x);
-	}
-
-	public static void giveitawhirl2()
-	{
-		container2.setVisible(false);
-	}
-	
-    public static void RefreshGUI(JTree tree)
-    {
-  	((DefaultTreeModel)tree.getModel()).reload();
-    }
     protected void quit() {
     	System.out.println("Program Terminated by User");
         System.exit(0);
@@ -135,10 +123,6 @@ public class ClientGUI extends JFrame implements ActionListener {
 		dialog = new UserNotes(user);
 		dialog.setLocation(600, 500);
 	}
-    
-
-		
-	
 
     public static void removeFrame(String user)
     {
@@ -156,7 +140,6 @@ public class ClientGUI extends JFrame implements ActionListener {
         } 
         else if ("man".contentEquals(e.getActionCommand()))
         {
-        	System.out.println("i got here");
         	popManage();
         }
 		else if ("quit".contentEquals(e.getActionCommand()))
@@ -172,7 +155,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 	
     public void popOptions()
     {
-    	PopOptions dialog = new PopOptions(this);
+    	PopOptions dialog = new PopOptions();
     }
     
     public void popManage()

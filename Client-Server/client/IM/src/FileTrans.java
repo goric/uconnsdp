@@ -14,7 +14,7 @@ import java.util.*;
 import java.security.*;
 import javax.crypto.*;
 
-public class FileTrans extends JDialog implements ActionListener
+public class FileTrans extends JDialog implements ActionListener, Runnable
 {
 	private JLabel descript, user;
 	private Container container;
@@ -22,15 +22,23 @@ public class FileTrans extends JDialog implements ActionListener
 	private JTextField fn, un;
 	private JFileChooser fc;
 	private File file;
-	public static boolean wait, go;
-	public static Socket sock;
-	public static ServerSocket servsock;
+	public boolean wait, go;
+	public Socket sock;
+	public ServerSocket servsock;
 	public ProgMonitor p ;
 	
 	public FileTrans (JFrame aframe)
 	{
 		super (aframe, "File Transfer", true);
+		
+		Thread aThread = new Thread(this);
+		aThread.start();
+		
 		FileFrame(aframe);
+	}
+	
+	public void run()
+	{
 	}
 	
 	private void FileFrame(JFrame aframe)
@@ -336,5 +344,4 @@ public class FileTrans extends JDialog implements ActionListener
 	public void set(int off, int sent){
 		p.setprog(off, sent);
 	}
-	
 }

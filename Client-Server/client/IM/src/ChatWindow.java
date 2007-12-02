@@ -110,7 +110,7 @@ public class ChatWindow extends JFrame implements ActionListener
 			}
 		});
 
-		this.setResizable(false);
+		this.setResizable(true);
 		this.setSize(310,210);
 		this.setTitle(user+" - Message");
 		System.out.println(x + " " + y);

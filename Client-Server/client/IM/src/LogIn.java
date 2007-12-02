@@ -1,19 +1,11 @@
 import java.awt.*;
-import javax.swing.*;
+
 import javax.swing.*;
 
-import java.awt.*;
 import java.awt.event.*;
-import java.util.EventObject;
-import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.math.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 
 public class LogIn extends JFrame implements ActionListener
 {
@@ -23,9 +15,8 @@ public class LogIn extends JFrame implements ActionListener
 	private JButton logbutton, qbutton;
 	private JLabel userlab, passlab, link;
 	private Container container;
+	private static Container scontainer;
 	public static Client thisclient = new Client();
-	String url;
-	Color rc;
 	
 	public LogIn (Client client)
 	{
@@ -42,27 +33,22 @@ public class LogIn extends JFrame implements ActionListener
 		userfield = new JTextField(9);
 		passfield = new JPasswordField(9);
 		logbutton = new JButton("Login");
-		link = new HyperLinkLabel("www.chatterim.com", null,
-		"http://www.chatterim.com");
+		link = new HyperLinkLabel("www.chatterim.com", null, "http://www.chatterim.com");
 		logbutton.setActionCommand("log");
 		logbutton.setMnemonic(KeyEvent.VK_ENTER);
 		qbutton = new JButton("Quit");
 		qbutton.setActionCommand("quit");
 		ImageIcon icon = new ImageIcon("logo.jpg");
 		JLabel logo = new JLabel(icon);
-		SpringLayout.Constraints okCst =
-			layout.getConstraints(qbutton);
-			okCst.setX(Spring.constant(10));
-			okCst.setY(Spring.constant(5));
-			SpringLayout.Constraints cancelCst =
-				layout.getConstraints(logbutton);
-				cancelCst.setX(Spring.constant(10));
-				cancelCst.setY(Spring.constant(5));
-			Spring widthSpring = Spring.max(
-					okCst.getWidth(),
-					cancelCst.getWidth());
-					okCst.setWidth(widthSpring);
-					cancelCst.setWidth(widthSpring);
+		SpringLayout.Constraints quitCst = layout.getConstraints(qbutton);
+		quitCst.setX(Spring.constant(10));
+		quitCst.setY(Spring.constant(5));
+		SpringLayout.Constraints logCst = layout.getConstraints(logbutton);
+		logCst.setX(Spring.constant(10));
+		logCst.setY(Spring.constant(5));
+		Spring widthSpring = Spring.max(quitCst.getWidth(), logCst.getWidth());
+		quitCst.setWidth(widthSpring);
+		logCst.setWidth(widthSpring);
         layout.putConstraint(SpringLayout.NORTH, userfield, 105, SpringLayout.NORTH, container);
         layout.putConstraint(SpringLayout.WEST, userfield, 80, SpringLayout.WEST, container);    
         layout.putConstraint(SpringLayout.NORTH, passfield, 105, SpringLayout.NORTH, container);
@@ -87,6 +73,7 @@ public class LogIn extends JFrame implements ActionListener
 		container.add(qbutton);
 		container.add(logo);
 		container.add(link);
+		scontainer = this;
 		userfield.addActionListener(this);
 		passfield.addActionListener(this);
 		logbutton.addActionListener(this);
@@ -125,17 +112,12 @@ public class LogIn extends JFrame implements ActionListener
 		{
         	username = userfield.getText();
         	password = new String(passfield.getPassword());
-        	System.out.print("the username is: ");
-        	System.out.println(username);
-        	System.out.print("the password is: ");
-        	System.out.println(password);
         	authenticatelogin();
-        	
         } 
-        else
+        else if ("quit".contentEquals(e.getActionCommand()))
         {
+        	quit();
         }
-		this.setVisible(false);
 	}
 	
 	private static String convertToHex(byte[] data) {
@@ -188,10 +170,38 @@ public class LogIn extends JFrame implements ActionListener
 		String ipsend = Client.ip;
 		String temp = "01 " + username + " " + hashpass + " " + ipsend;
 		thisclient.SendMessage(temp);
+		while (!(Client.anythingMessage[0].contentEquals("01")))
+		{
+		}
+		//System.out.println(Client.anythingMessage[0]);
+		try {
+		       Thread.currentThread().sleep(10);
+		       }
+		     catch (InterruptedException e) {
+		       e.printStackTrace();
+		       }
+		if (Client.validflag == true)
+		{
+		System.out.println("sdaf " + Client.anythingMessage[0]);
 		temp = "02 " + username;
 		thisclient.SendMessage(temp);
+		this.setVisible(false);
 		Point p = new Point(200,300);
 		ClientGUI gui = new ClientGUI(p);
+		}
+		else
+		{
+			invalidLog();
+		}
+	}
+	public void invalidLog()
+	{
+		JOptionPane.showMessageDialog(container,"Invalid LogIn Information\n Please Try Again", "Error",JOptionPane.ERROR_MESSAGE); 
+		userfield.setText("");
+		username = "";
+		passfield.setText("");
+		password = "";
+		Client.anythingMessage[0] = "00";
 	}
 	}
 
