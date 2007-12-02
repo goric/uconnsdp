@@ -3,7 +3,7 @@ import java.io.*;
 import javax.swing.*;
 
 
-public class ProgMonitor extends JFrame{
+public class ProgMonitor extends JFrame implements Runnable{
 
 	private JLabel progress, bit_rate;
 	private JLabel prog, avg_bits;
@@ -16,6 +16,8 @@ public class ProgMonitor extends JFrame{
 	public ProgMonitor ()
 	{
 		super ("File Transfer Progress");
+		 Thread aThread = new Thread(this);
+		 aThread.start();
 		ProgFrame();
 	}
 	
@@ -105,6 +107,7 @@ layout.putConstraint(SpringLayout.WEST, bar,
 
 		
 	}
+	public void run(){}
 	public void setprog(int pro){
 		previous++;
 		System.out.println("set prog bar");

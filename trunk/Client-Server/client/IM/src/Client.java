@@ -203,8 +203,15 @@ public void GetMessageFromServer()
 	else if(anythingMessage[0].contentEquals("17"))
 	{
 		String user = anythingMessage[1];
+		if (UserList.all_contacts.contains(user) == true)
+		{
 		OnlineTree thisone = (OnlineTree)ClientGUI.buddyTable.get(LogIn.username);
 		thisone.removeUser(user);
+		}
+		else
+		{
+			
+		}
 	}
 	else if (anythingMessage[0].contentEquals("20"))
 	{
@@ -264,17 +271,18 @@ public void GetMessageFromServer()
 		tehMessage = "";
 		incomingArray = anythingMessage;
 		String fromUser = incomingArray[2];
+		String chatname = incomingArray[3];
 		if (!(fromUser.contentEquals(LogIn.username)))
 		{
-        String msg_length = incomingArray[3];
+        String msg_length = incomingArray[4];
         int p = Integer.valueOf(msg_length).intValue();
-        p = p + 4;
-        for (int i = 4; i < p; i++)
+        p = p + 5;
+        for (int i = 5; i < p; i++)
         {
         	tehMessage = tehMessage + " " + anythingMessage[i];
         }
 		String toUser = anythingMessage[2];
-		AppendChatWindow.appendData3(toUser, tehMessage, true,(OneToMany)ChatName.onetomanyTable.get(OneToMany.chatnameblah) );
+		AppendChatWindow.appendData3(toUser, tehMessage, true,(OneToMany)ChatName.onetomanyTable.get(chatname) );
 		}
 	}
 	else if (anythingMessage[0].contentEquals("25"))
