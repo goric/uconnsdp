@@ -93,7 +93,7 @@ public class PopOptions extends JFrame implements ActionListener
         } 
         else if ("back".contentEquals(e.getActionCommand()))
         {
-        	String temp = "13 " + LogIn.username + " " + "away " + awaymsg;
+        	String temp = "13 " + LogIn.username;
         	LogIn.thisclient.SendMessage(temp);
         	this.setVisible(false);
         }
@@ -102,6 +102,11 @@ public class PopOptions extends JFrame implements ActionListener
 			String temp = ("28 " + LogIn.username + " " + LogIn.username);
 			System.out.println(temp);
 			LogIn.thisclient.SendMessage(temp);
+        }
+        else if ("dnd".contentEquals(e.getActionCommand()))
+        {
+        	String temp = ("12 " + LogIn.username + " " + "dnd");
+        	LogIn.thisclient.SendMessage(temp);
         }
         else if ("fil".contentEquals(e.getActionCommand()))
         {	
