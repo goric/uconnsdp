@@ -1,32 +1,21 @@
 import java.awt.*;
 import java.util.Hashtable;
 import javax.swing.*;
-import javax.swing.tree.*;
-
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.awt.event.*;
-import java.util.*;
 
 
 public class ClientGUI extends JFrame implements ActionListener {
 	
-	private Toolkit toolkit = Toolkit.getDefaultToolkit();
 	private JMenuBar menu;
 	private JMenu menu1;
 	private JMenuItem quitmenu;
 	private Container container;
-	private static Container container2;
-	private String username,password;
 	private JButton optbutton, manbutton;
-	private JLabel logo;
 	public static boolean rflag = true, pflag = true;
 	public static Hashtable frameTable = new Hashtable();
 	public static Hashtable buddyTable = new Hashtable();
     public static int i = 0;
     private static int chat_counter = 0;
-    private Image image;
 	
 	public ClientGUI(Point x)
 	{
@@ -47,38 +36,29 @@ public class ClientGUI extends JFrame implements ActionListener {
 		optbutton.setActionCommand("opt");
 		manbutton.setActionCommand("man");
 		quitmenu.setActionCommand("quit");
-        layout.putConstraint(SpringLayout.NORTH, optbutton,
-				 290,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, optbutton,
-				 120,
-				 SpringLayout.WEST, container);
-        layout.putConstraint(SpringLayout.NORTH, manbutton,
-				 290,
-				 SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, manbutton,
-				 20,
-				 SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, optbutton, 290, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, optbutton, 120, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, manbutton, 290, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, manbutton, 20, SpringLayout.WEST, container);
 		container.add(optbutton);
 		container.add(manbutton);
-		while(rflag == true){
-		
-		if ((Client.anythingMessage2[0].contentEquals("02")) && (pflag == true))
+		while(rflag == true)
 		{
-			String instancename = LogIn.username;
-			OnlineTree contacts;
-    		contacts = (OnlineTree) buddyTable.get(instancename);
-    		if(contacts == null)
-    		{
-    			contacts = new OnlineTree(this);
-    			
-    		buddyTable.put(instancename,contacts);
-			container.add(contacts);
-			pflag = false;
-			rflag = false;
-    		}
-    		rflag = false;
-		}
+			if ((Client.anythingMessage2[0].contentEquals("02")) && (pflag == true))
+			{
+				String instancename = LogIn.username;
+				OnlineTree contacts;
+				contacts = (OnlineTree) buddyTable.get(instancename);
+				if(contacts == null)
+				{
+					contacts = new OnlineTree(this);
+					buddyTable.put(instancename,contacts);
+					container.add(contacts);
+					pflag = false;
+					rflag = false;
+				}
+				rflag = false;
+			}
 		}
 		optbutton.addActionListener(this);
 		manbutton.addActionListener(this);
@@ -89,9 +69,10 @@ public class ClientGUI extends JFrame implements ActionListener {
 		this.setVisible(true);
 		this.setResizable(false);
 		this.setTitle("/dance " + LogIn.username + " dance");
-		}
+	}
 	
-    protected void quit() {
+    protected void quit() 
+    {
     	System.out.println("Program Terminated by User");
         System.exit(0);
     }
@@ -99,16 +80,17 @@ public class ClientGUI extends JFrame implements ActionListener {
     public static void createFrame(String user)
     {
 		ChatWindow dialog ;
-		synchronized(frameTable) {
-				dialog = (ChatWindow) frameTable.get(user);
-				if(dialog == null) {
-					dialog = new ChatWindow(user, 25*chat_counter, 25*chat_counter);
-					//dialog.setLocation(500, 500);
-					frameTable.put(user,dialog);
-			    	chat_counter++;
-				}
+		synchronized(frameTable) 
+		{
+			dialog = (ChatWindow) frameTable.get(user);
+			if(dialog == null) 
+			{
+				dialog = new ChatWindow(user, 25*chat_counter, 25*chat_counter);
+				frameTable.put(user,dialog);
+		    	chat_counter++;
 			}
 		}
+	}
     
     public static void createInfoFrame(String user)
 	{
@@ -148,8 +130,6 @@ public class ClientGUI extends JFrame implements ActionListener {
 		}
 		else
 		{
-			System.out.println("Program Terminated by User");
-			quit();
 		}
 	}
 	

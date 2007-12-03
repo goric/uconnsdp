@@ -1,25 +1,15 @@
 import javax.swing.*;
-
 import java.awt.*;
-import java.util.*;
 import java.awt.event.*;
-
-import javax.swing.event.*;
-import javax.swing.Timer;
-import javax.swing.text.html.*;
 import java.io.*;
 
 public class UserNotes extends JFrame implements ActionListener
 {
-	private ClientGUI frame;
-	private UserNotes thisframe;
 	private Container container;
 	public JTextArea recv;
 	private JButton close;
 	private JButton save;
 	private String user;
-	private Timer timer=null;
-	boolean isFocused = false;
 	private String str;
 
 	public UserNotes(String user)
@@ -30,14 +20,11 @@ public class UserNotes extends JFrame implements ActionListener
 
 	public void MainNotes()
 	{
-		thisframe = this;
 		container= this.getContentPane();
 		container.setLayout(null);
-
 		recv = new JTextArea();
 		recv.setFont(new Font("Arial",Font.PLAIN,11));
 		recv.setLineWrap(true);
-
 		JScrollPane pane
 			= new JScrollPane(recv,
 					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -51,14 +38,10 @@ public class UserNotes extends JFrame implements ActionListener
 		close.addActionListener(this);
 		save.setActionCommand("save");
 		close.setActionCommand("close");
-
 		container.add(pane);
 		container.add(close);
 		container.add(save);
-		
 		readnotes();
-
-
 		close.addKeyListener(new KeyAdapter() {
 					public void keyPressed(KeyEvent ke)
 					{
@@ -67,39 +50,18 @@ public class UserNotes extends JFrame implements ActionListener
 						}
 					}
 		});
-
-		recv.addMouseListener(new MouseInputAdapter() {
-			public void mouseClicked(MouseEvent me) {
-				isFocused = true;
-				if(timer != null)timer.stop();
-			}
-		});
-
 		this.setResizable(false);
 		this.setSize(310,210);
 		this.setTitle(user+"'s Notes");
 		this.setLocation(300,300);
-
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e)
 			{
 				setVisible(false);
-				if(timer != null) timer.stop();
-			}
-
-			public void windowActivated(WindowEvent ae) {
-				isFocused = true;
-				if(timer != null) timer.stop();
-			}
-
-			public void windowDeactivated(WindowEvent ae) {
-				isFocused = false;
 			}
 		});
 
 		this.setVisible(true);
-		isFocused = false;
-		
 		recv.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent ke)
 			{
@@ -123,17 +85,12 @@ public class UserNotes extends JFrame implements ActionListener
         try {
 			FileReader input = new FileReader(LogIn.username + "'s notes on " + user + ".txt");
 			BufferedReader bufRead = new BufferedReader(input);
-			
-            String line; 	// String that holds current file line
-            int count = 0;	// Line number of count 
-
+            String line;
             line = bufRead.readLine();
-
             while (line != null){
             	recv.setText(line);
                 line = bufRead.readLine();
             }
-            
             bufRead.close();
 			
         }catch (ArrayIndexOutOfBoundsException e){
@@ -143,7 +100,7 @@ public class UserNotes extends JFrame implements ActionListener
 		}catch (IOException e){
 
             e.printStackTrace();
-        }
+        }catch (Exception e){}
 	}
 	public void writenotes(String input)
 	{
@@ -151,9 +108,8 @@ public class UserNotes extends JFrame implements ActionListener
 		    FileWriter fstream = new FileWriter(LogIn.username + "'s notes on " + user + ".txt");
 		        BufferedWriter out = new BufferedWriter(fstream);
 		    out.write(str);
-
 		    out.close();
-		    }catch (Exception e){//Catch exception if any
+		    }catch (Exception e){
 		      System.err.println("Error: " + e.getMessage());
 		    }
 	}

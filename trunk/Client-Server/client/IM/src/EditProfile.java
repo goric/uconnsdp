@@ -1,21 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.awt.event.*;
-import javax.swing.event.*;
-import javax.swing.Timer;
 import javax.swing.text.html.*;
 
 public class EditProfile extends JFrame implements ActionListener
 {
-	private ClientGUI frame;
-	private EditProfile thisframe;
 	private Container container;
 	public JEditorPane edit_pane;
 	private JButton close, save;
-	private String user;
-	private Timer timer=null;
-	boolean isFocused = false;
 
 	public EditProfile()
 	{
@@ -24,10 +16,8 @@ public class EditProfile extends JFrame implements ActionListener
 
 	public void editProfileFrame()
 	{
-		thisframe = this;
 		container= this.getContentPane();
 		container.setLayout(null);
-
 		edit_pane = new JEditorPane();
 		edit_pane.setEditorKit(new HTMLEditorKit());
 		edit_pane.setEditable(true);
@@ -44,7 +34,6 @@ public class EditProfile extends JFrame implements ActionListener
 		container.add(pane);
 		container.add(close);
 		container.add(save);
-		
 		close.addKeyListener(new KeyAdapter() {
 					public void keyPressed(KeyEvent ke)
 					{
@@ -53,39 +42,19 @@ public class EditProfile extends JFrame implements ActionListener
 						}
 					}
 		});
-
-		edit_pane.addMouseListener(new MouseInputAdapter() {
-			public void mouseClicked(MouseEvent me) {
-				isFocused = true;
-				if(timer != null)timer.stop();
-			}
-		});
-
 		setUserInfo();
 		this.setResizable(false);
 		this.setSize(360,210);
 		this.setTitle(LogIn.username +"'s Info");
 		this.setLocation(300,300);
-
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e)
 			{
 				setVisible(false);
-				if(timer != null) timer.stop();
-			}
-
-			public void windowActivated(WindowEvent ae) {
-				isFocused = true;
-				if(timer != null) timer.stop();
-			}
-
-			public void windowDeactivated(WindowEvent ae) {
-				isFocused = false;
 			}
 		});
 
 		this.setVisible(true);
-		isFocused = false;
 	}
 	
 	public void setUserInfo()
@@ -103,8 +72,7 @@ public class EditProfile extends JFrame implements ActionListener
 	public void append(String str)
 	{
 		try {
-			((HTMLEditorKit)edit_pane.getEditorKit()).read(new java.io.StringReader(str),
-					edit_pane.getDocument(), edit_pane.getDocument().getLength());
+			((HTMLEditorKit)edit_pane.getEditorKit()).read(new java.io.StringReader(str), edit_pane.getDocument(), edit_pane.getDocument().getLength());
 			edit_pane.setCaretPosition(edit_pane.getDocument().getLength());
 		 	} catch(Exception e){}
 	}
@@ -122,6 +90,5 @@ public class EditProfile extends JFrame implements ActionListener
 			LogIn.thisclient.SendMessage(temp);
 			this.setVisible(false);
 		}
-		
 	}
 }

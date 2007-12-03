@@ -1,20 +1,15 @@
 import java.awt.*;
 import javax.swing.*;
-
 import java.awt.event.*;
-import java.util.EventObject;
 import java.util.Hashtable;
-import java.io.*;
 
 public class PopManage extends JFrame implements ActionListener
 {
-	private JLabel descript;
 	private Container container;
 	private JButton addcon, removecon, ret;
 	JLabel userlab;
 	JTextField userfield;
 	JButton subbutton, canbutton;
-	private static Container container2;
 	public static Hashtable buddyTable = new Hashtable();
 	
 	public PopManage (Point x)
@@ -48,8 +43,7 @@ public class PopManage extends JFrame implements ActionListener
 		if(contacts == null)
 		{
 			contacts = new UserList(this);
-			
-		buddyTable.put(instancename,contacts);
+			buddyTable.put(instancename,contacts);
 		}
         layout.putConstraint(SpringLayout.WEST, contacts, 20, SpringLayout.WEST, container);
 		container.add(contacts);
@@ -96,11 +90,11 @@ public class PopManage extends JFrame implements ActionListener
 		ShowRemove();
 	}
     private void ShowAdd()
-    {
+    {	
 		AddUser dialog = new AddUser(this);
 	}
     private void ShowRemove()
     {
-    	RemoveUser dialog = new RemoveUser(this);
+    	RemoveUser dialog = new RemoveUser(this, UserList.user2);
     }
 }

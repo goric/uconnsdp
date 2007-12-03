@@ -1,63 +1,40 @@
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.UIManager;
-
 import javax.swing.JTree;
+import javax.swing.text.Position;
 import javax.swing.tree.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.JInternalFrame;
-
-
-import java.io.IOException;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.awt.event.*;
-import javax.swing.tree.*;
 
 public class UserList extends JPanel implements ActionListener {
 	
     private JTree tree;
-    private static boolean DEBUG = false;
     public static DefaultMutableTreeNode toop;
     private ClientGUI frame;
-    private UserList frame2;
     private static DefaultTreeModel treeModel;
-    private Hashtable nodeTable = new Hashtable();
-    String[] ThisBuddyArray;
+    private String[] ThisBuddyArray;
     private JPopupMenu menu;
-    private static String user2;
+    public static String user2;
     public static JTree stree;
     public static ArrayList<String> all_contacts = new ArrayList<String>();
 
-    public UserList() {
-        this.frame = frame;
-        initAwtContainer();
-    }
     public UserList(PopManage frame2)
     {
-        initAwtContainer();
+        UserListFrame();
     }
-    private void initAwtContainer()
+    private void UserListFrame()
     {
     	this.setLayout(new FlowLayout());
-        //Create the nodes.
     	DefaultMutableTreeNode top =
             new DefaultMutableTreeNode("Contacts");
     	toop = top;
         createNodes(top);
-
         treeModel = new DefaultTreeModel(top);
         tree = new JTree(top);
-    	tree.setEditable(true);
+    	tree.setEditable(false);
         tree.getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.addMouseListener(new MyMouseAdapter(frame,tree));
@@ -75,18 +52,9 @@ public class UserList extends JPanel implements ActionListener {
 		scrollpane = new JScrollPane(tree);
 		scrollpane.setPreferredSize(new Dimension(160,280));
 		this.add(scrollpane);
+		
     }
     
-   /* public static void refreshIt(String user)
-    {
-        DefaultMutableTreeNode tehuser = null;
-    	tehuser = new DefaultMutableTreeNode(new User
-            	(user));
-           	toop.add(tehuser);
-    	((DefaultTreeModel)tree.getModel()).reload();
-    	treeModel.reload(tehuser);
-    	ClientGUI.RefreshGUI(tree);
-    }*/
     public void addUser(String user)
     {
         DefaultMutableTreeNode tehuser = null;
@@ -96,9 +64,15 @@ public class UserList extends JPanel implements ActionListener {
     	treeModel.reload(tehuser);
         all_contacts.add(user);
     }
+    
 	public void removeUser(String user)
 	{
-
+	    int startRow = 0;
+	    String prefix = user;
+	    TreePath path = tree.getNextMatch(prefix, startRow, Position.Bias.Forward);
+	    MutableTreeNode node = (MutableTreeNode)path.getLastPathComponent();
+	    treeModel.removeNodeFromParent(node);
+    	((DefaultTreeModel)tree.getModel()).reload();
 	}
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) 
@@ -123,19 +97,16 @@ public class UserList extends JPanel implements ActionListener {
 
 class MyMouseAdapter extends MouseAdapter
     {
-    	private ClientGUI frame;
     	private JTree tree;
 
     	public MyMouseAdapter(ClientGUI frame,JTree tree)
     	{
-    		this.frame = frame;
     		this.tree = tree;
     	}
         
     	public void mouseClicked(MouseEvent e) {
     		int selRow = tree.getRowForLocation(e.getX(), e.getY());
     		TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-    		ChatWindow dialog;
     		DefaultMutableTreeNode node;
     		if(selRow > 0 ) {
         		if (e.getButton() == 3) 
@@ -143,19 +114,19 @@ class MyMouseAdapter extends MouseAdapter
     				node = (DefaultMutableTreeNode)selPath.getLastPathComponent();
     				String user = (String)(node.getUserObject());
     				showit(tree, e.getX(), e.getY(), user);
+    				
         		}
-    			if(e.getClickCount() == 2) 
+    			if(e.getClickCount() >= 1)
     			{
     				node = (DefaultMutableTreeNode)selPath.getLastPathComponent();
-    				String user2 = (String)(node.getUserObject());
-    				ClientGUI.createFrame(user2);
+    				String user = (String)(node.getUserObject());
+    				user2 = user;
     			}
     		}
     	}
     }
 
     private void createNodes(DefaultMutableTreeNode top) {
-        DefaultMutableTreeNode category = null;
         DefaultMutableTreeNode auser = null;
         ThisBuddyArray = Client.buddyarray;
         String boob = ThisBuddyArray[2];
