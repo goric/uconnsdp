@@ -50,7 +50,7 @@ public void GetServerConnection( String pServer)
 	
 	try	
 	{
-		this.mClientSocket = new Socket( pServer, 6013);
+		this.mClientSocket = new Socket( pServer, 443);
 		
 		this.mDataInStream = new DataInputStream( this.mClientSocket.getInputStream());
 		this.mDataOutStream = new DataOutputStream( this.mClientSocket.getOutputStream());
