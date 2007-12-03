@@ -15,7 +15,6 @@ public class OneToMany extends JFrame implements ActionListener
 	private JTextArea type, members;
 	private JButton send;
 	public String chatname;
-	public static String chatnameblah = "chizat";
 	private Timer timer=null;
 	boolean isFocused = false;
 	private String[] array;
@@ -96,7 +95,7 @@ public class OneToMany extends JFrame implements ActionListener
 			{
 				if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					setVisible(false);
-				//	ClientGUI.removeFrame(user);
+					ChatName.removeFrame(chatname);
 				}
 			}
 		});
@@ -107,7 +106,7 @@ public class OneToMany extends JFrame implements ActionListener
 					{
 						if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 							setVisible(false);
-							//ClientGUI.removeFrame(user);
+							ChatName.removeFrame(chatname);
 						}
 					}
 		});
@@ -129,10 +128,9 @@ public class OneToMany extends JFrame implements ActionListener
 			{
 				setVisible(false);
 				if(timer != null) timer.stop();
-				ClientGUI.removeFrame(chatname);
+				ChatName.removeFrame(chatname);
 				String temp = "26 " + LogIn.username + " " + chatname;
 				LogIn.thisclient.SendMessage(temp);
-				System.out.println(temp);
 			}
 
 			public void windowActivated(WindowEvent ae) {

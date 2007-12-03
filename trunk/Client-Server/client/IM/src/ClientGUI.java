@@ -128,7 +128,7 @@ public class ClientGUI extends JFrame implements ActionListener {
     {
     	synchronized(frameTable) 
     	{
-    		frameTable.remove(user.toString());
+    		frameTable.remove(user);
     	}
     }
     

@@ -109,6 +109,14 @@ public class ChatName extends JDialog implements ActionListener
 	    }
     }
     
+    public static void removeFrame(String user)
+    {
+    	synchronized(onetomanyTable) 
+    	{
+    		onetomanyTable.remove(user);
+    	}
+    }
+    
     public static void createConFrame(String instancename)
     { 
     	System.out.println("i got here");

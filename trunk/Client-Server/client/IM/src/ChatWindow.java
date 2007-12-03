@@ -20,6 +20,7 @@ public class ChatWindow extends JFrame implements ActionListener
 	String temp = "";
 	String msg;
 	Client myclient = new Client();
+	String time;
 
 	public ChatWindow(String user, int x, int y)
 	{
@@ -32,36 +33,22 @@ public class ChatWindow extends JFrame implements ActionListener
 		thisframe = this;
 		container= this.getContentPane();
 		container.setLayout(null);
-
 		recv = new JEditorPane();
 		recv.setEditorKit(new HTMLEditorKit());
 		recv.setEditable(false);
-
-		JScrollPane pane
-			= new JScrollPane(recv,
-					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane pane = new JScrollPane(recv, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		pane.setBounds(10,10,290,100);
-
 		type = new JTextArea();
 		type.setFont(new Font("Arial",Font.PLAIN,11));
 		type.setLineWrap(true);
-
-		JScrollPane typepane
-			= new JScrollPane(type,
-					JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane typepane = new JScrollPane(type, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		typepane.setBounds(10,120,220,50);
-
-
 		send = new JButton("Send");
 		send.setBounds(235,120,65,50);
 		send.addActionListener(this);
-
 		container.add(pane);
 		container.add(typepane);
 		container.add(send);
-
 		type.addKeyListener(new KeyAdapter() 
 		{
 			public void keyPressed(KeyEvent ke)
@@ -74,7 +61,8 @@ public class ChatWindow extends JFrame implements ActionListener
 				{
 					if(type.getText().length() == 0) return;
 					msg = type.getText();
-					AppendChatWindow.appendData(LogIn.username,type.getText(),false, (ChatWindow)ClientGUI.frameTable.get(user.toString()));
+					getTime();
+					AppendChatWindow.appendData(LogIn.username,type.getText(),false, (ChatWindow)ClientGUI.frameTable.get(user.toString()), time);
 					temp = "03 " + LogIn.username + " " + user + " " + msg;
 					LogIn.thisclient.SendMessage(temp);
 					type.setText("");
@@ -148,11 +136,40 @@ public class ChatWindow extends JFrame implements ActionListener
 		return user.toString();
 	}
 
+	public void getTime()
+	{
+	   Calendar cal = new GregorianCalendar();
+	   time = "";
+	   int hour12 = cal.get(Calendar.HOUR);            // 0..11
+	   int hour24 = cal.get(Calendar.HOUR_OF_DAY);     // 0..23
+	   int min = cal.get(Calendar.MINUTE);             // 0..59
+	   int sec = cal.get(Calendar.SECOND);             // 0..59
+	   int ms = cal.get(Calendar.MILLISECOND);         // 0..999
+	   int ampm = cal.get(Calendar.AM_PM);             // 0=AM, 1=PM
+	   if (hour24 < 10)
+	   {
+		   time = "[" + "0" + hour24 + ":";
+	   }
+	   else
+	   {
+	   time = "[" + hour24 + ":";
+	   }
+	   if (min < 10)
+	   {
+		   time = time + "0" + min + "]";
+	   }
+	   else
+	   {
+		   time = time + min + "]";
+	   }
+	}
+	
 	public void actionPerformed(ActionEvent event)
 	{
 		if((event.getSource() == type)||(event.getSource() == send)) {
 			if(type.getText().length() == 0) return;
-			AppendChatWindow.appendData(LogIn.username,type.getText(),false, (ChatWindow)ClientGUI.frameTable.get(user.toString()));
+			getTime();
+			AppendChatWindow.appendData(LogIn.username,type.getText(),false, (ChatWindow)ClientGUI.frameTable.get(user.toString()), time);
 			String blah = type.getText();
 			try {
 				String temp = "03 " + LogIn.username + " " + user + " " + blah;

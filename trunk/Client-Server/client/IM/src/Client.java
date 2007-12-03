@@ -1,5 +1,7 @@
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.awt.Point;
 import java.io.*;
@@ -23,6 +25,8 @@ public static String[] commonArray;
 public static String[] incomingArray;
 public static String[] chatListArray;
 private String[] ans;
+String time;
+int min;
 public static String[] filetran;
 public static String[] filetran2;
 private int counter;
@@ -138,6 +142,7 @@ public void GetMessageFromServer()
 	}
 	else if (anythingMessage[0].contentEquals("04"))
 	{
+		getTime();
         String boob = anythingMessage[3];
         int p = Integer.valueOf(boob).intValue();
         p = p + 4;
@@ -147,7 +152,7 @@ public void GetMessageFromServer()
         }
 		String user = anythingMessage[2];
 		ClientGUI.createFrame(user);	
-		AppendChatWindow.appendData2(user, tehMessage, false,(ChatWindow)ClientGUI.frameTable.get(user) );
+		AppendChatWindow.appendData(user, tehMessage, true,(ChatWindow)ClientGUI.frameTable.get(user),time );
 	}
 	else if (anythingMessage[0].contentEquals("05"))
 	{
@@ -332,6 +337,34 @@ public String[] addToArray(String[] array, String s)
    System.arraycopy(array, 0, ans, 0, array.length);
    ans[ans.length - 1] = s;
    return ans;
+}
+
+public void getTime()
+{
+   Calendar cal = new GregorianCalendar();
+   time = "";
+   int hour12 = cal.get(Calendar.HOUR);            // 0..11
+   int hour24 = cal.get(Calendar.HOUR_OF_DAY);     // 0..23
+   min = cal.get(Calendar.MINUTE);             // 0..59
+   int sec = cal.get(Calendar.SECOND);             // 0..59
+   int ms = cal.get(Calendar.MILLISECOND);         // 0..999
+   int ampm = cal.get(Calendar.AM_PM);             // 0=AM, 1=PM
+   if (hour24 < 10)
+   {
+	   time = "[" + "0" + hour24 + ":";
+   }
+   else
+   {
+   time = "[" + hour24 + ":";
+   }
+   if (min < 10)
+   {
+	   time = time + "0" + min + "]";
+   }
+   else
+   {
+	   time = time + min + "]";
+   }
 }
 
 public void SendMessage( String pMessage)
