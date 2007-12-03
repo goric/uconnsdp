@@ -50,7 +50,7 @@ public void GetServerConnection( String pServer)
 	
 	try	
 	{
-		this.mClientSocket = new Socket( pServer, 443);
+		this.mClientSocket = new Socket( pServer, 6013);
 		
 		this.mDataInStream = new DataInputStream( this.mClientSocket.getInputStream());
 		this.mDataOutStream = new DataOutputStream( this.mClientSocket.getOutputStream());
@@ -233,11 +233,16 @@ public void GetMessageFromServer()
 	}
 	else if (anythingMessage[0].contentEquals("21"))
 	{
-		if (anythingMessage[3].contentEquals("successful"))
+		if (anythingMessage[4].contentEquals("successful"))
 		{
-		String user = anythingMessage[2];
+		String user = anythingMessage[3];
 		UserList thisone = (UserList)PopManage.buddyTable.get(LogIn.username);
 		thisone.removeUser(user);
+		if (!(anythingMessage[2].contentEquals("offline")))
+				{
+					OnlineTree onlinetree = (OnlineTree)ClientGUI.buddyTable.get(LogIn.username);
+					onlinetree.removeUser(user);
+				}
 		}
 	}
 	else if (anythingMessage[0].contentEquals("22"))
