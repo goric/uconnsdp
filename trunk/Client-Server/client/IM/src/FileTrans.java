@@ -168,7 +168,7 @@ public class FileTrans extends JDialog implements ActionListener, Runnable
         		System.out.println("sending file");
         		this.setVisible(false);
         		wait = true;	
-        		int port = 13267;
+        		int port = 10422;
         		
         		if (servsock == null){
         		try	{
