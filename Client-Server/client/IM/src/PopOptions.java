@@ -1,9 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
-
 import java.awt.event.*;
-import java.util.EventObject;
-import java.io.*;
 
 public class PopOptions extends JFrame implements ActionListener
 {
@@ -11,7 +8,6 @@ public class PopOptions extends JFrame implements ActionListener
 	private JTextField awayfield;
 	private Container container;
 	private JButton awaybutton, backbutton, dndbutton, probutton;
-	private String awaymsg;
 	private JCheckBox show_time, show_reg, show_status;
 	public static boolean time_flag = true, reg_flag = true, status_flag = true;
 	
@@ -117,7 +113,6 @@ public class PopOptions extends JFrame implements ActionListener
         }
         else
         {
-        	quit();
         }
 	}
 }

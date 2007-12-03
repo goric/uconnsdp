@@ -1,5 +1,4 @@
 import javax.swing.text.html.HTMLEditorKit;
-import java.util.*;
 
 public class AppendChatWindow {
 	public static void appendData(String user,String str,boolean received, ChatWindow window, String time)

@@ -1,38 +1,22 @@
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.UIManager;
 import javax.swing.text.*;
 import javax.swing.JTree;
 import javax.swing.tree.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.JInternalFrame;
-
-
-import java.io.IOException;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.awt.event.*;
-import javax.swing.tree.*;
 
 public class OnlineTree extends JPanel implements ActionListener {
 	
     private JTree otree;
-    private static boolean DEBUG = false;
     public static DefaultMutableTreeNode otoop;
     private ClientGUI frame;
-    private UserList frame2;
     private DefaultTreeModel otreeModel;
-    private Hashtable nodeTable = new Hashtable();
-    String[] oThisBuddyArray;
+    private String[] oThisBuddyArray;
     public ArrayList<String> OnlineList = new ArrayList<String>();
     private JPopupMenu menu;
     private String user2;
@@ -42,17 +26,12 @@ public class OnlineTree extends JPanel implements ActionListener {
 
     public OnlineTree(ClientGUI frame) {
         this.frame = frame;
-        initAwtContainer();
+        OnlineTreeFrame();
     }
-    public OnlineTree(PopManage frame2)
-    {
-        initAwtContainer();
-    }
-    private void initAwtContainer()
+    private void OnlineTreeFrame()
     {
     	this.setLayout(new FlowLayout());
-    	DefaultMutableTreeNode top =
-            new DefaultMutableTreeNode("Contacts");
+    	DefaultMutableTreeNode top = new DefaultMutableTreeNode("Contacts");
     	otoop = top;
         createNodes(top);
         i = 0;
@@ -60,8 +39,15 @@ public class OnlineTree extends JPanel implements ActionListener {
         otree = new JTree(top);
         otree.getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
-
         otree.addMouseListener(new MyMouseAdapter(frame,otree));
+        ImageIcon onlineicon = createImageIcon("images/away.gif");
+        if (onlineicon != null) {
+            DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+            renderer.setLeafIcon(onlineicon);
+            otree.setCellRenderer(renderer);
+        } else {
+            System.err.println("Leaf icon missing; using default.");
+        }
         menu = new JPopupMenu();
         JMenuItem infoitem = new JMenuItem("Get Info");
         menu.add(infoitem);
@@ -71,7 +57,7 @@ public class OnlineTree extends JPanel implements ActionListener {
         menu.add(notesitem);
         JMenuItem xferitem = new JMenuItem("Send File");
         menu.add(xferitem);
-        JMenuItem invite = new JMenuItem("Invite to Chizzat");
+        JMenuItem invite = new JMenuItem("Invite to Chat");
         menu.add(invite);
         JMenuItem common = new JMenuItem("Contacts in Common");
         menu.add(common);
@@ -89,10 +75,9 @@ public class OnlineTree extends JPanel implements ActionListener {
 		common.setActionCommand("common");
 		JScrollPane scrollpane;
 		scrollpane = new JScrollPane(otree);
-		scrollpane.setPreferredSize(new Dimension(200,100));
+		scrollpane.setPreferredSize(new Dimension(200,250));
 		this.add(scrollpane);
     }
-
 
     public void addUser(String user)
     {
@@ -102,6 +87,7 @@ public class OnlineTree extends JPanel implements ActionListener {
     	((DefaultTreeModel)otree.getModel()).reload();
     	otreeModel.reload(tehuser);
     }
+    
 	public void removeUser(String user)
 	{
 	    int startRow = 0;
@@ -111,6 +97,16 @@ public class OnlineTree extends JPanel implements ActionListener {
 	    otreeModel.removeNodeFromParent(node);
     	((DefaultTreeModel)otree.getModel()).reload();
 	}
+	
+    protected static ImageIcon createImageIcon(String path) {
+        java.net.URL imgURL = OnlineTree.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
+    }
 	
 	public void actionPerformed(java.awt.event.ActionEvent e) 
 	{
@@ -141,7 +137,6 @@ public class OnlineTree extends JPanel implements ActionListener {
 			String temp = "15 " + LogIn.username + " " + user2;
 			LogIn.thisclient.SendMessage(temp);
 		}
-        
     }
     
 	public void showit(Component com, int x, int y, String user1)
@@ -150,26 +145,18 @@ public class OnlineTree extends JPanel implements ActionListener {
 		menu.show(otree,x,y);
 	}
 
-    public void refreshit2(JTree tehtree)
-    {
-    	((DefaultTreeModel)otree.getModel()).reload();
-    }
-
 class MyMouseAdapter extends MouseAdapter
     {
-    	private ClientGUI frame;
     	private JTree tree;
 
     	public MyMouseAdapter(ClientGUI frame,JTree tree)
     	{
-    		this.frame = frame;
     		this.tree = tree;
     	}
         
     	public void mouseClicked(MouseEvent e) {
     		int selRow = tree.getRowForLocation(e.getX(), e.getY());
     		TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-    		ChatWindow dialog;
     		DefaultMutableTreeNode node;
     		if(selRow > 0 ) {
         		if (e.getButton() == 3) 
@@ -190,8 +177,6 @@ class MyMouseAdapter extends MouseAdapter
 
     private void createNodes(DefaultMutableTreeNode top) 
     {
-        DefaultMutableTreeNode category = null;
-        DefaultMutableTreeNode auser = null;
         oThisBuddyArray = Client.buddyarray;
         String boob = oThisBuddyArray[2];
         int p = Integer.valueOf(boob).intValue();
@@ -200,11 +185,17 @@ class MyMouseAdapter extends MouseAdapter
         for (int i = 3; i < p; i++)
         {
         	UserList.all_contacts.add(oThisBuddyArray[i]);
-        	if ((oThisBuddyArray[i+1].contentEquals("online")) || (oThisBuddyArray[i+1].contentEquals("away")))
+        	if (oThisBuddyArray[i+1].contentEquals("online"))
         	{
         	String blab = oThisBuddyArray[i];
         	OnlineList.add(blab);
         	i++;
+        	}
+        	else if(oThisBuddyArray[i+1].contentEquals("away"))
+        	{
+            	String blab = oThisBuddyArray[i];
+            	OnlineList.add(blab);
+            	i++;
         	}
         	else 
         	{
@@ -213,9 +204,8 @@ class MyMouseAdapter extends MouseAdapter
         }
         createtehNodes(top, OnlineList);
     }
-    public void createtehNodes(DefaultMutableTreeNode top, ArrayList array)
+    public void createtehNodes(DefaultMutableTreeNode top, ArrayList<String> array)
         {
-        DefaultMutableTreeNode category = null;
         DefaultMutableTreeNode auser = null;
         	for (int i = 0; i < OnlineList.size(); i++)
         	{
@@ -225,7 +215,6 @@ class MyMouseAdapter extends MouseAdapter
         }
     public void createtehNodes2(String[] array)
     {
-    DefaultMutableTreeNode category = null;
     DefaultMutableTreeNode auser = null;
     DefaultMutableTreeNode top = new DefaultMutableTreeNode("Contacts");
     j = OnlineList.size();
@@ -238,4 +227,4 @@ class MyMouseAdapter extends MouseAdapter
             	i++;
     	}
     }
-    }
+}

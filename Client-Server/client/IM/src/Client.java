@@ -1,43 +1,35 @@
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Hashtable;
-import java.awt.Point;
 import java.io.*;
-
 import javax.swing.JOptionPane;
-
-import javax.swing.tree.DefaultMutableTreeNode;
 
 public class Client implements Runnable
 {
-private ClientGUI frame;
-private Socket mClientSocket;
-private Thread mClientThread;
-public static String ip;
-public static String[] anythingMessage;
-public static String[] buddyarray;
-public static String[] recarray;
-public static String[] anythingMessage2;
-public static String[] userInfoArray;
-public static String[] commonArray;
-public static String[] incomingArray;
-public static String[] chatListArray;
-private String[] ans;
-String time;
-int min;
-public static String[] filetran;
-public static String[] filetran2;
-private int counter;
-private boolean addorremove = false;
-public static boolean validflag = false;
-
-private DataInputStream mDataInStream;
-private DataOutputStream mDataOutStream;
-
-private static boolean mIsConnected;
-public static String mClientAddress;
+	private ClientGUI frame;
+	private Socket mClientSocket;
+	private Thread mClientThread;
+	public static String ip;
+	public static String[] anythingMessage;
+	public static String[] buddyarray;
+	public static String[] recarray;
+	public static String[] anythingMessage2;
+	public static String[] userInfoArray;
+	public static String[] commonArray;
+	public static String[] incomingArray;
+	public static String[] chatListArray;
+	public static String[] filetran;
+	public static String[] filetran2;
+	private String[] ans;
+	private String time;
+	private int min;
+	private int counter;
+	private boolean addorremove = false;
+	public static boolean validflag = false;
+	private DataInputStream mDataInStream;	
+	private DataOutputStream mDataOutStream;
+	private static boolean mIsConnected;
+	public static String mClientAddress;
 
 
 public Client()
@@ -229,8 +221,6 @@ public void GetMessageFromServer()
 		thisone.addUser(user);
 		OnlineTree onlinetree = (OnlineTree)ClientGUI.buddyTable.get(LogIn.username);
 		onlinetree.addUser(user);
-		//String temp = "02 " + LogIn.username;
-		//LogIn.thisclient.SendMessage(temp);
 		}
 		else if (anythingMessage[3].contentEquals("offline"))
 		{
@@ -239,6 +229,15 @@ public void GetMessageFromServer()
 			thisone.addUser(user);
 			System.out.println("added but offline");
 		}
+		}
+	}
+	else if (anythingMessage[0].contentEquals("21"))
+	{
+		if (anythingMessage[3].contentEquals("successful"))
+		{
+		String user = anythingMessage[2];
+		UserList thisone = (UserList)PopManage.buddyTable.get(LogIn.username);
+		thisone.removeUser(user);
 		}
 	}
 	else if (anythingMessage[0].contentEquals("22"))
@@ -300,6 +299,7 @@ public void GetMessageFromServer()
 		}
 		else
 		{
+			
 			AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(chatname));
 			OneToMany thisone = (OneToMany)ChatName.onetomanyTable.get(chatname);
 			thisone.appendMember(user);
@@ -343,19 +343,15 @@ public void getTime()
 {
    Calendar cal = new GregorianCalendar();
    time = "";
-   int hour12 = cal.get(Calendar.HOUR);            // 0..11
-   int hour24 = cal.get(Calendar.HOUR_OF_DAY);     // 0..23
-   min = cal.get(Calendar.MINUTE);             // 0..59
-   int sec = cal.get(Calendar.SECOND);             // 0..59
-   int ms = cal.get(Calendar.MILLISECOND);         // 0..999
-   int ampm = cal.get(Calendar.AM_PM);             // 0=AM, 1=PM
+   int hour24 = cal.get(Calendar.HOUR_OF_DAY);  
+   min = cal.get(Calendar.MINUTE);    
    if (hour24 < 10)
    {
 	   time = "[" + "0" + hour24 + ":";
    }
    else
    {
-   time = "[" + hour24 + ":";
+	   time = "[" + hour24 + ":";
    }
    if (min < 10)
    {

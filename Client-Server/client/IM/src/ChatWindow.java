@@ -3,24 +3,19 @@ import java.awt.*;
 import java.util.*;
 import java.awt.event.*;
 import javax.swing.event.*;
-import javax.swing.Timer;
 import javax.swing.text.html.*;
 
 public class ChatWindow extends JFrame implements ActionListener
 {
-	private ClientGUI frame;
-	private ChatWindow thisframe;
 	private Container container;
 	public JEditorPane recv;
 	private JTextArea type;
 	private JButton send;
 	private String user;
-	private Timer timer=null;
+	private String temp = "";
+	private String msg;
+	private String time;
 	boolean isFocused = false;
-	String temp = "";
-	String msg;
-	Client myclient = new Client();
-	String time;
 
 	public ChatWindow(String user, int x, int y)
 	{
@@ -30,7 +25,6 @@ public class ChatWindow extends JFrame implements ActionListener
 
 	public void ChatWindowFrame(int x, int y)
 	{
-		thisframe = this;
 		container= this.getContentPane();
 		container.setLayout(null);
 		recv = new JEditorPane();
@@ -66,6 +60,7 @@ public class ChatWindow extends JFrame implements ActionListener
 					temp = "03 " + LogIn.username + " " + user + " " + msg;
 					LogIn.thisclient.SendMessage(temp);
 					type.setText("");
+					type.setCaretPosition(0);
 				}
 			}
 		});
@@ -94,7 +89,6 @@ public class ChatWindow extends JFrame implements ActionListener
 		recv.addMouseListener(new MouseInputAdapter() {
 			public void mouseClicked(MouseEvent me) {
 				isFocused = true;
-				if(timer != null)timer.stop();
 			}
 		});
 
@@ -108,13 +102,11 @@ public class ChatWindow extends JFrame implements ActionListener
 			public void windowClosing(WindowEvent e)
 			{
 				setVisible(false);
-				if(timer != null) timer.stop();
 				ClientGUI.removeFrame(user);
 			}
 
 			public void windowActivated(WindowEvent ae) {
 				isFocused = true;
-				if(timer != null) timer.stop();
 			}
 
 			public void windowDeactivated(WindowEvent ae) {
@@ -130,29 +122,19 @@ public class ChatWindow extends JFrame implements ActionListener
 		isFocused = false;
 	}
 
-
-	public String toString()
-	{
-		return user.toString();
-	}
-
 	public void getTime()
 	{
 	   Calendar cal = new GregorianCalendar();
 	   time = "";
-	   int hour12 = cal.get(Calendar.HOUR);            // 0..11
-	   int hour24 = cal.get(Calendar.HOUR_OF_DAY);     // 0..23
-	   int min = cal.get(Calendar.MINUTE);             // 0..59
-	   int sec = cal.get(Calendar.SECOND);             // 0..59
-	   int ms = cal.get(Calendar.MILLISECOND);         // 0..999
-	   int ampm = cal.get(Calendar.AM_PM);             // 0=AM, 1=PM
+	   int hour24 = cal.get(Calendar.HOUR_OF_DAY);
+	   int min = cal.get(Calendar.MINUTE);
 	   if (hour24 < 10)
 	   {
 		   time = "[" + "0" + hour24 + ":";
 	   }
 	   else
 	   {
-	   time = "[" + hour24 + ":";
+		   time = "[" + hour24 + ":";
 	   }
 	   if (min < 10)
 	   {

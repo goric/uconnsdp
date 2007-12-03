@@ -1,7 +1,5 @@
 import java.awt.*;
-
 import javax.swing.*;
-
 import java.awt.event.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,7 +13,6 @@ public class LogIn extends JFrame implements ActionListener
 	private JButton logbutton, qbutton;
 	private JLabel userlab, passlab, link;
 	private Container container;
-	private static Container scontainer;
 	public static Client thisclient = new Client();
 	
 	public LogIn (Client client)
@@ -73,12 +70,10 @@ public class LogIn extends JFrame implements ActionListener
 		container.add(qbutton);
 		container.add(logo);
 		container.add(link);
-		scontainer = this;
 		userfield.addActionListener(this);
 		passfield.addActionListener(this);
 		logbutton.addActionListener(this);
 		qbutton.addActionListener(this);
-		
 		this.setTitle("Welcome to Chatter");
 		this.setSize(390,230);
 		this.setResizable(false);
@@ -173,7 +168,6 @@ public class LogIn extends JFrame implements ActionListener
 		while (!(Client.anythingMessage[0].contentEquals("01")))
 		{
 		}
-		//System.out.println(Client.anythingMessage[0]);
 		try {
 		       Thread.currentThread().sleep(10);
 		       }
