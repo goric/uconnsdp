@@ -151,7 +151,7 @@ public void GetMessageFromServer()
 		{
 			String temp = "27 " + LogIn.username + " " + user + " " + away_msg;
 			LogIn.thisclient.SendMessage(temp);
-			
+			AppendChatWindow.appendData(user, temp, false,(ChatWindow)ClientGUI.frameTable.get(user),time );
 		}
 	}
 	else if (anythingMessage[0].contentEquals("05"))
