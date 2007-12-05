@@ -107,6 +107,47 @@ public class FileTrans extends JDialog implements ActionListener, Runnable
 		container.add(un);
 		open.addActionListener(this);
 		send.addActionListener(this);
+
+		un.addKeyListener(new KeyAdapter() 
+		{
+			public void keyPressed(KeyEvent ke)
+			{
+				if(ke.getKeyCode() == KeyEvent.VK_ENTER) 
+				{
+		        	send_file();
+				}
+			}
+		});
+		fn.addKeyListener(new KeyAdapter() 
+		{
+			public void keyPressed(KeyEvent ke)
+			{
+				if(ke.getKeyCode() == KeyEvent.VK_ENTER) 
+				{
+		        	send_file();
+				}
+			}
+		});
+		send.addKeyListener(new KeyAdapter() 
+		{
+			public void keyPressed(KeyEvent ke)
+			{
+				if(ke.getKeyCode() == KeyEvent.VK_ENTER) 
+				{
+		        	send_file();
+				}
+			}
+		});
+		open.addKeyListener(new KeyAdapter() 
+		{
+			public void keyPressed(KeyEvent ke)
+			{
+				if(ke.getKeyCode() == KeyEvent.VK_ENTER) 
+				{
+					choose_file();
+				}
+			}
+		});
 		
 		this.setSize(320,220);
 		this.setResizable(false);
@@ -123,63 +164,11 @@ public class FileTrans extends JDialog implements ActionListener, Runnable
 	{
 		if ("opn".contentEquals(e.getActionCommand())) 
 		{
-        	System.out.println("Open File to send");
-        	
-        	fc = new JFileChooser();
-        	file = null;
-        	
-            int x = fc.showDialog(FileTrans.this, "Open");
-        	
-            if (x == JFileChooser.APPROVE_OPTION) {
-                file = fc.getSelectedFile();
-                try {
-                fn.setText(file.getCanonicalPath()); }
-                catch (IOException ioe){}
-            } 
-            else {
-                file = null;
-            }
+			choose_file();
         } 
         else if ("snd".contentEquals(e.getActionCommand()))
         {
-        	JFrame jf = new JFrame();
-        	boolean doSend = true;
-        	System.out.println("Send File");
-        	if (file == null){
-        		doSend = false;
-        		
-      	      JOptionPane.showMessageDialog(jf,
-  	    		    "No File Selected", 
-  	    		    "Success",
-  	    		    JOptionPane.PLAIN_MESSAGE);
-        		
-        	}
-        	if (un.getText() == ""){
-        		doSend = false;
-        	
-        	      JOptionPane.showMessageDialog(jf,
-        	    		    "No User Selected", 
-        	    		    "Success",
-        	    		    JOptionPane.PLAIN_MESSAGE);	
-        	}
-        		
-        	if (doSend == true)
-        	{
-        		System.out.println("sending file");
-        		this.setVisible(false);
-        		wait = true;	
-        		int port = 13211;
-        		
-        		if (servsock == null){
-        		try	{
-        		 servsock = new ServerSocket(port);
-        		}
-        		catch (IOException io){System.out.println("servsock error");}
-        		
-        		}
-     		      String temp = "09 " + LogIn.username + " " + un.getText() + " " + file.getName() + " " + Client.ip + " " + port + " " + (file.length()+10000);
-    		      LogIn.thisclient.SendMessage(temp);
-        	}
+        	send_file();
         }
         
         else {
@@ -187,6 +176,67 @@ public class FileTrans extends JDialog implements ActionListener, Runnable
         }
 	}
 	
+	public void choose_file(){
+    	System.out.println("Open File to send");
+    	
+    	fc = new JFileChooser();
+    	file = null;
+    	
+        int x = fc.showDialog(FileTrans.this, "Open");
+    	
+        if (x == JFileChooser.APPROVE_OPTION) {
+            file = fc.getSelectedFile();
+            try {
+            fn.setText(file.getCanonicalPath()); }
+            catch (IOException ioe){}
+        } 
+        else {
+            file = null;
+        }
+	}
+	
+	public void send_file(){
+		JFrame jf = new JFrame();
+    	boolean doSend = true;
+    	System.out.println("Send File");
+    	if (file == null){
+    		doSend = false;
+    		
+  	      JOptionPane.showMessageDialog(jf,
+	    		    "No File Selected", 
+	    		    "Success",
+	    		    JOptionPane.PLAIN_MESSAGE);
+    		
+    	}
+    	if (un.getText() == ""){
+    		doSend = false;
+    	
+    	      JOptionPane.showMessageDialog(jf,
+    	    		    "No User Selected", 
+    	    		    "Success",
+    	    		    JOptionPane.PLAIN_MESSAGE);	
+    	}
+    		
+    	if (doSend == true)
+    	{
+    		System.out.println("sending file");
+    		this.setVisible(false);
+    		wait = true;	
+    		int port = 10422;
+    		
+    		if (servsock == null){
+    		try	{
+    		 servsock = new ServerSocket(port);
+    		}
+    		catch (IOException io){System.out.println("servsock error");}
+    		
+    		}
+ 		      String temp = "09 " + LogIn.username + " " + un.getText() + " " + file.getName() + " " + Client.ip + " " + port + " " + (file.length()+10000);
+		      LogIn.thisclient.SendMessage(temp);
+    	}
+	}
+	
+
 	public  void send() throws IOException {
 		
 		//try
