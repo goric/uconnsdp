@@ -2,7 +2,6 @@ import java.awt.Container;
 import java.io.*;
 import javax.swing.*;
 
-
 public class ProgMonitor extends JFrame implements Runnable{
 
 	private JLabel progress, bit_rate;
@@ -16,12 +15,10 @@ public class ProgMonitor extends JFrame implements Runnable{
 	public ProgMonitor ()
 	{
 		super ("File Transfer Progress");
-		 Thread aThread = new Thread(this);
-		 aThread.start();
-		ProgFrame();
+		Thread aThread = new Thread(this);
+		aThread.start();
+	 	ProgFrame();
 	}
-	
-	
 	
 	private void ProgFrame()
 	{
@@ -32,26 +29,27 @@ public class ProgMonitor extends JFrame implements Runnable{
 		progress = new JLabel("Transfer Progess: " );
 		prog = new JLabel("prog " );
 		
-		bit_rate = new JLabel("Avg. Bits Transfered: ");
-		avg_bits = new JLabel("0 kb/s");
+//		bit_rate = new JLabel("Avg. Bits Transfered: ");
+//		avg_bits = new JLabel("0 kb/s");
 		
 		bar = new JProgressBar();
 		
         layout.putConstraint(SpringLayout.NORTH, progress,
 				 5,
 				 SpringLayout.NORTH, container);
-       layout.putConstraint(SpringLayout.WEST, progress,
+        layout.putConstraint(SpringLayout.WEST, progress,
 				 5,
 				 SpringLayout.WEST, container);
        
-       layout.putConstraint(SpringLayout.NORTH, prog,
+        layout.putConstraint(SpringLayout.NORTH, prog,
   			 5,
   			 SpringLayout.NORTH, container);
-     layout.putConstraint(SpringLayout.WEST, prog,
+        layout.putConstraint(SpringLayout.WEST, prog,
   			 120,
   			 SpringLayout.WEST, container);
        
-       layout.putConstraint(SpringLayout.NORTH, bit_rate,
+     
+ /*      layout.putConstraint(SpringLayout.NORTH, bit_rate,
 				 40,
 				 SpringLayout.NORTH, container);
      layout.putConstraint(SpringLayout.WEST, bit_rate,
@@ -64,26 +62,28 @@ public class ProgMonitor extends JFrame implements Runnable{
  layout.putConstraint(SpringLayout.WEST, avg_bits,
 			 130,
 			 SpringLayout.WEST, container);
-
- layout.putConstraint(SpringLayout.NORTH, bar,
-		 70,
-		 SpringLayout.NORTH, container);
-layout.putConstraint(SpringLayout.WEST, bar,
-		 5,
-		 SpringLayout.WEST, container);
+*/
+     
+     
+        layout.putConstraint(SpringLayout.NORTH, bar,
+		   35,
+		   SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, bar,
+		   5,
+		   SpringLayout.WEST, container);
  
  
-	container.add(bit_rate);
+//	container.add(bit_rate);
 	container.add(progress);
 	container.add(prog);
-	container.add(avg_bits);
+//	container.add(avg_bits);
 	container.add(bar);	
 	
 	bar.setValue(0);
 	
 	bar.setStringPainted(true);
 
-	this.setSize(235,130);
+	this.setSize(265,100);
 	this.setResizable(false);
 	this.setLocation(400,200);
 	this.setVisible(true);
@@ -99,13 +99,12 @@ layout.putConstraint(SpringLayout.WEST, bar,
 	
 	public void setprog(int pro, int bytesR){
 		previous++;
-		System.out.println("set r");
+		//System.out.println("set r");
 		prog.setText("" + pro + " / " + filesize);
 		bar.setValue(Math.min(pro, filesize));
 		
-		avg_bits.setText(""+ ((bytesR)/1000)+ " kb/s");
+	//	avg_bits.setText(""+ ((bytesR)/1000)+ " kb/s");
 
-		
 	}
 	public void run(){}
 	public void setprog(int pro){
@@ -114,17 +113,5 @@ layout.putConstraint(SpringLayout.WEST, bar,
 		prog.setText("" + pro + " / " + filesize);
 		bar.setValue(Math.min(pro, filesize));
 							
-		
 	}
-	
-	
-	
-	
-/*	public static void main(String args[]){
-			JFrame f = new JFrame();
-			ProgMonitor ft = new ProgMonitor(f);
-			ft.setVisible(true);
-			
-		}
-	*/
 }
