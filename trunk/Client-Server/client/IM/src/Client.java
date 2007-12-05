@@ -25,6 +25,7 @@ public class Client implements Runnable
 	private int min;
 	private int counter;
 	public static boolean status_away;
+	public static String away_msg;
 	private boolean addorremove = false;
 	public static boolean validflag = false;
 	private DataInputStream mDataInStream;	
@@ -148,8 +149,9 @@ public void GetMessageFromServer()
 		AppendChatWindow.appendData(user, tehMessage, true,(ChatWindow)ClientGUI.frameTable.get(user),time );
 		if (status_away == true)
 		{
-			String temp = "27 " + LogIn.username + " " + user;
+			String temp = "27 " + LogIn.username + " " + user + " " + away_msg;
 			LogIn.thisclient.SendMessage(temp);
+			
 		}
 	}
 	else if (anythingMessage[0].contentEquals("05"))

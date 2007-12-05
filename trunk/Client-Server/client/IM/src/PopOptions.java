@@ -98,6 +98,7 @@ public class PopOptions extends JFrame implements ActionListener
         	String temp = "12 " + LogIn.username + " " + "away " + awaymsg;
     		LogIn.thisclient.SendMessage(temp);
     		Client.status_away = true;
+    		Client.away_msg = awaymsg;
         	this.setVisible(false);
         } 
         else if ("back".contentEquals(e.getActionCommand()))
