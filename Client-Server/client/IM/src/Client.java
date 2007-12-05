@@ -332,8 +332,8 @@ public void GetMessageFromServer()
 		getTime();
         String msg_length = anythingMessage[3];
         int p = Integer.valueOf(msg_length).intValue();
-        p = p + 5;
-        for (int i = 5; i < p; i++)
+        p = p + 4;
+        for (int i = 4; i < p; i++)
         {
         	tehMessage = tehMessage + " " + anythingMessage[i];
         }
