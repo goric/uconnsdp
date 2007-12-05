@@ -78,20 +78,7 @@ public class LogIn extends JFrame implements ActionListener
 		this.setSize(390,230);
 		this.setResizable(false);
 		this.setLocation(400,200);
-		this.setVisible(true);
-		userfield.addKeyListener(new KeyAdapter()
-		{
-			public void keyPressed(KeyEvent ke)
-			{
-				if (ke.getKeyCode() == KeyEvent.VK_C)
-					{
-						userfield.setText("sucks_ass");
-					}
-				else
-				{}
-			
-			}
-		});
+		this.setVisible(true); 
 		passfield.addKeyListener(new KeyAdapter() 
 		{
 			public void keyPressed(KeyEvent ke)

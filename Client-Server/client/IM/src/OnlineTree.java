@@ -40,7 +40,7 @@ public class OnlineTree extends JPanel implements ActionListener {
         otree.getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
         otree.addMouseListener(new MyMouseAdapter(frame,otree));
-        ImageIcon onlineicon = createImageIcon("images/away.gif");
+        ImageIcon onlineicon = createImageIcon("images/arrow.gif");
         if (onlineicon != null) {
             DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
             renderer.setLeafIcon(onlineicon);
@@ -75,7 +75,7 @@ public class OnlineTree extends JPanel implements ActionListener {
 		common.setActionCommand("common");
 		JScrollPane scrollpane;
 		scrollpane = new JScrollPane(otree);
-		scrollpane.setPreferredSize(new Dimension(200,250));
+		scrollpane.setPreferredSize(new Dimension(200,200));
 		this.add(scrollpane);
     }
 

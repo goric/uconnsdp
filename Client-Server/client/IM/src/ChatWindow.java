@@ -31,14 +31,14 @@ public class ChatWindow extends JFrame implements ActionListener
 		recv.setEditorKit(new HTMLEditorKit());
 		recv.setEditable(false);
 		JScrollPane pane = new JScrollPane(recv, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		pane.setBounds(10,10,290,100);
+		pane.setBounds(10,10,305,135);
 		type = new JTextArea();
-		type.setFont(new Font("Arial",Font.PLAIN,11));
+		type.setFont(new Font("Arial",Font.PLAIN,12));
 		type.setLineWrap(true);
 		JScrollPane typepane = new JScrollPane(type, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		typepane.setBounds(10,120,220,50);
+		typepane.setBounds(10,155,235,20);
 		send = new JButton("Send");
-		send.setBounds(235,120,65,50);
+		send.setBounds(250,154,65,20);
 		send.addActionListener(this);
 		container.add(pane);
 		container.add(typepane);
@@ -93,7 +93,7 @@ public class ChatWindow extends JFrame implements ActionListener
 		});
 
 		this.setResizable(true);
-		this.setSize(310,210);
+		this.setSize(330,225);
 		this.setTitle(user+" - Message");
 		System.out.println(x + " " + y);
 		this.setLocation(500 + x, 400 + y);

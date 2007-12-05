@@ -28,6 +28,8 @@ public class AddUser extends JDialog implements ActionListener
 		subbutton.setMnemonic(KeyEvent.VK_ENTER); 
 		canbutton = new JButton("Cancel");
 		canbutton.setActionCommand("can");
+		ImageIcon icon = new ImageIcon("username.jpg");
+		JLabel userlab = new JLabel(icon);
 		SpringLayout.Constraints subCst = layout.getConstraints(subbutton);
 		subCst.setX(Spring.constant(10));
 		subCst.setY(Spring.constant(5));
@@ -37,10 +39,10 @@ public class AddUser extends JDialog implements ActionListener
 		Spring widthSpring = Spring.max(subCst.getWidth(), canCst.getWidth());
 		subCst.setWidth(widthSpring);
 		canCst.setWidth(widthSpring);
-        layout.putConstraint(SpringLayout.NORTH, userfield, 30, SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, userfield, 60, SpringLayout.WEST, container); 
-        layout.putConstraint(SpringLayout.NORTH, userlab, 5, SpringLayout.NORTH, container);
-        layout.putConstraint(SpringLayout.WEST, userlab, 60, SpringLayout.WEST, container);
+        layout.putConstraint(SpringLayout.NORTH, userfield, 60, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, userfield, 55, SpringLayout.WEST, container); 
+        layout.putConstraint(SpringLayout.NORTH, userlab, 15, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, userlab, 45, SpringLayout.WEST, container);
         layout.putConstraint(SpringLayout.NORTH, subbutton, 125, SpringLayout.NORTH, container);
         layout.putConstraint(SpringLayout.EAST, subbutton, -30, SpringLayout.EAST, container);
         layout.putConstraint(SpringLayout.NORTH, canbutton, 125, SpringLayout.NORTH, container);
