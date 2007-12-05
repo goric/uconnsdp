@@ -50,7 +50,7 @@ public class UserList extends JPanel implements ActionListener {
 		JScrollPane scrollpane;
 		stree = tree;
 		scrollpane = new JScrollPane(tree);
-		scrollpane.setPreferredSize(new Dimension(160,280));
+		scrollpane.setPreferredSize(new Dimension(160,200));
 		this.add(scrollpane);
 		
     }

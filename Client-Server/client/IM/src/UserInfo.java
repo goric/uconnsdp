@@ -10,7 +10,7 @@ public class UserInfo extends JFrame implements ActionListener
 	public JEditorPane recv;
 	private JButton send;
 	private String user;
-	private String blank = "---------------------------------------------------------------";
+	private String blank = "-------------------------------------------------------";
 
 	public UserInfo(String user)
 	{
@@ -28,9 +28,9 @@ public class UserInfo extends JFrame implements ActionListener
 		JScrollPane pane = new JScrollPane(recv,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		pane.setBounds(10,10,340,100);
+		pane.setBounds(10,10,310,130);
 		send = new JButton("Close");
-		send.setBounds(105,120,95,50);
+		send.setBounds(110,160,95,50);
 		send.addActionListener(this);
 		send.setActionCommand("close");
 		container.add(pane);
@@ -45,7 +45,7 @@ public class UserInfo extends JFrame implements ActionListener
 					}
 		});
 		this.setResizable(false);
-		this.setSize(360,210);
+		this.setSize(330,250);
 		this.setTitle(user+"'s Info");
 		this.setLocation(300,300);
 		this.addWindowListener(new WindowAdapter() {
@@ -65,14 +65,9 @@ public class UserInfo extends JFrame implements ActionListener
 		long l = Long.parseLong(myUserInfoArray[4].trim());
 		long timestamp = l * 1000;
 		java.util.Date d = new java.util.Date(timestamp);
-		if (PopOptions.reg_flag == true)
-		{
-		str = ("Member Since : " + d);
+		str = ("<b>Member Since : </b>" + d);
 		append(str);
-		}
-		if (PopOptions.time_flag == true)
-		{
-		if ((myUserInfoArray[3].contentEquals("online")))
+		if ((myUserInfoArray[3].contentEquals("online")) || (myUserInfoArray[3].contentEquals("dnd")))
 		{
 			String sseconds = myUserInfoArray[5];
 			int itotal = Integer.parseInt(sseconds.trim());
@@ -88,7 +83,7 @@ public class UserInfo extends JFrame implements ActionListener
 				if (iminutes > 0)
 				{itotal = itotal - (iminutes * 60);}
 				iseconds = itotal;
-				str = ("Online Time : " + idays + " days " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
+				str = ("<b>Online Time : </b>" + idays + " days " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
 			}
 			else if (itotal > 3599 && itotal < 86399)
 			{
@@ -99,7 +94,7 @@ public class UserInfo extends JFrame implements ActionListener
 				if (iminutes > 0)
 				{itotal = itotal - (iminutes * 60);}
 				iseconds = itotal;
-				str = ("Online Time : " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
+				str = ("<b>Online Time : </b>" + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
 			}
 			else if (itotal > 59 && itotal < 3599)
 			{
@@ -107,12 +102,12 @@ public class UserInfo extends JFrame implements ActionListener
 				if (iminutes > 0)
 				{itotal = itotal - (iminutes * 60);}
 				iseconds = itotal;
-				str = ("Online Time : " + iminutes + " minutes " + iseconds + " seconds");
+				str = ("<b>Online Time : </b>" + iminutes + " minutes " + iseconds + " seconds");
 			}
 			else
 			{
 				iseconds = itotal;
-				str = ("Online Time : " + iseconds + " seconds");
+				str = ("<b>Online Time : </b>" + iseconds + " seconds");
 			}
 			append(str);
 		}
@@ -132,7 +127,7 @@ public class UserInfo extends JFrame implements ActionListener
 				if (iminutes > 0)
 				{itotal = itotal - (iminutes * 60);}
 				iseconds = itotal;
-				str = ("Last Seen : " + idays + " days " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
+				str = ("<b>Last Seen : </b>" + idays + " days " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
 			}
 			else if (itotal > 3599 && itotal < 86399)
 			{
@@ -143,7 +138,7 @@ public class UserInfo extends JFrame implements ActionListener
 				if (iminutes > 0)
 				{itotal = itotal - (iminutes * 60);}
 				iseconds = itotal;
-				str = ("Last Seen : " + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
+				str = ("<b>Last Seen : </b>" + ihours + " hours " + iminutes + " minutes " + iseconds + " seconds");
 			}
 			else if (itotal > 59 && itotal < 3599)
 			{
@@ -151,15 +146,14 @@ public class UserInfo extends JFrame implements ActionListener
 				if (iminutes > 0)
 				{itotal = itotal - (iminutes * 60);}
 				iseconds = itotal;
-				str = ("Last Seen : " + iminutes + " minutes " + iseconds + " seconds");
+				str = ("<b>Last Seen : </b>" + iminutes + " minutes " + iseconds + " seconds");
 			}
 			else
 			{
 				iseconds = itotal;
-				str = ("Last Seen : " + iseconds + " seconds");
+				str = ("<b>Last Seen : </b>" + iseconds + " seconds");
 			}
 			append(str);
-		}
 		}
 		String sprofile = myUserInfoArray[6];
 		int iprofile = Integer.parseInt(sprofile.trim());
@@ -168,25 +162,24 @@ public class UserInfo extends JFrame implements ActionListener
 		String saway = myUserInfoArray[awayspot];
 		int iaway = Integer.parseInt(saway.trim());
 		String temp = "";
-		if (PopOptions.status_flag == true)
+		if(iaway > 0 && (myUserInfoArray[3].contentEquals("online")))
 		{
-		if(iaway > 0 && (!(myUserInfoArray[3].contentEquals("offline"))))
-		{
-			System.out.println("I got here");
-			temp = "Status : Away";
-			append(temp);
-			temp = "";
+			temp = "<b>Status : Away, </b>";
 			for (int i = 2; i < iaway+1; i++)
 			{
 				temp = temp + myUserInfoArray[i+awayspot] + " ";
 			}
 			append(temp);
 		}
-		else if (myUserInfoArray[3].contentEquals("offline"))
+		else if (myUserInfoArray[3].contentEquals("dnd"))
 		{
-			temp = "Status : Offline";
+			temp = "<b>Status : Do Not Disturb</b>";
 			append(temp);
 		}
+		else if (myUserInfoArray[3].contentEquals("offline"))
+		{
+			temp = "<b>Status : Offline</b>";
+			append(temp);
 		}
 		append(blank);
 		temp = "";

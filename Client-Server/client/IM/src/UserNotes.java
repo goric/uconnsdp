@@ -69,11 +69,13 @@ public class UserNotes extends JFrame implements ActionListener
 					setVisible(false);
 				} else if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
+						str = recv.getText();
+						writenotes(str);
+						setVisible(false);
 					}
 					catch(Exception e) {
-						JOptionPane.showMessageDialog(container, "DOH!", "Error", JOptionPane.ERROR_MESSAGE);
+						
 						}
-					recv.setText("");
 				}
 			}
 		}
