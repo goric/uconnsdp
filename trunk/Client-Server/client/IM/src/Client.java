@@ -24,6 +24,7 @@ public class Client implements Runnable
 	private String time;
 	private int min;
 	private int counter;
+	public static boolean status_away;
 	private boolean addorremove = false;
 	public static boolean validflag = false;
 	private DataInputStream mDataInStream;	
@@ -50,7 +51,7 @@ public void GetServerConnection( String pServer)
 	
 	try	
 	{
-		this.mClientSocket = new Socket( pServer, 6013);
+		this.mClientSocket = new Socket( pServer, 443);
 		
 		this.mDataInStream = new DataInputStream( this.mClientSocket.getInputStream());
 		this.mDataOutStream = new DataOutputStream( this.mClientSocket.getOutputStream());
@@ -145,6 +146,11 @@ public void GetMessageFromServer()
 		String user = anythingMessage[2];
 		ClientGUI.createFrame(user);	
 		AppendChatWindow.appendData(user, tehMessage, true,(ChatWindow)ClientGUI.frameTable.get(user),time );
+		if (status_away == true)
+		{
+			String temp = "27 " + LogIn.username + " " + user;
+			LogIn.thisclient.SendMessage(temp);
+		}
 	}
 	else if (anythingMessage[0].contentEquals("05"))
 	{
@@ -194,7 +200,6 @@ public void GetMessageFromServer()
 		}
 		else
 		{
-			System.out.println("who the fuck cares");
 		}
 	}
 	else if(anythingMessage[0].contentEquals("17"))
@@ -318,6 +323,21 @@ public void GetMessageFromServer()
 		AppendChatWindow.appendData4(user, str, (OneToMany)ChatName.onetomanyTable.get(chatname));
 		OneToMany thisone = (OneToMany)ChatName.onetomanyTable.get(chatname);
 		thisone.removeMember(user);
+	}
+	else if (anythingMessage[0].contentEquals("27"))
+	{
+		getTime();
+        String msg_length = anythingMessage[3];
+        int p = Integer.valueOf(msg_length).intValue();
+        p = p + 4;
+        for (int i = 4; i < p; i++)
+        {
+        	tehMessage = tehMessage + " " + anythingMessage[i];
+        }
+		String user = anythingMessage[2];
+		ClientGUI.createFrame(user);	
+		AppendChatWindow.appendData(user, tehMessage, true,(ChatWindow)ClientGUI.frameTable.get(user),time );
+		
 	}
 	else if (anythingMessage[0].contentEquals("28"))
 	{

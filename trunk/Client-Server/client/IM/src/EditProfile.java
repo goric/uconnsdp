@@ -22,11 +22,11 @@ public class EditProfile extends JFrame implements ActionListener
 		edit_pane.setEditorKit(new HTMLEditorKit());
 		edit_pane.setEditable(true);
 		JScrollPane pane = new JScrollPane(edit_pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		pane.setBounds(10,10,340,100);
+		pane.setBounds(10,10,340,130);
 		close = new JButton("Close");
 		save = new JButton("Save");
-		close.setBounds(70,120,95,30);
-		save.setBounds(180,120,95,30);
+		close.setBounds(70,160,95,30);
+		save.setBounds(180,160,95,30);
 		close.addActionListener(this);
 		save.addActionListener(this);
 		close.setActionCommand("close");
@@ -44,7 +44,7 @@ public class EditProfile extends JFrame implements ActionListener
 		});
 		setUserInfo();
 		this.setResizable(false);
-		this.setSize(360,210);
+		this.setSize(360,240);
 		this.setTitle(LogIn.username +"'s Info");
 		this.setLocation(300,300);
 		this.addWindowListener(new WindowAdapter() {

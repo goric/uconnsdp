@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.util.Hashtable;
 import javax.swing.*;
+
 import java.awt.event.*;
 
 
@@ -20,9 +21,10 @@ public class ClientGUI extends JFrame implements ActionListener {
 	public ClientGUI(Point x)
 	{
 		MainWin(x);
-	}
+	}	
 	public void MainWin(Point x)
 	{
+		
 		container = this.getContentPane();
 		SpringLayout layout = new SpringLayout();
 		container.setLayout(layout);
@@ -31,23 +33,28 @@ public class ClientGUI extends JFrame implements ActionListener {
 		quitmenu = new JMenuItem("Quit");
 		menu1.add(quitmenu);
 		menu.add(menu1);
+		ImageIcon icon = new ImageIcon("small_logo.jpg");
+		JLabel logo = new JLabel(icon);
 		optbutton = new JButton("Options");
 		manbutton = new JButton("Manage");
 		optbutton.setActionCommand("opt");
 		manbutton.setActionCommand("man");
 		quitmenu.setActionCommand("quit");
+        layout.putConstraint(SpringLayout.NORTH, logo, 10, SpringLayout.NORTH, container);
+        layout.putConstraint(SpringLayout.WEST, logo, 15, SpringLayout.WEST, container);
         layout.putConstraint(SpringLayout.NORTH, optbutton, 290, SpringLayout.NORTH, container);
         layout.putConstraint(SpringLayout.WEST, optbutton, 120, SpringLayout.WEST, container);
         layout.putConstraint(SpringLayout.NORTH, manbutton, 290, SpringLayout.NORTH, container);
         layout.putConstraint(SpringLayout.WEST, manbutton, 20, SpringLayout.WEST, container);
 		container.add(optbutton);
 		container.add(manbutton);
+		container.add(logo);
 		while(rflag == true)
 		{
 			if ((Client.anythingMessage2[0].contentEquals("02")) && (pflag == true))
 			{
-				String instancename = LogIn.username;
 				OnlineTree contacts;
+				String instancename = LogIn.username;
 				contacts = (OnlineTree) buddyTable.get(instancename);
 				if(contacts == null)
 				{
@@ -56,6 +63,8 @@ public class ClientGUI extends JFrame implements ActionListener {
 					container.add(contacts);
 					pflag = false;
 					rflag = false;
+			        layout.putConstraint(SpringLayout.NORTH, contacts, 60, SpringLayout.NORTH, container);
+			        layout.putConstraint(SpringLayout.WEST, contacts, 5, SpringLayout.WEST, container);
 				}
 				rflag = false;
 			}
