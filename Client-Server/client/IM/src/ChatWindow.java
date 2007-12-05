@@ -56,7 +56,7 @@ public class ChatWindow extends JFrame implements ActionListener
 					if(type.getText().length() == 0) return;
 					msg = type.getText();
 					getTime();
-					AppendChatWindow.appendData(LogIn.username,type.getText(),false, (ChatWindow)ClientGUI.frameTable.get(user.toString()), time);
+					AppendChatWindow.appendData(LogIn.username,type.getText(),false, (ChatWindow)ClientGUI.frameTable.get(user), time);
 					temp = "03 " + LogIn.username + " " + user + " " + msg;
 					LogIn.thisclient.SendMessage(temp);
 					type.setText("");
