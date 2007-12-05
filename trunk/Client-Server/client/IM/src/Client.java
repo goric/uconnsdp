@@ -149,9 +149,10 @@ public void GetMessageFromServer()
 		AppendChatWindow.appendData(user, tehMessage, true,(ChatWindow)ClientGUI.frameTable.get(user),time );
 		if (status_away == true)
 		{
-			String temp = "27 " + LogIn.username + " " + user + " " + away_msg;
+			String temp2 = "<b>Auto Response from meh BLOODY PANDA: </b>" + away_msg;
+			String temp = "27 " + LogIn.username + " " + user + " " + temp2;
 			LogIn.thisclient.SendMessage(temp);
-			AppendChatWindow.appendData(user, temp, false,(ChatWindow)ClientGUI.frameTable.get(user),time );
+			AppendChatWindow.appendData(LogIn.username, temp2, false,(ChatWindow)ClientGUI.frameTable.get(user),time );
 		}
 	}
 	else if (anythingMessage[0].contentEquals("05"))
